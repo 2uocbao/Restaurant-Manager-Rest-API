@@ -22,7 +22,7 @@ public class Restaurants {
 	@Column(name = "id")
 	private String id;
 
-	@Column(name = "name")
+	@Column(name = "namerest")
 	private String name;
 
 	@Column(name = "email")

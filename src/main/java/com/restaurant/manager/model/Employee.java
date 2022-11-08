@@ -48,7 +48,7 @@ public class Employee {
 	@Column(name = "phone")
 	private String phone;
 
-	@Column(name = "role")
+	@Column(name = "role_emp")
 	private String role;
 
 	@Column(name = "city")
@@ -60,7 +60,7 @@ public class Employee {
 	@Column(name = "address")
 	private String address;
 
-	@Column(name = "password")
+	@Column(name = "pass")
 	private String password;
 
 	@Column(name = "status")

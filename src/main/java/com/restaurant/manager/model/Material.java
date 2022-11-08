@@ -26,13 +26,13 @@ public class Material {
 	@Column(name = "code")
 	private String code;
 
-	@Column(name = "name")
+	@Column(name = "namemate")
 	private String name;
 
-	@Column(name = "cost")
+	@Column(name = "price")
 	private int cost;
 	
-	@Column(name = "type")
+	@Column(name = "typemate")
 	private String type;
 
 	@Column(name = "quantity")
