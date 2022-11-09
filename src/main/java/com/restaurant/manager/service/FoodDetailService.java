@@ -10,6 +10,8 @@ public interface FoodDetailService {
 	public boolean deleteFoodDetail(int id);
 
 	public List<foodDetail> listFoodDetail(int foodId);
-	
+
+	public boolean deleteFoodDetailByMateCode(String materialCode);
+
 	public boolean updateFoodDetail(foodDetail foodDetail);
 }

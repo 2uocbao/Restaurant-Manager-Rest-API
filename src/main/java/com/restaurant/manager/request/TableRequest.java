@@ -3,6 +3,9 @@ package com.restaurant.manager.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TableRequest {
+	
+	@JsonProperty("employeeId")
+	private String employeeId;
 
 	@JsonProperty("name")
 	private String name;
@@ -12,6 +15,14 @@ public class TableRequest {
 
 	@JsonProperty("total_slot")
 	private int totalSlot;
+
+	public String getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
+	}
 
 	public String getName() {
 		return name;

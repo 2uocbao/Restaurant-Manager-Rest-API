@@ -42,11 +42,10 @@ public class WarehouseController {
 	MaterialService materialService;
 
 	@PostMapping("/create")
-	ResponseEntity<String> createWarehouse(@RequestParam("employeeId") String employeeId,
-			@RequestBody WarehouseRequest warehouseRequest) {
+	ResponseEntity<String> createWarehouse(@RequestBody WarehouseRequest warehouseRequest) {
 		String message = null;
 		boolean success;
-		Employee employee = employeeService.detailEmployee(employeeId);
+		Employee employee = employeeService.detailEmployee(warehouseRequest.getEmployeeId());
 		Material material = null;
 		Warehouse warehouse = new Warehouse();
 		if (employee.getStatus() == 0) {
@@ -91,8 +90,6 @@ public class WarehouseController {
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
-
-	/// list theo ma material
 
 	@GetMapping("/list-warehouse")
 	ResponseEntity<?> listWarehouse(@RequestParam("employeeId") String employeeId,

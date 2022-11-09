@@ -5,6 +5,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FoodRequest {
+	@JsonProperty("employeeId")
+	private String employeeId;
 
 	@JsonProperty("name")
 	private String name;
@@ -17,6 +19,14 @@ public class FoodRequest {
 
 	@JsonProperty("material code")
 	private List<String> materialCode;
+
+	public String getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
+	}
 
 	public String getName() {
 		return name;

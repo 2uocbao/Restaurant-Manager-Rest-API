@@ -6,6 +6,9 @@ import java.sql.Timestamp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WarehouseRequest {
+	@JsonProperty("employeeId")
+	private String employeeId;
+	
 	@JsonProperty("material code")
 	private String materialCode;
 
@@ -20,6 +23,14 @@ public class WarehouseRequest {
 	
 	@JsonProperty("date")
 	private Timestamp date;
+
+	public String getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
+	}
 
 	public String getMaterialCode() {
 		return materialCode;

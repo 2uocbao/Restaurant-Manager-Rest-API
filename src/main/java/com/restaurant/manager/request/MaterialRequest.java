@@ -3,6 +3,9 @@ package com.restaurant.manager.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MaterialRequest {
+	@JsonProperty("employeeId")
+	private String employeeId;
+	
 	@JsonProperty("code")
 	private String code;
 
@@ -17,6 +20,16 @@ public class MaterialRequest {
 
 	@JsonProperty("where_production")
 	private String whereProduction;
+	
+	
+
+	public String getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
+	}
 
 	public String getCode() {
 		return code;

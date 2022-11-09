@@ -3,6 +3,9 @@ package com.restaurant.manager.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BranchRequest {
+	
+	@JsonProperty("restaurantId")
+	private String restaurantId;
 
 	@JsonProperty("name")
 	private String name;
@@ -15,6 +18,14 @@ public class BranchRequest {
 
 	@JsonProperty("phone")
 	private String phone;
+
+	public String getRestaurantId() {
+		return restaurantId;
+	}
+
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
 
 	public String getName() {
 		return name;

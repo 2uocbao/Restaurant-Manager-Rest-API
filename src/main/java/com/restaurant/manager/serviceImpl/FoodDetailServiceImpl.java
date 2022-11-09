@@ -34,4 +34,10 @@ public class FoodDetailServiceImpl implements FoodDetailService {
 	public boolean updateFoodDetail(foodDetail foodDetail) {
 		return foodDetailRepository.updateFoodDetail(foodDetail);
 	}
+
+	@Override
+	public boolean deleteFoodDetailByMateCode(String materialCode) {
+		return foodDetailRepository.deleteFoodDetailByMateCode(materialCode);
+	}
+
 }

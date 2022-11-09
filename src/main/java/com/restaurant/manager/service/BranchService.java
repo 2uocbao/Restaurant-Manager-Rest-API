@@ -1,5 +1,7 @@
 package com.restaurant.manager.service;
 
+import java.util.List;
+
 import com.restaurant.manager.model.Branch;
 
 public interface BranchService {
@@ -14,4 +16,6 @@ public interface BranchService {
 	public Branch getDetailByPhone(String phone);
 	
 	public Integer getStatusbyId(String id);
+	
+	public List<Branch> listBranchByRestaurantId(String restaurantId);
 }

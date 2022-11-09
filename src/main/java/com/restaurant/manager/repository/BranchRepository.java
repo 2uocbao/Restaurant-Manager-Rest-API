@@ -1,5 +1,7 @@
 package com.restaurant.manager.repository;
 
+import java.util.List;
+
 import com.restaurant.manager.model.Branch;
 
 public interface BranchRepository {
@@ -17,4 +19,6 @@ public interface BranchRepository {
 	public Integer getStatusbyId(String id);
 
 	public boolean changeStatusbyRestaurantId(String restaurantId, int status);
+	
+	public List<Branch> listBranchByRestaurantId(String restaurantId);
 }

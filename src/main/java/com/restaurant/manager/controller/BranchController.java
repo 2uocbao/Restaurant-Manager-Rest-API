@@ -1,5 +1,8 @@
 package com.restaurant.manager.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +35,13 @@ public class BranchController {
 	CheckService checkService;
 
 	@PostMapping("/create")
-	ResponseEntity<String> createBranch(@Valid @RequestParam(name = "restaurantId") String restaurantId,
-			@Valid @RequestBody BranchRequest branchRequest) {
+	ResponseEntity<String> createBranch(@Valid @RequestBody BranchRequest branchRequest) {
 		Branch branch = new Branch();
-		Restaurants restaurant = restaurantService.detailRestaurant(restaurantId);
+		Restaurants restaurant = restaurantService.detailRestaurant(branchRequest.getRestaurantId());
 		String message;
 		if (restaurant == null) {
 			return ResponseEntity.badRequest().body("Không có thông tin về nhà hàng này");
-		} else if (restaurantService.getStatusById(restaurantId) == 0) {
+		} else if (restaurantService.getStatusById(branchRequest.getRestaurantId()) == 0) {
 			return ResponseEntity.badRequest().body("Nhà hàng đang tạm ngưng hoạt động");
 		} else if (!checkService.checkName(branchRequest.getName())) {
 			return ResponseEntity.badRequest().body("Tên không hợp lệ");
@@ -120,5 +122,20 @@ public class BranchController {
 
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
+	}
+
+	@GetMapping("/list-branch")
+	ResponseEntity<?> listBranchByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
+		List<Branch> listBranch = branchService.listBranchByRestaurantId(restaurantId);
+		List<BranchRequest> listBranchRequest = new ArrayList<>();
+		for (Branch branch : listBranch) {
+			BranchRequest branchRequest = new BranchRequest();
+			branchRequest.setName(branch.getName());
+			branchRequest.setPhone(branch.getPhone());
+			branchRequest.setStreet(branch.getStreet());
+			branchRequest.setAddress(branch.getAddress());
+			listBranchRequest.add(branchRequest);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(listBranchRequest);
 	}
 }

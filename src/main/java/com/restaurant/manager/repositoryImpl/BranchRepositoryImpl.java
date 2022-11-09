@@ -1,5 +1,8 @@
 package com.restaurant.manager.repositoryImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -167,9 +170,7 @@ public class BranchRepositoryImpl implements BranchRepository {
 			transaction = session.beginTransaction();
 			session.createQuery(
 					"UPDATE com.restaurant.manager.model.Branch b SET b.status = :status WHERE b.restaurant.id = :restaurantId")
-					.setParameter("restaurantId", restaurantId)
-					.setParameter("status", status)
-					.executeUpdate();
+					.setParameter("restaurantId", restaurantId).setParameter("status", status).executeUpdate();
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -184,5 +185,29 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 		}
 		return successful;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Branch> listBranchByRestaurantId(String restaurantId) {
+		List<Branch> listBranch = new ArrayList<>();
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			listBranch = session.createQuery("FROM com.restaurant.manager.model.Branch b WHERE b.restaurant.id = :id")
+					.setParameter("id", restaurantId).list();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return listBranch;
 	}
 }

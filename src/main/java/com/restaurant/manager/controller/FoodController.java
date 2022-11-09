@@ -52,11 +52,10 @@ public class FoodController {
 	MaterialService materialService;
 
 	@PostMapping("/create")
-	ResponseEntity<String> createFood(@RequestParam("employeeId") String employeeId,
-			@RequestBody FoodRequest foodRequest) {
+	ResponseEntity<String> createFood(@RequestBody FoodRequest foodRequest) {
 		String message = null;
 		boolean success = false;
-		Employee employee = employeeService.detailEmployee(employeeId);
+		Employee employee = employeeService.detailEmployee(foodRequest.getEmployeeId());
 		if (employee.getStatus() == 0) {
 			return ResponseEntity.badRequest().body("Không thể thêm món mới, vì bạn không hoạt động");
 		}
@@ -118,22 +117,32 @@ public class FoodController {
 		if (food == null) {
 			return ResponseEntity.badRequest().body("Không có dữ liệu về món ăn này");
 		}
-//		String branchId = food.getBranch() != null ? food.getBranch().getId() : "";
+		String branchId = food.getBranch() != null ? food.getBranch().getId() : "";
 		food.setName(foodRequest.getName());
 		food.setPrice(foodRequest.getPrice());
 		food.setType(foodRequest.getType());
 		foodService.updateFood(food);
 		List<foodDetail> listFoodDetails = foodDetailService.listFoodDetail(food.getId());
+		List<String> materialCode = new ArrayList<>();
+		List<String> materialCode2 = new ArrayList<>();
 		for (foodDetail fooddetail : listFoodDetails) {
-			for (String materialCode : foodRequest.getMaterialCode()) {
-				fooddetail.setFood(food);
-//				Material material = materialService.detailMaterial(materialCode, food.getRestaurant().getId(),
-//						branchId);
-				fooddetail.setMaterialCode(materialCode);
-				message = foodDetailService.updateFoodDetail(fooddetail) ? "Cập nhật thông tin thành công"
-						: "Không thành công";
-				break;
-			}
+			materialCode.add(fooddetail.getMaterialCode());
+			materialCode2.add(fooddetail.getMaterialCode());
+		}
+		materialCode.removeAll(foodRequest.getMaterialCode());
+		foodRequest.getMaterialCode().removeAll(materialCode2);
+		for (String materialcode : materialCode) {
+			message = foodDetailService.deleteFoodDetailByMateCode(materialcode) ? "Cập nhật thông tin thành công"
+					: "không thành công";
+		}
+		for (String materialcd : foodRequest.getMaterialCode()) {
+			Material material = null;
+			foodDetail fooddetail = new foodDetail();
+			material = materialService.detailMaterial(materialcd, food.getRestaurant().getId(), branchId);
+			fooddetail.setFood(food);
+			fooddetail.setMaterialCode(material.getCode());
+			message = foodDetailService.createFoodDetail(fooddetail) ? "Cập nhật thông tin thành công"
+					: "Không thành công";
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
@@ -141,15 +150,25 @@ public class FoodController {
 	@GetMapping("/list-food")
 	ResponseEntity<?> listFood(@RequestParam("employeeId") String employeeId) {
 		Employee employee = employeeService.detailEmployee(employeeId);
-		List<Food> listFood = foodService.listFood(employee.getRestaurant().getId(), employee.getBranch().getId(), 0);
+		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
+		List<Food> listFood = foodService.getFoodIdByRestaurantIdAndBranchId(employee.getRestaurant().getId(),
+				branchId);
 		List<FoodRequest> listFoodRequest = new ArrayList<>();
 		for (Food food : listFood) {
 			FoodRequest foodRequest = new FoodRequest();
+			List<String> nameMaterial = new ArrayList<>();
+			List<foodDetail> listFoodDetail = foodDetailService.listFoodDetail(food.getId());
+			for (foodDetail listFooddetail : listFoodDetail) {
+				Material material = materialService.detailMaterial(listFooddetail.getMaterialCode(),
+						food.getRestaurant().getId(), branchId);
+				nameMaterial.add(material.getName());
+			}
 			foodRequest.setName(food.getName());
 			foodRequest.setPrice(food.getPrice());
+			foodRequest.setType(food.getType());
+			foodRequest.setMaterialCode(nameMaterial);
 			listFoodRequest.add(foodRequest);
 		}
-
 		return ResponseEntity.status(HttpStatus.OK).body(listFoodRequest);
 	}
 

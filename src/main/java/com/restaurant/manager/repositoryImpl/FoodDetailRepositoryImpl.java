@@ -49,7 +49,7 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.createQuery("DELETE com.restaurant.manager.model.foodDetail f WHERE f.id = :id")
+			session.createQuery("DELETE com.restaurant.manager.model.foodDetail f WHERE f.food.id = :id")
 					.setParameter("id", id).executeUpdate();
 			transaction.commit();
 			successful = true;
@@ -115,4 +115,27 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 		return successful;
 	}
 
+	@Override
+	public boolean deleteFoodDetailByMateCode(String materialCode) {
+		boolean success = false;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.createQuery("DELETE com.restaurant.manager.model.foodDetail f WHERE f.materialCode = :materialCode")
+					.setParameter("materialCode", materialCode).executeUpdate();
+			transaction.commit();
+			success = true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return success;
+	}
 }

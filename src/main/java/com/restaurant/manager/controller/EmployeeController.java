@@ -42,14 +42,12 @@ public class EmployeeController {
 	CheckService checkService;
 
 	@PostMapping("/create")
-	ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest,
-			@Valid @RequestParam(name = "restaurantId") String restaurantId,
-			@Valid @RequestParam(name = "branchId") String branchId) {
+	ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
 		String message = null;
-		Branch branch = branchService.detailBranch(branchId);
-		Restaurants restaurant = restaurantService.detailRestaurant(restaurantId);
+		Branch branch = branchService.detailBranch(employeeRequest.getBranchId());
+		Restaurants restaurant = restaurantService.detailRestaurant(employeeRequest.getRestaurantId());
 		Employee employee = new Employee();
-		if (!branchId.isEmpty()) {
+		if (!employeeRequest.getBranchId().isEmpty()) {
 			if (branch == null) {
 				return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh không tồn tại");
 			} else {
@@ -211,25 +209,14 @@ public class EmployeeController {
 		if (employee.getBranch() != null) {
 			if (branchService.getStatusbyId(employee.getBranch().getId()) == 0) {
 				return ResponseEntity.badRequest().body("Không thể hoạt động, vì chi nhánh đang ngưng hoạt động");
-			} else {
-				int status = employee.getStatus() == 0 ? 1 : 0;
-				if (status == 1) {
-					message = employeeService.changeStatusEmployee(id, status) ? "Bạn đang hoạt động"
-							: "Không thành công";
-				} else {
-					message = employeeService.changeStatusEmployee(id, status) ? "Bạn không hoạt động"
-							: "Không thành công";
-				}
-			}
-		} else {
-			int status = employee.getStatus() == 0 ? 1 : 0;
-			if (status == 1) {
-				message = employeeService.changeStatusEmployee(id, status) ? "Bạn đang hoạt động" : "Không thành công";
-			} else {
-				message = employeeService.changeStatusEmployee(id, status) ? "Bạn không hoạt động" : "Không thành công";
 			}
 		}
-
+		int status = employee.getStatus() == 0 ? 1 : 0;
+		if (status == 1) {
+			message = employeeService.changeStatusEmployee(id, status) ? "Bạn đang hoạt động" : "Không thành công";
+		} else {
+			message = employeeService.changeStatusEmployee(id, status) ? "Bạn không hoạt động" : "Không thành công";
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 }

@@ -45,12 +45,11 @@ public class TableController {
 	CheckService checkService;
 
 	@PostMapping("/create")
-	ResponseEntity<String> createTable(@Valid @RequestParam(name = "employeeId") String employeeId,
-			@Valid @RequestBody TableRequest tableRequest) {
+	ResponseEntity<String> createTable(@Valid @RequestBody TableRequest tableRequest) {
 		String message = null;
 		Tables table = new Tables();
 		List<Tables> listTable = new ArrayList<>();
-		Employee employee = employeeService.detailEmployee(employeeId);
+		Employee employee = employeeService.detailEmployee(tableRequest.getEmployeeId());
 		if (employee.getBranch() == null) {
 			listTable = tableService.listTableByBranchIdandRestaurantId(employee.getRestaurant().getId(), "");
 		} else {

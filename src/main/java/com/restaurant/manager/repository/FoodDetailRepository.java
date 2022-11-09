@@ -11,6 +11,8 @@ public interface FoodDetailRepository {
 	public boolean updateFoodDetail(foodDetail foodDetail);
 
 	public boolean deleteFoodDetail(int foodId);
+	
+	public boolean deleteFoodDetailByMateCode(String materialCode);
 
 	public List<foodDetail> listFoodDetail(int foodId);
 }

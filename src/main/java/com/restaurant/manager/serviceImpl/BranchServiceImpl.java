@@ -1,5 +1,7 @@
 package com.restaurant.manager.serviceImpl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,4 +58,8 @@ public class BranchServiceImpl implements BranchService {
 		return branchRepository.getStatusbyId(id);
 	}
 
+	@Override
+	public List<Branch> listBranchByRestaurantId(String restaurantId) {
+		return branchRepository.listBranchByRestaurantId(restaurantId);
+	}
 }

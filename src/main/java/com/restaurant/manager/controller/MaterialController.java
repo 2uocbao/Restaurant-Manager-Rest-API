@@ -34,10 +34,9 @@ public class MaterialController {
 	EmployeeService employeeService;
 
 	@PostMapping("/create")
-	ResponseEntity<String> creatematerial(@RequestParam("employeeId") String employeeId,
-			@RequestBody MaterialRequest materialRequest) {
+	ResponseEntity<String> creatematerial(@RequestBody MaterialRequest materialRequest) {
 		String message = null;
-		Employee employee = employeeService.detailEmployee(employeeId);
+		Employee employee = employeeService.detailEmployee(materialRequest.getEmployeeId());
 		Material materialTmp = null;
 		if (employee.getBranch() == null) {
 			materialTmp = materialService.detailMaterial(materialRequest.getCode(), employee.getRestaurant().getId(),

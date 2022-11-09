@@ -27,13 +27,13 @@ public class Food {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "name")
+	@Column(name = "namefood")
 	private String name;
 
 	@Column(name = "price")
 	private int price;
 
-	@Column(name = "type")
+	@Column(name = "typefood")
 	private String type;
 
 	@Column(name = "status")

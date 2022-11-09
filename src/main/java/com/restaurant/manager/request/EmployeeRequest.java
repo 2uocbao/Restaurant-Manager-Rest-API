@@ -5,6 +5,13 @@ import java.sql.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EmployeeRequest {
+	
+	@JsonProperty("restaurantId")
+	private String restaurantId;
+	
+	@JsonProperty("branchId")
+	private String branchId;
+	
 	@JsonProperty("first name")
 	private String firstName;
 
@@ -40,6 +47,22 @@ public class EmployeeRequest {
 
 	@JsonProperty("password")
 	private String password;
+
+	public String getRestaurantId() {
+		return restaurantId;
+	}
+
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
 
 	public String getFirstName() {
 		return firstName;
