@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -91,12 +91,14 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/list-order")
 	ResponseEntity<?> listOrderByEmployeeId(@RequestParam("employeeId") String employeeId) {
 		List<Orders> listOrder = orderService.listOrderByEmployeeId(employeeId);
 		return ResponseEntity.status(HttpStatus.OK).body(listOrder);
 	}
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/list-by-status")
 	ResponseEntity<?> listOrderByStatus(@RequestParam("employeeId") String employeeId,
 			@RequestParam("status") int status) {
