@@ -5,7 +5,13 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OrderRequest {
+
+	@JsonProperty("employeeId")
+	private String employeeId;
 	
+	@JsonProperty("tableId")
+	private int tableId;
+
 	@JsonProperty("food id")
 	private List<Integer> foodId;
 
@@ -17,6 +23,22 @@ public class OrderRequest {
 
 	@JsonProperty("description")
 	private String description;
+
+	public String getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	public int getTableId() {
+		return tableId;
+	}
+
+	public void setTableId(int tableId) {
+		this.tableId = tableId;
+	}
 
 	public String getDescription() {
 		return description;

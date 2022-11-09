@@ -25,7 +25,7 @@ public class orderDetail {
 	private Orders order;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "food_code")
+	@JoinColumn(name = "food_id")
 	private Food food;
 
 	@Column(name = "quantity")

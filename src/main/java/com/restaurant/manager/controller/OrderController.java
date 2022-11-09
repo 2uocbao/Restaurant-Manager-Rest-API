@@ -52,13 +52,12 @@ public class OrderController {
 	FoodService foodService;
 
 	@PostMapping("/create")
-	ResponseEntity<String> createOrder(@RequestBody OrderRequest orderRequest,
-			@RequestParam("employeeId") String employeeId, @RequestParam("tableId") int tableId) {
+	ResponseEntity<String> createOrder(@RequestBody OrderRequest orderRequest) {
 		boolean success;
 		String message = null;
 		Orders orders = new Orders();
-		Employee employee = employeeService.detailEmployee(employeeId);
-		Tables table = tableService.detailTable(tableId);
+		Employee employee = employeeService.detailEmployee(orderRequest.getEmployeeId());
+		Tables table = tableService.detailTable(orderRequest.getTableId());
 		if (employee.getStatus() == 0) {
 			return ResponseEntity.badRequest().body("Bạn không hoạt động nên không thể tạo gọi món");
 		} else if (table.getStatus() == 1) {
@@ -69,7 +68,7 @@ public class OrderController {
 			orders.setDescription(orderRequest.getDescription());
 			success = orderService.createOrder(orders) ? true : false;
 			orderDetail orderDetail = new orderDetail();
-			orders = orderService.detailOrder(tableId);
+			orders = orderService.detailOrder(orderRequest.getTableId());
 			for (Integer foodId : orderRequest.getFoodId()) {
 				for (Integer quantity : orderRequest.getQuantity()) {
 					Food food = foodService.detailFood(foodId);
