@@ -148,10 +148,13 @@ public class TableController {
 	ResponseEntity<String> changeStatusTable(@Valid @RequestParam(name = "id") int id) {
 		String message = null;
 		Tables table = tableService.detailTable(id);
+		String branchId = table.getBranch() != null ? table.getBranch().getId() : null;
 		if (restaurantService.getStatusById(table.getRestaurant().getId()) == 0) {
 			return ResponseEntity.badRequest().body("Nhà hàng đang ngưng hoạt động");
-		} else if (branchService.getStatusbyId(table.getBranch().getId()) == 0) {
-			return ResponseEntity.badRequest().body("Chi nhánh đang ngưng hoạt động");
+		} else if (branchId != null) {
+			if (branchService.getStatusbyId(branchId) == 0) {
+				return ResponseEntity.badRequest().body("Chi nhánh đang ngưng hoạt động");
+			}
 		} else {
 			int status = table.getStatus() == 1 ? 0 : 1;
 			if (status == 0) {

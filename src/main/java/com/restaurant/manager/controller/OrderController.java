@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,18 +67,25 @@ public class OrderController {
 			orders.setEmployee(employee);
 			orders.setTable(table);
 			orders.setDescription(orderRequest.getDescription());
+			orders.setStatus(1);
 			success = orderService.createOrder(orders) ? true : false;
 			orderDetail orderDetail = new orderDetail();
-			orders = orderService.detailOrder(orderRequest.getTableId());
-			for (Integer foodId : orderRequest.getFoodId()) {
-				for (Integer quantity : orderRequest.getQuantity()) {
-					Food food = foodService.detailFood(foodId);
-					orderDetail.setOrder(orders);
-					orderDetail.setFood(food);
-					orderDetail.setQuatity(quantity);
-				}
+			int i = orderRequest.getFood().size();
+			int j = orderRequest.getQuantity().size();
+			if (i > j || i < j) {
+				return ResponseEntity.badRequest()
+						.body("Xem lại chi tiết order, món ăn và số lượng, món ăn không có số lượng, hoặc ngược lại");
+			}
+
+			for (int n = 0; n < i; n++) {
+				Food food = foodService.detailFood(Integer.parseInt(orderRequest.getFood().get(n)));
+				orderDetail.setFood(food);
+				orderDetail.setOrder(orders);
+				orderDetail.setQuatity(orderRequest.getQuantity().get(n));
 				orderDetailService.createOrderDetail(orderDetail);
 			}
+
+			tableService.changeStatusById(table.getId(), 1);
 			message = success ? "Việc gọi món đã hoàn tất" : "Không thành công";
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);

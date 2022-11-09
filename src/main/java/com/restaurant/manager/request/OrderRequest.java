@@ -5,15 +5,12 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OrderRequest {
-
+	
 	@JsonProperty("employeeId")
 	private String employeeId;
 	
 	@JsonProperty("tableId")
 	private int tableId;
-
-	@JsonProperty("food id")
-	private List<Integer> foodId;
 
 	@JsonProperty("food")
 	private List<String> food;
@@ -62,13 +59,5 @@ public class OrderRequest {
 
 	public void setQuantity(List<Integer> quantity) {
 		this.quantity = quantity;
-	}
-
-	public List<Integer> getFoodId() {
-		return foodId;
-	}
-
-	public void setFoodId(List<Integer> foodId) {
-		this.foodId = foodId;
 	}
 }

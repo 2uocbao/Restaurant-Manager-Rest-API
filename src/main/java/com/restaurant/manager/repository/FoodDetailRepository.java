@@ -12,7 +12,7 @@ public interface FoodDetailRepository {
 
 	public boolean deleteFoodDetail(int foodId);
 	
-	public boolean deleteFoodDetailByMateCode(String materialCode);
+	public boolean deleteFoodDetailByMateCode(int foodId, String materialCode);
 
 	public List<foodDetail> listFoodDetail(int foodId);
 }

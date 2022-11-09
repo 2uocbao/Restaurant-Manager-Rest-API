@@ -11,7 +11,7 @@ public interface FoodDetailService {
 
 	public List<foodDetail> listFoodDetail(int foodId);
 
-	public boolean deleteFoodDetailByMateCode(String materialCode);
+	public boolean deleteFoodDetailByMateCode(int foodId, String materialCode);
 
 	public boolean updateFoodDetail(foodDetail foodDetail);
 }

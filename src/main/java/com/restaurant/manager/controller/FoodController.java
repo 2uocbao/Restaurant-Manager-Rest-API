@@ -132,7 +132,7 @@ public class FoodController {
 		materialCode.removeAll(foodRequest.getMaterialCode());
 		foodRequest.getMaterialCode().removeAll(materialCode2);
 		for (String materialcode : materialCode) {
-			message = foodDetailService.deleteFoodDetailByMateCode(materialcode) ? "Cập nhật thông tin thành công"
+			message = foodDetailService.deleteFoodDetailByMateCode(food.getId() ,materialcode) ? "Cập nhật thông tin thành công"
 					: "không thành công";
 		}
 		for (String materialcd : foodRequest.getMaterialCode()) {

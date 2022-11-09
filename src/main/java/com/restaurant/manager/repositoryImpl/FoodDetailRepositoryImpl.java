@@ -116,13 +116,14 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 	}
 
 	@Override
-	public boolean deleteFoodDetailByMateCode(String materialCode) {
+	public boolean deleteFoodDetailByMateCode(int foodId, String materialCode) {
 		boolean success = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.createQuery("DELETE com.restaurant.manager.model.foodDetail f WHERE f.materialCode = :materialCode")
-					.setParameter("materialCode", materialCode).executeUpdate();
+			session.createQuery(
+					"DELETE com.restaurant.manager.model.foodDetail f WHERE f.food.id = :foodId AND f.materialCode = :materialCode")
+					.setParameter("foodId", foodId).setParameter("materialCode", materialCode).executeUpdate();
 			transaction.commit();
 			success = true;
 		} catch (Exception e) {
