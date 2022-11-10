@@ -31,16 +31,16 @@ public class RestaurantController {
 		String message;
 		Restaurants restaurant = new Restaurants();
 		if (!checkService.isValidEmail(restaurantRequest.getEmail())) {
-			return ResponseEntity.badRequest().body("Email không hợp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Email không hợp lệ");
 		} else if (!checkService.checkPhone(restaurantRequest.getPhone())) {
-			return ResponseEntity.badRequest().body("Số điện thoại không hơp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hơp lệ");
 		} else if (!checkService.checkName(restaurantRequest.getName())) {
-			return ResponseEntity.badRequest().body("Tên không hợp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Tên không hợp lệ");
 		} else {
 			if (restaurantService.getRestaurantbyEmail(restaurantRequest.getEmail()) != null) {
-				return ResponseEntity.badRequest().body("Email đã được sử dụng");
+				return ResponseEntity.status(HttpStatus.OK).body("Email đã được sử dụng");
 			} else if (restaurantService.getRestaurantbyPhone(restaurantRequest.getPhone()) != null) {
-				return ResponseEntity.badRequest().body("Số điện thoại đã được sử dụng");
+				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
 			} else {
 				restaurant.setId(restaurantRequest.getPhone().trim());
 				restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
@@ -64,17 +64,17 @@ public class RestaurantController {
 		restaurant.setPhone("");
 		restaurant.setEmail("");
 		if (!checkService.isValidEmail(restaurantRequest.getEmail())) {
-			return ResponseEntity.badRequest().body("Email không hợp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Email không hợp lệ");
 		} else if (!checkService.checkPhone(restaurantRequest.getPhone())) {
-			return ResponseEntity.badRequest().body("Số điện thoại không hơp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hơp lệ");
 		} else if (!checkService.checkName(restaurantRequest.getName())) {
-			return ResponseEntity.badRequest().body("Tên không hợp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Tên không hợp lệ");
 		} else {
 			restaurantService.updateRestaurant(restaurant);
 			if (restaurantService.getRestaurantbyEmail(restaurantRequest.getEmail()) != null) {
-				return ResponseEntity.badRequest().body("Email đã được sử dụng");
+				return ResponseEntity.status(HttpStatus.OK).body("Email đã được sử dụng");
 			} else if (restaurantService.getRestaurantbyPhone(restaurantRequest.getPhone()) != null) {
-				return ResponseEntity.badRequest().body("Số điện thoại đã được sử dụng");
+				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
 			}
 			restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
 			restaurant.setEmail(restaurantRequest.getEmail().trim());
@@ -92,7 +92,7 @@ public class RestaurantController {
 		Restaurants restaurant = restaurantService.detailRestaurant(id);
 		RestaurantRequest restaurantRequest = new RestaurantRequest();
 		if (restaurant == null) {
-			return ResponseEntity.badRequest().body("Nhà hàng không tồn tại");
+			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng không tồn tại");
 		} else {
 			restaurantRequest.setName(restaurant.getName());
 			restaurantRequest.setEmail(restaurant.getEmail());

@@ -50,7 +50,7 @@ public class WarehouseController {
 		Material material = null;
 		Warehouse warehouse = new Warehouse();
 		if (employee.getStatus() == 0) {
-			return ResponseEntity.badRequest().body("Bạn không hoạt động");
+			return ResponseEntity.status(HttpStatus.OK).body("Bạn không hoạt động");
 		} else if (employee.getBranch() == null) {
 			material = materialService.detailMaterial(warehouseRequest.getMaterialCode(),
 					employee.getRestaurant().getId(), "");
@@ -59,7 +59,7 @@ public class WarehouseController {
 					employee.getRestaurant().getId(), employee.getBranch().getId());
 		}
 		if (material == null) {
-			return ResponseEntity.badRequest().body("Nguyên liệu này chưa được tạo");
+			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu này chưa được tạo");
 		} else {
 			Warehouse warehouseTmp = warehouseService.detailWarehouse(employee.getId(), material.getCode());
 			if (warehouseTmp == null) {

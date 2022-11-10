@@ -65,7 +65,7 @@ public class TableController {
 		table.setStatus(1);
 		for (Tables tables : listTable) {
 			if (tables.getName().equals(tableRequest.getName().toUpperCase())) {
-				return ResponseEntity.badRequest().body("Bàn này đã có");
+				return ResponseEntity.status(HttpStatus.OK).body("Bàn này đã có");
 			}
 		}
 		message = tableService.createTable(table) ? "Tạo bàn mới thành công" : "Không thành công";
@@ -77,7 +77,7 @@ public class TableController {
 		Tables table = tableService.detailTable(id);
 		TableRequest tableRequest = new TableRequest();
 		if (table == null) {
-			return ResponseEntity.badRequest().body("Bàn này chưa có");
+			return ResponseEntity.status(HttpStatus.OK).body("Bàn này chưa có");
 		} else {
 			tableRequest.setName(table.getName());
 			tableRequest.setTotalSlot(table.getTotalSlot());
@@ -136,7 +136,7 @@ public class TableController {
 		}
 		for (Tables tables : listTable) {
 			if (tables.getName().equals(tableRequest.getName().toUpperCase())) {
-				return ResponseEntity.badRequest().body("Bàn này đã có");
+				return ResponseEntity.status(HttpStatus.OK).body("Bàn này đã có");
 			}
 		}
 		table.setName(tableRequest.getName().toUpperCase());
@@ -152,10 +152,10 @@ public class TableController {
 		Tables table = tableService.detailTable(id);
 		String branchId = table.getBranch() != null ? table.getBranch().getId() : null;
 		if (restaurantService.getStatusById(table.getRestaurant().getId()) == 0) {
-			return ResponseEntity.badRequest().body("Nhà hàng đang ngưng hoạt động");
+			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng đang ngưng hoạt động");
 		} else if (branchId != null) {
 			if (branchService.getStatusbyId(branchId) == 0) {
-				return ResponseEntity.badRequest().body("Chi nhánh đang ngưng hoạt động");
+				return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh đang ngưng hoạt động");
 			}
 		} else {
 			int status = table.getStatus() == 1 ? 0 : 1;

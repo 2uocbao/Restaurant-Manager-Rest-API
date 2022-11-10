@@ -47,11 +47,11 @@ public class MaterialController {
 					employee.getBranch().getId());
 		}
 		if (materialTmp != null) {
-			return ResponseEntity.badRequest().body("Nguyên liệu có mã code này đã tồn tại");
+			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu có mã code này đã tồn tại");
 		} else if (checkService.checkCode(materialRequest.getCode())) {
-			return ResponseEntity.badRequest().body("Mã code chứa kí tự đặc biệt");
+			return ResponseEntity.status(HttpStatus.OK).body("Mã code chứa kí tự đặc biệt");
 		} else if (!checkService.checkName(materialRequest.getName())) {
-			return ResponseEntity.badRequest().body("Tên nguyên liệu không hợp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Tên nguyên liệu không hợp lệ");
 		} else {
 			Material material = new Material();
 			material.setRestaurant(employee.getRestaurant());
@@ -81,7 +81,7 @@ public class MaterialController {
 					employee.getBranch().getId());
 		}
 		if (materialTmp == null) {
-			return ResponseEntity.badRequest().body("Nguyên liệu này chưa có");
+			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu này chưa có");
 		}
 		materialTmp.setRestaurant(employee.getRestaurant());
 		materialTmp.setBranch(employee.getBranch());
@@ -105,7 +105,7 @@ public class MaterialController {
 					employee.getBranch().getId());
 		}
 		if (material == null) {
-			return ResponseEntity.badRequest().body("Nguyên liệu này chưa có");
+			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu này chưa có");
 		}
 		materialRequest.setName(material.getName());
 		materialRequest.setCode(material.getCode());

@@ -42,16 +42,16 @@ public class BranchController {
 		Restaurants restaurant = restaurantService.detailRestaurant(branchRequest.getRestaurantId());
 		String message;
 		if (restaurant == null) {
-			return ResponseEntity.badRequest().body("Không có thông tin về nhà hàng này");
+			return ResponseEntity.status(HttpStatus.OK).body("Không có thông tin về nhà hàng này");
 		} else if (restaurantService.getStatusById(branchRequest.getRestaurantId()) == 0) {
-			return ResponseEntity.badRequest().body("Nhà hàng đang tạm ngưng hoạt động");
+			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng đang tạm ngưng hoạt động");
 		} else if (!checkService.checkName(branchRequest.getName())) {
-			return ResponseEntity.badRequest().body("Tên không hợp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Tên không hợp lệ");
 		} else if (!checkService.checkPhone(branchRequest.getPhone())) {
-			return ResponseEntity.badRequest().body("Số điện thoại không hợp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hợp lệ");
 		} else {
 			if (branchService.getDetailByPhone(branchRequest.getPhone()) != null) {
-				return ResponseEntity.badRequest().body("Số điện thoại này đã được sử dụng");
+				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại này đã được sử dụng");
 			} else {
 				branch.setId(branchRequest.getPhone().substring(0, 10).trim());
 				branch.setRestaurant(restaurant);
@@ -71,7 +71,7 @@ public class BranchController {
 		BranchRequest branchRequest = new BranchRequest();
 		Branch branch = branchService.detailBranch(id);
 		if (branch == null) {
-			return ResponseEntity.badRequest().body("Nhà hàng không tồn tại");
+			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng không tồn tại");
 		} else {
 			branchRequest.setName(branch.getName());
 			branchRequest.setPhone(branch.getPhone());
@@ -88,11 +88,11 @@ public class BranchController {
 		Branch branch = branchService.detailBranch(id);
 		branch.setPhone("");
 		if (!checkService.checkPhone(branchRequest.getPhone())) {
-			return ResponseEntity.badRequest().body("Số điện thoại không hợp lệ");
+			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hợp lệ");
 		} else {
 			branchService.updateBranch(branch);
 			if (branchService.getDetailByPhone(branchRequest.getPhone()) != null) {
-				return ResponseEntity.badRequest().body("Số điện thoại này đã được sử dụng");
+				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại này đã được sử dụng");
 			} else {
 				branch.setName(branchRequest.getName().replace("//s+", " ").trim());
 				branch.setPhone(branchRequest.getPhone().trim());
@@ -110,7 +110,7 @@ public class BranchController {
 		String message;
 		int statusFromRestaurant = restaurantService.getStatusById(branch.getRestaurant().getId());
 		if (statusFromRestaurant == 0) {
-			return ResponseEntity.badRequest()
+			return ResponseEntity.status(HttpStatus.OK)
 					.body("Không thể trở lại hoạt động, vì nhà hàng chính đang tạm ngưng hoạt động");
 		} else {
 			int statusBranchNow = branch.getStatus() == 0 ? 1 : 0;

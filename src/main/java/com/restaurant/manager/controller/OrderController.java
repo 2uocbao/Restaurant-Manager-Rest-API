@@ -62,9 +62,9 @@ public class OrderController {
 		Employee employee = employeeService.detailEmployee(orderRequest.getEmployeeId());
 		Tables table = tableService.detailTable(Integer.parseInt(orderRequest.getTableId()));
 		if (employee.getStatus() == 0) {
-			return ResponseEntity.badRequest().body("Bạn không hoạt động nên không thể tạo gọi món");
+			return ResponseEntity.status(HttpStatus.OK).body("Bạn không hoạt động nên không thể tạo gọi món");
 		} else if (table.getStatus() == 1) {
-			return ResponseEntity.badRequest().body("Bàn này đã có người ngồi");
+			return ResponseEntity.status(HttpStatus.OK).body("Bàn này đã có người ngồi");
 		} else {
 			orders.setEmployee(employee);
 			orders.setTable(table);
@@ -75,14 +75,14 @@ public class OrderController {
 			int i = orderRequest.getFood().size();
 			int j = orderRequest.getQuantity().size();
 			if (i > j || i < j) {
-				return ResponseEntity.badRequest()
+				return ResponseEntity.status(HttpStatus.OK)
 						.body("Xem lại chi tiết order, món ăn và số lượng, món ăn không có số lượng, hoặc ngược lại");
 			}
 
 			for (int n = 0; n < i; n++) {
 				Food food = foodService.detailFood(Integer.parseInt(orderRequest.getFood().get(n)));
 				if(food.getStatus() == 0) {
-					return ResponseEntity.badRequest().body("Mon an nay hien da het");
+					return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 				}
 				orderDetail.setFood(food);
 				orderDetail.setOrder(orders);
@@ -170,9 +170,9 @@ public class OrderController {
 		Orders order = orderService.detailOrder(tableId);
 		Tables table = tableService.detailTable(tableId);
 		if (table == null) {
-			return ResponseEntity.badRequest().body("Không có dữ liệu của bàn này");
+			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu của bàn này");
 		} else if (order == null) {
-			return ResponseEntity.badRequest().body("Không có order nào của bàn này");
+			return ResponseEntity.status(HttpStatus.OK).body("Không có order nào của bàn này");
 		}
 		List<orderDetail> listorderDetail = orderDetailService.listOrderbyIdorder(order.getId());
 		List<String> foodName = new ArrayList<>();
@@ -200,9 +200,9 @@ public class OrderController {
 		float total = 0;
 		Orders orders = orderService.detailOrder(tableId);
 		if (orders == null) {
-			return ResponseEntity.badRequest().body("Không có dữ liệu order của bàn này, vui lòng xem lại");
+			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu order của bàn này, vui lòng xem lại");
 		} else if (orders.getStatus() == 1) {
-			return ResponseEntity.badRequest().body("Order này đã thanh toán");
+			return ResponseEntity.status(HttpStatus.OK).body("Order này đã thanh toán");
 		}
 		List<orderDetail> listorderDetail = orderDetailService.listOrderbyIdorder(orders.getId());
 		List<Integer> costFood = new ArrayList<>();
@@ -228,11 +228,11 @@ public class OrderController {
 		Orders order = orderService.detailOrder(Integer.parseInt(orderRequest.getTableId()));
 		Tables table = tableService.detailTable(Integer.parseInt(orderRequest.getTableId()));
 		if (table.getStatus() == 0) {
-			return ResponseEntity.badRequest().body("Bàn này chưa có order");
+			return ResponseEntity.status(HttpStatus.OK).body("Bàn này chưa có order");
 		} else if (order == null) {
-			return ResponseEntity.badRequest().body("Không có order này");
+			return ResponseEntity.status(HttpStatus.OK).body("Không có order này");
 		} else if(order.getStatus() == 1) {
-			return ResponseEntity.badRequest().body("order này đã thanh toán, không thể cập nhật");
+			return ResponseEntity.status(HttpStatus.OK).body("order này đã thanh toán, không thể cập nhật");
 		}
 		// update cho order
 		order.setDescription(orderRequest.getDescription());
@@ -269,7 +269,7 @@ public class OrderController {
 		for (Integer listfoodid2 : listFoodId2) {
 			Food food = foodService.detailFood(listfoodid2);
 			if(food.getStatus() == 0) {
-				return ResponseEntity.badRequest().body("Mon an nay hien da het");
+				return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 			}
 			orderDetail = orderDetailService.detailOrder(order.getId(), listfoodid2);
 			orderDetail.setFood(food);
@@ -281,7 +281,7 @@ public class OrderController {
 		for (Integer foodid : listFoodReq) {
 			Food food = foodService.detailFood(foodid);
 			if(food.getStatus() == 0) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mon an nay hien da het");
+				return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 			}
 			orderDetail.setFood(food);
 			orderDetail.setOrder(order);

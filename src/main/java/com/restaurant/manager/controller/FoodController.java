@@ -59,7 +59,7 @@ public class FoodController {
 		boolean success = false;
 		Employee employee = employeeService.detailEmployee(foodRequest.getEmployeeId());
 		if (employee.getStatus() == 0) {
-			return ResponseEntity.badRequest().body("Không thể thêm món mới, vì bạn không hoạt động");
+			return ResponseEntity.status(HttpStatus.OK).body("Không thể thêm món mới, vì bạn không hoạt động");
 		}
 		Restaurants restaurant = restaurantService.detailRestaurant(employee.getRestaurant().getId());
 		Branch branch = employee.getBranch() != null ? branchService.detailBranch(employee.getBranch().getId()) : null;
@@ -67,7 +67,7 @@ public class FoodController {
 		List<Food> listFood = foodService.getFoodIdByRestaurantIdAndBranchId(restaurant.getId(), branchId);
 		for (Food food : listFood) {
 			if (food.getName().equalsIgnoreCase(foodRequest.getName())) {
-				return ResponseEntity.badRequest().body("Món ăn có tên này đã có");
+				return ResponseEntity.status(HttpStatus.OK).body("Món ăn có tên này đã có");
 			}
 		}
 		Food food = new Food();
@@ -94,7 +94,7 @@ public class FoodController {
 	ResponseEntity<?> detailFood(@RequestParam("id") int id) {
 		Food food = foodService.detailFood(id);
 		if (food == null) {
-			return ResponseEntity.badRequest().body("Không có dữ liệu của món ăn này");
+			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu của món ăn này");
 		}
 		List<foodDetail> listFoodDetail = foodDetailService.listFoodDetail(food.getId());
 		List<String> nameMaterial = new ArrayList<>();
@@ -117,7 +117,7 @@ public class FoodController {
 		String message = null;
 		Food food = foodService.detailFood(id);
 		if (food == null) {
-			return ResponseEntity.badRequest().body("Không có dữ liệu về món ăn này");
+			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu về món ăn này");
 		}
 		String branchId = food.getBranch() != null ? food.getBranch().getId() : "";
 		food.setName(foodRequest.getName());
