@@ -16,6 +16,4 @@ public interface OrderService {
 	public List<Orders> listOrderByEmployeeId(String employeeId);
 
 	public boolean changeStatus(int tableId, int status);
-
-	public List<Orders> listOrderONorOFF(String employeeId, int status);
 }

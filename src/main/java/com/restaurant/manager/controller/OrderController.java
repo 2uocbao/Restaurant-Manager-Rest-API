@@ -1,6 +1,7 @@
 package com.restaurant.manager.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -67,7 +69,7 @@ public class OrderController {
 			orders.setEmployee(employee);
 			orders.setTable(table);
 			orders.setDescription(orderRequest.getDescription());
-			orders.setStatus(1);
+			orders.setStatus(0);
 			success = orderService.createOrder(orders) ? true : false;
 			orderDetail orderDetail = new orderDetail();
 			int i = orderRequest.getFood().size();
@@ -91,98 +93,115 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
+	// lay danh sach order theo status
+
 	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/list-order")
-	ResponseEntity<?> listOrderByEmployeeId(@RequestParam("employeeId") String employeeId) {
+	ResponseEntity<?> listOrderByEmployeeId(@RequestParam("employeeId") String employeeId,
+			@RequestParam("status") int status) {
 		// lay danh sach order
 		List<Orders> listOrder = orderService.listOrderByEmployeeId(employeeId);
-		
+
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
-		
+
 		// duyet theo danh sach order
 		for (Orders order : listOrder) {
-			
-			// voi moi order lay ra danh sach cac orderdetail tuong ung voi idorder
-			List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
+			if (order.getStatus() == status) {
 
-			// list mon an
-			List<String> nameFood = new ArrayList<>();
+				// voi moi order lay ra danh sach cac orderdetail tuong ung voi idorder
+				List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
 
-			// list so luong order
-			List<Integer> quantityFood = new ArrayList<>();
+				// list mon an
+				List<String> nameFood = new ArrayList<>();
 
-			// lay ra danh sach mon an va so luong chinh xac order cua tung mon
-			for (orderDetail orderdetail : listOrderDetails) {
-				Food food = foodService.detailFood(orderdetail.getFood().getId());
-				nameFood.add(food.getName());
-				quantityFood.add(orderdetail.getQuatity());
+				// list so luong order
+				List<Integer> quantityFood = new ArrayList<>();
+
+				// lay ra danh sach mon an va so luong chinh xac order cua tung mon
+				for (orderDetail orderdetail : listOrderDetails) {
+					Food food = foodService.detailFood(orderdetail.getFood().getId());
+					nameFood.add(food.getName());
+					quantityFood.add(orderdetail.getQuatity());
+				}
+
+				// tao orderrequest, set cac thuoc tinh
+				OrderRequest orderRequest = new OrderRequest();
+				Tables table = tableService.detailTable(order.getTable().getId());
+				orderRequest.setTableId(table.getName());
+				orderRequest.setDescription(order.getDescription());
+
+				// su dung list namefood da lay ra o tren
+				orderRequest.setFood(nameFood);
+
+				// su dung quantityFood da lay o tren
+				orderRequest.setQuantity(quantityFood);
+
+				if (order.getStatus() == 1) {
+					orderRequest.setStatus("Đã thanh toán");
+				} else {
+					orderRequest.setStatus("Chưa thanh toán");
+				}
+				listOrderRequests.add(orderRequest);
+
 			}
-			
-			// tao orderrequest, set cac thuoc tinh
-			OrderRequest orderRequest = new OrderRequest();
-			Tables table = tableService.detailTable(order.getTable().getId());
-			orderRequest.setTableId(table.getName());
-			orderRequest.setDescription(order.getDescription());
-			
-			// su dung list namefood da lay ra o tren
-			orderRequest.setFood(nameFood);
-			
-			// su dung quantityFood da lay o tren
-			orderRequest.setQuantity(quantityFood);
-			listOrderRequests.add(orderRequest);
-
-		}
-		
-		int status = 0;
-		
-		if(status == 0) {
-			
 		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(listOrderRequests);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
-	@GetMapping("/list-by-status")
-	ResponseEntity<?> listOrderByStatus(@RequestParam("employeeId") String employeeId,
-			@RequestParam("status") int status) {
-		List<Orders> listOrder = orderService.listOrderONorOFF(employeeId, status);
-		
-		
-		
-		
-		return ResponseEntity.status(HttpStatus.OK).body(listOrder);
-	}
-
-	@PostMapping("/change-status")
-	ResponseEntity<String> changeStatusOrder(@RequestParam("tableName") int tableId) {
+	@PutMapping("/change-status")
+	ResponseEntity<String> changeStatusOrder(@RequestParam("tableId") int tableId) {
 		String message = null;
 		int status = orderService.getStatusByTableId(tableId) == 0 ? 1 : 0;
-
-		message = orderService.changeStatus(tableId, status) ? "Cập nhật trạng thái thành công" : "Không thành công";
-
+		if (status == 0) {
+			message = orderService.changeStatus(tableId, status) ? "Chưa thanh toán" : "Không thành công";
+		} else {
+			message = orderService.changeStatus(tableId, status) ? "Đã thanh toán" : "Không thành công";
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<?> detailOrder(@RequestParam("orderId") int orderId) {
+	ResponseEntity<?> detailOrder(@RequestParam("tableId") int tableId) {
 		OrderRequest orderRequest = new OrderRequest();
-		List<orderDetail> listorderDetail = orderDetailService.listOrderbyIdorder(orderId);
+		Orders order = orderService.detailOrder(tableId);
+		Tables table = tableService.detailTable(tableId);
+		if (table == null) {
+			return ResponseEntity.badRequest().body("Không có dữ liệu của bàn này");
+		} else if (order == null) {
+			return ResponseEntity.badRequest().body("Không có order nào của bàn này");
+		}
+		List<orderDetail> listorderDetail = orderDetailService.listOrderbyIdorder(order.getId());
 		List<String> foodName = new ArrayList<>();
 		List<Integer> quantity = new ArrayList<>();
+
 		for (orderDetail orderDetail : listorderDetail) {
-			foodName.add(orderDetail.getFood().getName());
+			Food food = foodService.detailFood(orderDetail.getFood().getId());
+			foodName.add(food.getName());
 			quantity.add(orderDetail.getQuatity());
 		}
+		orderRequest.setTableId(table.getName());
 		orderRequest.setFood(foodName);
 		orderRequest.setQuantity(quantity);
+		orderRequest.setDescription(order.getDescription());
+		if (order.getStatus() == 1) {
+			orderRequest.setStatus("Đã thanh toán");
+		} else {
+			orderRequest.setStatus("Chưa thanh toán");
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(orderRequest);
 	}
 
 	@GetMapping("/pay")
-	ResponseEntity<String> payOrder(@RequestParam("orderId") int orderId) {
+	ResponseEntity<String> payOrder(@RequestParam("tableId") int tableId) {
 		float total = 0;
-		List<orderDetail> listorderDetail = orderDetailService.listOrderbyIdorder(orderId);
+		Orders orders = orderService.detailOrder(tableId);
+		if (orders == null) {
+			return ResponseEntity.badRequest().body("Không có dữ liệu order của bàn này, vui lòng xem lại");
+		} else if (orders.getStatus() == 1) {
+			return ResponseEntity.badRequest().body("Order này đã thanh toán");
+		}
+		List<orderDetail> listorderDetail = orderDetailService.listOrderbyIdorder(orders.getId());
 		List<Integer> costFood = new ArrayList<>();
 		List<Integer> listQuantity = new ArrayList<>();
 		for (orderDetail orderdetail : listorderDetail) {
@@ -190,15 +209,75 @@ public class OrderController {
 			costFood.add(food.getPrice());
 			listQuantity.add(orderdetail.getQuatity());
 		}
-		for (Integer price : costFood) {
-			for (Integer quantity : listQuantity) {
-				total += price * quantity;
-			}
+		for (int i = 0; i < costFood.size(); i++) {
+			total = total + costFood.get(i) * listQuantity.get(i);
 		}
-		Orders orders = orderService.detailOrder(orderId);
 		orders.setTotalAmount(total);
 		orders.setStatus(1);
 		orderService.updateOrder(orders);
 		return ResponseEntity.status(HttpStatus.OK).body("Số tiền cần thanh toán là" + total);
+	}
+
+	@PutMapping("/update")
+	ResponseEntity<?> updateOrder(@RequestBody OrderRequest orderRequest) {
+		String message = null;
+		Orders order = orderService.detailOrder(Integer.parseInt(orderRequest.getTableId()));
+		Tables table = tableService.detailTable(Integer.parseInt(orderRequest.getTableId()));
+		if (table.getStatus() == 0) {
+			return ResponseEntity.badRequest().body("Bàn này chưa có order");
+		} else if (order == null) {
+			return ResponseEntity.badRequest().body("Không có order này");
+		} else if(order.getStatus() == 1) {
+			return ResponseEntity.badRequest().body("order này đã thanh toán, không thể cập nhật");
+		}
+		// update cho order
+		order.setDescription(orderRequest.getDescription());
+		message = orderService.updateOrder(order) ? "Cập nhật thông tin thành công" : "Không thành công";
+		// update orderdetail
+		List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
+		List<Integer> listFoodReq = new ArrayList<>();
+		HashMap<Integer, Integer> listRequest = new HashMap<>();
+		List<Integer> listFoodId = new ArrayList<>();
+		List<Integer> listFoodId2 = new ArrayList<>();
+		List<Integer> listQuantity = new ArrayList<>();
+		for (orderDetail orderdetail : listOrderDetails) {
+			listFoodId.add(orderdetail.getFood().getId());
+			listFoodId2.add(orderdetail.getFood().getId());
+			listQuantity.add(orderdetail.getQuatity());
+		}
+		for (int i = 0; i < orderRequest.getFood().size(); i++) {
+			listFoodReq.add(Integer.parseInt(orderRequest.getFood().get(i)));
+			listRequest.put(Integer.parseInt(orderRequest.getFood().get(i)), orderRequest.getQuantity().get(i));
+		}
+		//lay ra mon muon loai bo
+		listFoodId.removeAll(listFoodReq);
+		//lay ra mon moi muon them vao
+		listFoodReq.removeAll(listFoodId2);
+		for (Integer listfoodid : listFoodId) {
+			listFoodId2.remove(listfoodid);
+		}
+		// loai bo mon an khong muon order
+		for (Integer foodid : listFoodId) {
+			orderDetailService.deleteOrderDetail(order.getId(), foodid);
+		}
+		//thay doi so luong cua mot mon an
+		orderDetail orderDetail = new orderDetail();
+		for (Integer listfoodid2 : listFoodId2) {
+			Food food = foodService.detailFood(listfoodid2);
+			orderDetail = orderDetailService.detailOrder(order.getId(), listfoodid2);
+			orderDetail.setFood(food);
+			orderDetail.setOrder(order);
+			orderDetail.setQuatity(listRequest.get(listfoodid2));
+			orderDetailService.updateOrderDetail(orderDetail);
+		}
+		// tao mon moi khi order them
+		for (Integer foodid : listFoodReq) {
+			Food food = foodService.detailFood(foodid);
+			orderDetail.setFood(food);
+			orderDetail.setOrder(order);
+			orderDetail.setQuatity(listRequest.get(foodid));
+			orderDetailService.createOrderDetail(orderDetail);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 }

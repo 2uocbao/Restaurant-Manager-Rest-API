@@ -40,11 +40,6 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<Orders> listOrderONorOFF(String employeeId, int status) {
-		return orderRepository.listOrderONorOFF(employeeId, status);
-	}
-
-	@Override
 	public Orders detailOrder(int tableId) {
 		return orderRepository.detailOrder(tableId);
 	}

@@ -21,17 +21,22 @@ public class orderDetailServiceImpl implements orderDetailService {
 	}
 
 	@Override
-	public orderDetail detailOrder(int orderId) {
-		return orderDetailRepository.detailOrder(orderId);
+	public orderDetail detailOrder(int orderId, int foodId) {
+		return orderDetailRepository.detailOrder(orderId, foodId);
 	}
 
 	@Override
-	public boolean updateOrder(orderDetail orderDetail) {
-		return orderDetailRepository.updateOrder(orderDetail);
+	public boolean updateOrderDetail(orderDetail orderDetail) {
+		return orderDetailRepository.updateOrderDetail(orderDetail);
 	}
 
 	@Override
 	public List<orderDetail> listOrderbyIdorder(int orderId) {
 		return orderDetailRepository.listOrderbyIdorder(orderId);
+	}
+
+	@Override
+	public boolean deleteOrderDetail(int orderId, int foodId) {
+		return orderDetailRepository.deleteOrderDetail(orderId, foodId);
 	}
 }

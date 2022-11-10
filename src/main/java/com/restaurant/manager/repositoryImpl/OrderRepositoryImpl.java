@@ -124,7 +124,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			session.createQuery(
-					"UPDATE com.restaurant.manager.model.Orders o SET o.status = :status WHERE o.tableId = :tableId AND o.employeeId = :employeeId")
+					"UPDATE com.restaurant.manager.model.Orders o SET o.status = :status WHERE o.table.id = :tableId")
 					.setParameter("tableId", tableId).setParameter("status", status).executeUpdate();
 			transaction.commit();
 			successful = true;
@@ -140,31 +140,6 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 		}
 		return successful;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Orders> listOrderONorOFF(String employeeId, int status) {
-		List<Orders> listOrder = new ArrayList<>();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			listOrder = session.createQuery(
-					"FROM com.restaurant.manager.model.Orders o WHERE o.status = :status AND o.employee.id = :employeeId")
-					.setParameter("status", status).setParameter("employeeId", employeeId).list();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return listOrder;
 	}
 
 	@Override

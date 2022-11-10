@@ -44,14 +44,14 @@ public class orderDetailRepositoryImpl implements orderDetailRepository {
 	}
 
 	@Override
-	public orderDetail detailOrder(int orderId) {
+	public orderDetail detailOrder(int orderId, int foodId) {
 		orderDetail orderDetail = new orderDetail();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			orderDetail = (orderDetail) session
-					.createQuery("FROM com.restaurant.manager.model.orderDetail o WHERE o.orderId = :orderId")
-					.setParameter("orderId", orderId).uniqueResult();
+			orderDetail = (orderDetail) session.createQuery(
+					"FROM com.restaurant.manager.model.orderDetail o WHERE o.order.id = :orderId AND o.food.id = :foodId")
+					.setParameter("orderId", orderId).setParameter("foodId", foodId).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -68,7 +68,7 @@ public class orderDetailRepositoryImpl implements orderDetailRepository {
 	}
 
 	@Override
-	public boolean updateOrder(orderDetail orderDetail) {
+	public boolean updateOrderDetail(orderDetail orderDetail) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -113,5 +113,30 @@ public class orderDetailRepositoryImpl implements orderDetailRepository {
 			}
 		}
 		return listorder;
+	}
+
+	@Override
+	public boolean deleteOrderDetail(int orderId, int foodId) {
+		boolean successful = false;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.createQuery(
+					"DELETE com.restaurant.manager.model.orderDetail o WHERE o.order.id = :orderId AND o.food.id = :foodId")
+					.setParameter("orderId", orderId).setParameter("foodId", foodId).executeUpdate();
+			transaction.commit();
+			successful = true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return successful;
 	}
 }

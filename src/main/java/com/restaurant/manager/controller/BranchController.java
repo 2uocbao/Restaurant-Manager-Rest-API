@@ -35,6 +35,7 @@ public class BranchController {
 	@Autowired
 	CheckService checkService;
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/create")
 	ResponseEntity<String> createBranch(@Valid @RequestBody BranchRequest branchRequest) {
 		Branch branch = new Branch();

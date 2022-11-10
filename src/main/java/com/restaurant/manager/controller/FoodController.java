@@ -52,6 +52,7 @@ public class FoodController {
 	@Autowired
 	MaterialService materialService;
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/create")
 	ResponseEntity<String> createFood(@RequestBody FoodRequest foodRequest) {
 		String message = null;

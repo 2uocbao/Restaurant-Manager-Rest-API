@@ -20,6 +20,9 @@ public class OrderRequest {
 
 	@JsonProperty("description")
 	private String description;
+	
+	@JsonProperty("status")
+	private String status;
 
 	public String getEmployeeId() {
 		return employeeId;
@@ -59,5 +62,9 @@ public class OrderRequest {
 
 	public void setQuantity(List<Integer> quantity) {
 		this.quantity = quantity;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

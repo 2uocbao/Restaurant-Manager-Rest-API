@@ -42,6 +42,7 @@ public class EmployeeController {
 	@Autowired
 	CheckService checkService;
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/create")
 	ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
 		String message = null;
