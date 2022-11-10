@@ -7,6 +7,9 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RestaurantRequest {
+	
+	@JsonProperty("restaurantId")
+	private String restaurantId;
 
 	@NotEmpty(message = "Tên không được để trống")
 	@Size(min = 2, max = 32, message = "Tên phải dài từ 2 đến 32 ký tự")
@@ -29,6 +32,16 @@ public class RestaurantRequest {
 	@NotEmpty(message = "Địa chỉ không được để trống")
 	@JsonProperty("address")
 	private String address;
+	
+	
+
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
+
+	public String getRestaurantId() {
+		return restaurantId;
+	}
 
 	public String getName() {
 		return name;

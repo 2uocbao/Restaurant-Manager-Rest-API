@@ -79,6 +79,7 @@ public class TableController {
 		if (table == null) {
 			return ResponseEntity.status(HttpStatus.OK).body("Bàn này chưa có");
 		} else {
+			tableRequest.setTableId(table.getId());
 			tableRequest.setName(table.getName());
 			tableRequest.setTotalSlot(table.getTotalSlot());
 			tableRequest.setDescription(table.getDescription());
@@ -102,6 +103,7 @@ public class TableController {
 			for (Tables table : listTable) {
 				if (table.getBranch() == null) {
 					TableRequest tableRequest = new TableRequest();
+					tableRequest.setTableId(table.getId());
 					tableRequest.setName(table.getName());
 					tableRequest.setTotalSlot(table.getTotalSlot());
 					tableRequest.setDescription(table.getDescription());
@@ -112,6 +114,7 @@ public class TableController {
 			for (Tables table : listTable) {
 				if (table.getBranch() != null) {
 					TableRequest tableRequest = new TableRequest();
+					tableRequest.setTableId(table.getId());
 					tableRequest.setName(table.getName());
 					tableRequest.setTotalSlot(table.getTotalSlot());
 					tableRequest.setDescription(table.getDescription());

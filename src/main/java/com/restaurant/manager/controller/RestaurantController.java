@@ -61,8 +61,6 @@ public class RestaurantController {
 			@Valid @RequestBody RestaurantRequest restaurantRequest) {
 		String message;
 		Restaurants restaurant = restaurantService.detailRestaurant(id);
-		restaurant.setPhone("");
-		restaurant.setEmail("");
 		if (!checkService.isValidEmail(restaurantRequest.getEmail())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Email không hợp lệ");
 		} else if (!checkService.checkPhone(restaurantRequest.getPhone())) {
@@ -70,11 +68,15 @@ public class RestaurantController {
 		} else if (!checkService.checkName(restaurantRequest.getName())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Tên không hợp lệ");
 		} else {
-			restaurantService.updateRestaurant(restaurant);
 			if (restaurantService.getRestaurantbyEmail(restaurantRequest.getEmail()) != null) {
-				return ResponseEntity.status(HttpStatus.OK).body("Email đã được sử dụng");
-			} else if (restaurantService.getRestaurantbyPhone(restaurantRequest.getPhone()) != null) {
-				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
+				if (!restaurant.getEmail().equals(restaurantRequest.getEmail())) {
+					return ResponseEntity.status(HttpStatus.OK).body("Email đã được sử dụng");
+				}
+			}
+			if (restaurantService.getRestaurantbyPhone(restaurantRequest.getPhone()) != null) {
+				if (!restaurant.getPhone().equalsIgnoreCase(restaurantRequest.getPhone())) {
+					return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
+				}
 			}
 			restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
 			restaurant.setEmail(restaurantRequest.getEmail().trim());
@@ -94,6 +96,7 @@ public class RestaurantController {
 		if (restaurant == null) {
 			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng không tồn tại");
 		} else {
+			restaurantRequest.setRestaurantId(restaurant.getId());
 			restaurantRequest.setName(restaurant.getName());
 			restaurantRequest.setEmail(restaurant.getEmail());
 			restaurantRequest.setPhone(restaurant.getPhone());

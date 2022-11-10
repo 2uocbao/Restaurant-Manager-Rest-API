@@ -8,6 +8,9 @@ public class FoodRequest {
 	@JsonProperty("employeeId")
 	private String employeeId;
 
+	@JsonProperty("foodId")
+	private int foodId;
+	
 	@JsonProperty("name")
 	private String name;
 
@@ -19,6 +22,10 @@ public class FoodRequest {
 
 	@JsonProperty("materialCode")
 	private List<String> materialCode;
+	
+	public void setFoodId(int foodId) {
+		this.foodId = foodId;
+	}
 
 	public String getEmployeeId() {
 		return employeeId;

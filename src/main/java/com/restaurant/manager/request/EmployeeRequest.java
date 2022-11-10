@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EmployeeRequest {
 	
+	@JsonProperty("employeeId")
+	private String employeeId;
+	
 	@JsonProperty("restaurantId")
 	private String restaurantId;
 	
@@ -47,6 +50,10 @@ public class EmployeeRequest {
 
 	@JsonProperty("password")
 	private String password;
+
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
+	}
 
 	public String getRestaurantId() {
 		return restaurantId;

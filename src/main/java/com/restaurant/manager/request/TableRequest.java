@@ -6,6 +6,9 @@ public class TableRequest {
 	
 	@JsonProperty("employeeId")
 	private String employeeId;
+	
+	@JsonProperty("tableId")
+	private int tableId;
 
 	@JsonProperty("name")
 	private String name;
@@ -15,6 +18,10 @@ public class TableRequest {
 
 	@JsonProperty("totalSlot")
 	private int totalSlot;
+
+	public void setTableId(int tableId) {
+		this.tableId = tableId;
+	}
 
 	public String getEmployeeId() {
 		return employeeId;

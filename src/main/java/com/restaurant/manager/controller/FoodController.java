@@ -105,6 +105,7 @@ public class FoodController {
 			nameMaterial.add(material.getName());
 		}
 		FoodRequest foodRequest = new FoodRequest();
+		foodRequest.setFoodId(food.getId());
 		foodRequest.setName(food.getName());
 		foodRequest.setPrice(food.getPrice());
 		foodRequest.setType(food.getType());
@@ -119,7 +120,14 @@ public class FoodController {
 		if (food == null) {
 			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu về món ăn này");
 		}
-		String branchId = food.getBranch() != null ? food.getBranch().getId() : "";
+		Branch branch = food.getBranch() != null ? branchService.detailBranch(food.getBranch().getId()) : null;
+		String branchId = branch != null ? branch.getId() : "";
+		List<Food> listFood = foodService.getFoodIdByRestaurantIdAndBranchId(food.getRestaurant().getId(), branchId);
+		for (Food food1 : listFood) {
+			if (food1.getName().equalsIgnoreCase(foodRequest.getName())) {
+				return ResponseEntity.status(HttpStatus.OK).body("Món ăn có tên này đã có");
+			}
+		}
 		food.setName(foodRequest.getName());
 		food.setPrice(foodRequest.getPrice());
 		food.setType(foodRequest.getType());
@@ -166,6 +174,7 @@ public class FoodController {
 						food.getRestaurant().getId(), branchId);
 				nameMaterial.add(material.getName());
 			}
+			foodRequest.setFoodId(food.getId());
 			foodRequest.setName(food.getName());
 			foodRequest.setPrice(food.getPrice());
 			foodRequest.setType(food.getType());
