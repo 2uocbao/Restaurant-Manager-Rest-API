@@ -81,6 +81,7 @@ public class BranchController {
 		return ResponseEntity.status(HttpStatus.OK).body(branchRequest);
 	}
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PutMapping("/update")
 	ResponseEntity<String> updateBranch(@Valid @RequestParam(name = "id") String id,
 			@Valid @RequestBody BranchRequest branchRequest) {
