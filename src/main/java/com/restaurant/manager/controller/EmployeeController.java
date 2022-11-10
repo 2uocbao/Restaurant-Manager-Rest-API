@@ -51,7 +51,7 @@ public class EmployeeController {
 		Employee employee = new Employee();
 		if (!employeeRequest.getBranchId().isEmpty()) {
 			if (branch == null) {
-				return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh không tồn tại");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Chi nhánh không tồn tại");
 			} else {
 				employee.setBranch(branch);
 			}
@@ -59,15 +59,15 @@ public class EmployeeController {
 		if (!checkService.checkName(employeeRequest.getFirstName())
 				|| !checkService.checkName(employeeRequest.getLastName())
 				|| !checkService.checkName(employeeRequest.getFullName())) {
-			return ResponseEntity.badRequest().body("Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn");
 		} else if (!checkService.checkPhone(employeeRequest.getPhone())) {
-			return ResponseEntity.badRequest().body("Số điện thoại không đúng, số điện thoại gồm 10 số");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại không đúng, số điện thoại gồm 10 số");
 		} else if (!checkService.isValidEmail(employeeRequest.getEmail())) {
-			return ResponseEntity.badRequest().body("Email không đúng, vui lòng nhập lại");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email không đúng, vui lòng nhập lại");
 		} else if (employeeService.getEmployeeByEmail(employeeRequest.getEmail()) != null) {
-			return ResponseEntity.badRequest().body("Email này đã được sử dụng");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email này đã được sử dụng");
 		} else if (employeeService.getEmployeeByPhone(employeeRequest.getPhone()) != null) {
-			return ResponseEntity.badRequest().body("Số điện thoại đã được sử dụng");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã được sử dụng");
 		} else {
 			employee.setId(employeeRequest.getPhone().substring(0, 10));
 			employee.setRestaurant(restaurant);
@@ -96,7 +96,7 @@ public class EmployeeController {
 		EmployeeRequest employeeRequest = new EmployeeRequest();
 		Employee employee = employeeService.detailEmployee(id);
 		if (employee == null) {
-			return ResponseEntity.badRequest().body("Không tìm thấy nhân viên");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tìm thấy nhân viên");
 		}
 		employeeRequest.setFirstName(employee.getFirstName());
 		employeeRequest.setLastName(employee.getLastName());
@@ -125,15 +125,15 @@ public class EmployeeController {
 		if (!checkService.checkName(employeeRequest.getFirstName())
 				|| !checkService.checkName(employeeRequest.getLastName())
 				|| !checkService.checkName(employeeRequest.getFullName())) {
-			return ResponseEntity.badRequest().body("Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn");
 		} else if (!checkService.checkPhone(employeeRequest.getPhone())) {
-			return ResponseEntity.badRequest().body("Số điện thoại không đúng, số điện thoại gồm 10 số");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại không đúng, số điện thoại gồm 10 số");
 		} else if (!checkService.isValidEmail(employeeRequest.getEmail())) {
-			return ResponseEntity.badRequest().body("Email không đúng, vui lòng nhập lại");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email không đúng, vui lòng nhập lại");
 		} else if (employeeService.getEmployeeByEmail(employeeRequest.getEmail()) != null) {
-			return ResponseEntity.badRequest().body("Email này đã được sử dụng");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email này đã được sử dụng");
 		} else if (employeeService.getEmployeeByPhone(employeeRequest.getPhone()) != null) {
-			return ResponseEntity.badRequest().body("Số điện thoại đã được sử dụng");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Số điện thoại đã được sử dụng");
 		} else {
 			employee.setFirstName(employeeRequest.getFirstName().replaceAll("\\s+", " ").trim());
 			employee.setLastName(employeeRequest.getLastName().replaceAll("\\s+", " ").trim());
@@ -193,7 +193,7 @@ public class EmployeeController {
 		String message;
 		Employee employee = employeeService.detailEmployee(id);
 		if (!employeeService.loginEmployee(employee.getPhone(), oldPassword)) {
-			return ResponseEntity.badRequest().body("Mật khẩu cũ không chính xác");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu cũ không chính xác");
 		}
 		message = employeeService.changePasswordEmployee(id, newPassword) ? "Thay đổi mật khẩu thành công"
 				: "Không thành công";
@@ -205,14 +205,14 @@ public class EmployeeController {
 		String message = null;
 		Employee employee = employeeService.detailEmployee(id);
 		if (employee == null) {
-			return ResponseEntity.badRequest().body("Người dùng không tồn tại");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Người dùng không tồn tại");
 		}
 		if (restaurantService.getStatusById(employee.getRestaurant().getId()) == 0) {
-			return ResponseEntity.badRequest().body("Không thể hoạt động, vì nhà hàng đang ngưng hoạt động");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không thể hoạt động, vì nhà hàng đang ngưng hoạt động");
 		}
 		if (employee.getBranch() != null) {
 			if (branchService.getStatusbyId(employee.getBranch().getId()) == 0) {
-				return ResponseEntity.badRequest().body("Không thể hoạt động, vì chi nhánh đang ngưng hoạt động");
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không thể hoạt động, vì chi nhánh đang ngưng hoạt động");
 			}
 		}
 		int status = employee.getStatus() == 0 ? 1 : 0;
