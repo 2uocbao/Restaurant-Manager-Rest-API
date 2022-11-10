@@ -58,7 +58,7 @@ public class OrderController {
 		String message = null;
 		Orders orders = new Orders();
 		Employee employee = employeeService.detailEmployee(orderRequest.getEmployeeId());
-		Tables table = tableService.detailTable(orderRequest.getTableId());
+		Tables table = tableService.detailTable(Integer.parseInt(orderRequest.getTableId()));
 		if (employee.getStatus() == 0) {
 			return ResponseEntity.badRequest().body("Bạn không hoạt động nên không thể tạo gọi món");
 		} else if (table.getStatus() == 1) {
@@ -94,8 +94,52 @@ public class OrderController {
 	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/list-order")
 	ResponseEntity<?> listOrderByEmployeeId(@RequestParam("employeeId") String employeeId) {
+		// lay danh sach order
 		List<Orders> listOrder = orderService.listOrderByEmployeeId(employeeId);
-		return ResponseEntity.status(HttpStatus.OK).body(listOrder);
+		
+		List<OrderRequest> listOrderRequests = new ArrayList<>();
+		
+		// duyet theo danh sach order
+		for (Orders order : listOrder) {
+			
+			// voi moi order lay ra danh sach cac orderdetail tuong ung voi idorder
+			List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
+
+			// list mon an
+			List<String> nameFood = new ArrayList<>();
+
+			// list so luong order
+			List<Integer> quantityFood = new ArrayList<>();
+
+			// lay ra danh sach mon an va so luong chinh xac order cua tung mon
+			for (orderDetail orderdetail : listOrderDetails) {
+				Food food = foodService.detailFood(orderdetail.getFood().getId());
+				nameFood.add(food.getName());
+				quantityFood.add(orderdetail.getQuatity());
+			}
+			
+			// tao orderrequest, set cac thuoc tinh
+			OrderRequest orderRequest = new OrderRequest();
+			Tables table = tableService.detailTable(order.getTable().getId());
+			orderRequest.setTableId(table.getName());
+			orderRequest.setDescription(order.getDescription());
+			
+			// su dung list namefood da lay ra o tren
+			orderRequest.setFood(nameFood);
+			
+			// su dung quantityFood da lay o tren
+			orderRequest.setQuantity(quantityFood);
+			listOrderRequests.add(orderRequest);
+
+		}
+		
+		int status = 0;
+		
+		if(status == 0) {
+			
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(listOrderRequests);
 	}
 
 	@CrossOrigin(origins = "http://localhost:3000")
@@ -103,6 +147,10 @@ public class OrderController {
 	ResponseEntity<?> listOrderByStatus(@RequestParam("employeeId") String employeeId,
 			@RequestParam("status") int status) {
 		List<Orders> listOrder = orderService.listOrderONorOFF(employeeId, status);
+		
+		
+		
+		
 		return ResponseEntity.status(HttpStatus.OK).body(listOrder);
 	}
 

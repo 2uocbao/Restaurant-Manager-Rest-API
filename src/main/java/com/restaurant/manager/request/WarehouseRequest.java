@@ -9,10 +9,10 @@ public class WarehouseRequest {
 	@JsonProperty("employeeId")
 	private String employeeId;
 	
-	@JsonProperty("material code")
+	@JsonProperty("materialCode")
 	private String materialCode;
 
-	@JsonProperty("vat amount")
+	@JsonProperty("vatAmount")
 	private BigDecimal vatAmount;
 
 	@JsonProperty("cost")

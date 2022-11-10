@@ -13,7 +13,7 @@ public class TableRequest {
 	@JsonProperty("description")
 	private String description;
 
-	@JsonProperty("total_slot")
+	@JsonProperty("totalSlot")
 	private int totalSlot;
 
 	public String getEmployeeId() {

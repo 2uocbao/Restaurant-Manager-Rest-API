@@ -12,19 +12,19 @@ public class EmployeeRequest {
 	@JsonProperty("branchId")
 	private String branchId;
 	
-	@JsonProperty("first name")
+	@JsonProperty("firstName")
 	private String firstName;
 
-	@JsonProperty("last name")
+	@JsonProperty("lastName")
 	private String lastName;
 
-	@JsonProperty("full name")
+	@JsonProperty("fullName")
 	private String fullName;
 
 	@JsonProperty("gender")
 	private String gender;
 
-	@JsonProperty("date of birth")
+	@JsonProperty("dateOfbirth")
 	private Date dateOfbirth;
 
 	@JsonProperty("email")

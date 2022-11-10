@@ -17,7 +17,7 @@ public class FoodRequest {
 	@JsonProperty("type")
 	private String type;
 
-	@JsonProperty("material code")
+	@JsonProperty("materialCode")
 	private List<String> materialCode;
 
 	public String getEmployeeId() {

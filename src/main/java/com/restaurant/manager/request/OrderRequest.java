@@ -9,8 +9,8 @@ public class OrderRequest {
 	@JsonProperty("employeeId")
 	private String employeeId;
 	
-	@JsonProperty("tableId")
-	private int tableId;
+	@JsonProperty("table")
+	private String tableId;
 
 	@JsonProperty("food")
 	private List<String> food;
@@ -29,11 +29,11 @@ public class OrderRequest {
 		this.employeeId = employeeId;
 	}
 
-	public int getTableId() {
+	public String getTableId() {
 		return tableId;
 	}
 
-	public void setTableId(int tableId) {
+	public void setTableId(String tableId) {
 		this.tableId = tableId;
 	}
 

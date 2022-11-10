@@ -18,7 +18,7 @@ public class MaterialRequest {
 	@JsonProperty("type")
 	private String type;
 
-	@JsonProperty("where_production")
+	@JsonProperty("whereProduction")
 	private String whereProduction;
 	
 	

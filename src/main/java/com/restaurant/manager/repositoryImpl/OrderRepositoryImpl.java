@@ -100,7 +100,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			listOrder = session
-					.createQuery("FROM com.restaurant.manager.model.Orders o WHERE o.employeeId = :employeeId")
+					.createQuery("FROM com.restaurant.manager.model.Orders o WHERE o.employee.id = :employeeId")
 					.setParameter("employeeId", employeeId).list();
 			transaction.commit();
 		} catch (Exception e) {
