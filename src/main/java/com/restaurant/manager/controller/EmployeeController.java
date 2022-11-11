@@ -155,6 +155,7 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
+//	@CrossOrigin(origins = "http://localhost:3000")
 	@DeleteMapping("/delete")
 	ResponseEntity<String> deleteEmployee(@RequestParam("id") String id) {
 		String message;
