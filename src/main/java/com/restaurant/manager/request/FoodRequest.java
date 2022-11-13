@@ -23,6 +23,10 @@ public class FoodRequest {
 	@JsonProperty("materialCode")
 	private List<String> materialCode;
 	
+	public int getFoodId() {
+		return foodId;
+	}
+
 	public void setFoodId(int foodId) {
 		this.foodId = foodId;
 	}

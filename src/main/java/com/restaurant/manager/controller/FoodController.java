@@ -112,9 +112,9 @@ public class FoodController {
 	}
 
 	@PutMapping("/update")
-	ResponseEntity<String> updateFood(@RequestParam("id") int id, @RequestBody FoodRequest foodRequest) {
+	ResponseEntity<String> updateFood(@RequestBody FoodRequest foodRequest) {
 		String message = null;
-		Food food = foodService.detailFood(id);
+		Food food = foodService.detailFood(foodRequest.getFoodId());
 		if (food == null) {
 			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu về món ăn này");
 		}
@@ -122,7 +122,8 @@ public class FoodController {
 		String branchId = branch != null ? branch.getId() : "";
 		List<Food> listFood = foodService.getFoodIdByRestaurantIdAndBranchId(food.getRestaurant().getId(), branchId);
 		for (Food food1 : listFood) {
-			if (food1.getName().equalsIgnoreCase(foodRequest.getName())) {
+			if (food1.getName().equalsIgnoreCase(foodRequest.getName())
+					&& !food.getName().equalsIgnoreCase(food1.getName())) {
 				return ResponseEntity.status(HttpStatus.OK).body("Món ăn có tên này đã có");
 			}
 		}
@@ -130,7 +131,7 @@ public class FoodController {
 		food.setPrice(foodRequest.getPrice());
 		food.setType(foodRequest.getType());
 		foodService.updateFood(food);
-		List<foodDetail> listFoodDetails = foodDetailService.listFoodDetail(food.getId());
+		List<foodDetail> listFoodDetails = foodDetailService.listFoodDetail(foodRequest.getFoodId());
 		List<String> materialCode = new ArrayList<>();
 		List<String> materialCode2 = new ArrayList<>();
 		for (foodDetail fooddetail : listFoodDetails) {
@@ -140,7 +141,8 @@ public class FoodController {
 		materialCode.removeAll(foodRequest.getMaterialCode());
 		foodRequest.getMaterialCode().removeAll(materialCode2);
 		for (String materialcode : materialCode) {
-			message = foodDetailService.deleteFoodDetailByMateCode(food.getId() ,materialcode) ? "Cập nhật thông tin thành công"
+			message = foodDetailService.deleteFoodDetailByMateCode(food.getId(), materialcode)
+					? "Cập nhật thông tin thành công"
 					: "không thành công";
 		}
 		for (String materialcd : foodRequest.getMaterialCode()) {
