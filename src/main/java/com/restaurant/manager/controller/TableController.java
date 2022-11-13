@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.restaurant.manager.model.Branch;
 import com.restaurant.manager.model.Employee;
 import com.restaurant.manager.model.Tables;
 import com.restaurant.manager.request.TableRequest;
@@ -50,24 +50,26 @@ public class TableController {
 		String message = null;
 		Tables table = new Tables();
 		List<Tables> listTable = new ArrayList<>();
+		Branch branch = null;
 		Employee employee = employeeService.detailEmployee(tableRequest.getEmployeeId());
 		if (employee.getBranch() == null) {
 			listTable = tableService.listTableByBranchIdandRestaurantId(employee.getRestaurant().getId(), "");
 		} else {
+			branch = branchService.detailBranch(employee.getBranch().getId());
 			listTable = tableService.listTableByBranchIdandRestaurantId(employee.getRestaurant().getId(),
 					employee.getBranch().getId());
 		}
-		table.setRestaurant(employee.getRestaurant());
-		table.setBranch(employee.getBranch());
-		table.setName(tableRequest.getName().replaceAll("//s+", " ").trim());
-		table.setTotalSlot(tableRequest.getTotalSlot());
-		table.setDescription(tableRequest.getDescription().replaceAll("//s+", " ").trim());
-		table.setStatus(1);
 		for (Tables tables : listTable) {
 			if (tables.getName().equals(tableRequest.getName().toUpperCase())) {
 				return ResponseEntity.status(HttpStatus.OK).body("Bàn này đã có");
 			}
 		}
+		table.setRestaurant(employee.getRestaurant());
+		table.setBranch(branch);
+		table.setName(tableRequest.getName().replaceAll("//s+", " ").trim());
+		table.setTotalSlot(tableRequest.getTotalSlot());
+		table.setDescription(tableRequest.getDescription().replaceAll("//s+", " ").trim());
+		table.setStatus(1);
 		message = tableService.createTable(table) ? "Tạo bàn mới thành công" : "Không thành công";
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
@@ -87,7 +89,6 @@ public class TableController {
 		return ResponseEntity.status(HttpStatus.OK).body(tableRequest);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/list")
 	ResponseEntity<?> listTable(@Valid @RequestParam(name = "employeeId") String employeeId) {
 		Employee employee = employeeService.detailEmployee(employeeId);

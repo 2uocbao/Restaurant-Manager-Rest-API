@@ -1,15 +1,14 @@
 package com.restaurant.manager.controller;
 
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,19 +46,19 @@ public class WarehouseController {
 		String message = null;
 		boolean success;
 		Employee employee = employeeService.detailEmployee(warehouseRequest.getEmployeeId());
-		Material material = null;
 		Warehouse warehouse = new Warehouse();
 		if (employee.getStatus() == 0) {
 			return ResponseEntity.status(HttpStatus.OK).body("Bạn không hoạt động");
-		} else if (employee.getBranch() == null) {
-			material = materialService.detailMaterial(warehouseRequest.getMaterialCode(),
-					employee.getRestaurant().getId(), "");
+		}
+		Material material = null;
+		if (employee.getBranch() == null) {
+			material = materialService.detailMaterial(warehouseRequest.getMaterialCode(), employee.getRestaurant().getId(), "");
 		} else {
-			material = materialService.detailMaterial(warehouseRequest.getMaterialCode(),
-					employee.getRestaurant().getId(), employee.getBranch().getId());
+			material = materialService.detailMaterial(warehouseRequest.getMaterialCode(), employee.getRestaurant().getId(),
+					employee.getBranch().getId());
 		}
 		if (material == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu này chưa được tạo");
+			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu này chưa có");
 		} else {
 			Warehouse warehouseTmp = warehouseService.detailWarehouse(employee.getId(), material.getCode());
 			if (warehouseTmp == null) {
@@ -92,7 +91,6 @@ public class WarehouseController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/list-warehouse")
 	ResponseEntity<?> listWarehouse(@RequestParam("employeeId") String employeeId,
 			@RequestParam("material code") String materialCode) {
@@ -115,7 +113,7 @@ public class WarehouseController {
 	@SuppressWarnings("deprecation")
 	@GetMapping("/warehouse-in")
 	ResponseEntity<?> warehouseDay(@RequestParam("employeeId") String employeeId,
-			@RequestParam("material code") String materialCode, @RequestParam("day") String day) {
+			@RequestParam("material code") String materialCode, @RequestParam("from_day") String day) {
 		List<WarehouseRequest> listWarehouseRequests = new ArrayList<>();
 		List<WarehouseDetail> listWarehouseDetails = null;
 		Warehouse warehouse = warehouseService.detailWarehouse(employeeId, materialCode);
@@ -124,12 +122,13 @@ public class WarehouseController {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			Date date = null;
 			try {
-				date = (Date) formatter.parse(day);
+				date = formatter.parse(day);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			if (warehouseD.getCreateAt().getDate() == date.getDate()
-					&& warehouseD.getCreateAt().getMonth() == date.getMonth()) {
+			if (warehouseD.getCreateAt().getDate() <= date.getDate()
+					&& warehouseD.getCreateAt().getMonth() <= date.getMonth()
+					&& warehouseD.getCreateAt().getYear() <= date.getYear()) {
 				WarehouseRequest warehouseRequest = new WarehouseRequest();
 				warehouseRequest.setMaterialCode(materialCode);
 				warehouseRequest.setQuantity(warehouseD.getQuantity());

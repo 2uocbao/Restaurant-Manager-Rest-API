@@ -3,6 +3,9 @@ package com.restaurant.manager.serviceImpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.restaurant.manager.model.Employee;
@@ -11,7 +14,7 @@ import com.restaurant.manager.sercurity.hashingwithBCrypt;
 import com.restaurant.manager.service.EmployeeService;
 
 @Service
-public class EmployeeServiceImpl implements EmployeeService {
+public class EmployeeServiceImpl implements EmployeeService, UserDetailsService {
 	@Autowired
 	EmployeeRepository employeeRepository;
 	@Autowired
@@ -51,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public Employee getEmployeeByPhone(String phone) {
+	public Employee getEmployeeByPhone(String phone) throws UsernameNotFoundException{
 		return employeeRepository.getEmployeeByPhone(phone);
 	}
 
@@ -74,5 +77,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public boolean getStatusById(String id) {
 		return employeeRepository.getStatusById(id);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return (UserDetails) employeeRepository.findByPhone(username).orElseThrow(
+				() -> new UsernameNotFoundException("User with username not found"));
 	}
 }

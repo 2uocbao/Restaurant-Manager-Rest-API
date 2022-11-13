@@ -73,7 +73,7 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 			transaction = session.beginTransaction();
 			if (branchId == "") {
 				material = (Material) session.createQuery(
-						"FROM com.restaurant.manager.model.Material i WHERE i.code = :code AND i.restaurant.id = :restaurantId  AND i.branch.id = null")
+						"FROM com.restaurant.manager.model.Material i WHERE i.code = :code AND i.restaurant.id = :restaurantId")
 						.setParameter("code", code).setParameter("restaurantId", restaurantId).uniqueResult();
 			} else {
 				material = (Material) session.createQuery(

@@ -1,5 +1,7 @@
 package com.restaurant.manager.model;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
@@ -14,6 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -33,6 +38,10 @@ public class Orders {
 
 	@Column(name = "status")
 	private int status;
+	
+	@Column(name = "created_at")
+	@CreationTimestamp
+	private Timestamp createdAt;
 
 	// Nhiều gọi món của một nhân viên
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -99,5 +108,13 @@ public class Orders {
 
 	public void setTotalAmount(float totalAmount) {
 		this.totalAmount = totalAmount;
+	}
+
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Timestamp createdAt) {
+		this.createdAt = createdAt;
 	}
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -81,7 +80,7 @@ public class OrderController {
 
 			for (int n = 0; n < i; n++) {
 				Food food = foodService.detailFood(Integer.parseInt(orderRequest.getFood().get(n)));
-				if(food.getStatus() == 0) {
+				if (food.getStatus() == 0) {
 					return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 				}
 				orderDetail.setFood(food);
@@ -97,48 +96,41 @@ public class OrderController {
 	}
 
 	// lay danh sach order theo status
-
-	@CrossOrigin(origins = "http://localhost:3000")
+	@SuppressWarnings("deprecation")
 	@GetMapping("/list-order")
 	ResponseEntity<?> listOrderByEmployeeId(@RequestParam("employeeId") String employeeId,
 			@RequestParam("status") int status) {
 		// lay danh sach order
+		long millis = System.currentTimeMillis();
+		java.sql.Date date = new java.sql.Date(millis);
 		List<Orders> listOrder = orderService.listOrderByEmployeeId(employeeId);
-
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
-
 		// duyet theo danh sach order
 		for (Orders order : listOrder) {
-			if (order.getStatus() == status) {
-
+			if (order.getStatus() == status && order.getCreatedAt().getDate() == date.getDate()
+					&& order.getCreatedAt().getMonth() == date.getMonth()
+					&& order.getCreatedAt().getYear() == date.getYear()) {
 				// voi moi order lay ra danh sach cac orderdetail tuong ung voi idorder
 				List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
-
 				// list mon an
 				List<String> nameFood = new ArrayList<>();
-
 				// list so luong order
 				List<Integer> quantityFood = new ArrayList<>();
-
 				// lay ra danh sach mon an va so luong chinh xac order cua tung mon
 				for (orderDetail orderdetail : listOrderDetails) {
 					Food food = foodService.detailFood(orderdetail.getFood().getId());
 					nameFood.add(food.getName());
 					quantityFood.add(orderdetail.getQuatity());
 				}
-
 				// tao orderrequest, set cac thuoc tinh
 				OrderRequest orderRequest = new OrderRequest();
 				Tables table = tableService.detailTable(order.getTable().getId());
 				orderRequest.setTableId(table.getName());
 				orderRequest.setDescription(order.getDescription());
-
 				// su dung list namefood da lay ra o tren
 				orderRequest.setFood(nameFood);
-
 				// su dung quantityFood da lay o tren
 				orderRequest.setQuantity(quantityFood);
-
 				if (order.getStatus() == 1) {
 					orderRequest.setStatus("Đã thanh toán");
 				} else {
@@ -231,7 +223,7 @@ public class OrderController {
 			return ResponseEntity.status(HttpStatus.OK).body("Bàn này chưa có order");
 		} else if (order == null) {
 			return ResponseEntity.status(HttpStatus.OK).body("Không có order này");
-		} else if(order.getStatus() == 1) {
+		} else if (order.getStatus() == 1) {
 			return ResponseEntity.status(HttpStatus.OK).body("order này đã thanh toán, không thể cập nhật");
 		}
 		// update cho order
@@ -253,9 +245,9 @@ public class OrderController {
 			listFoodReq.add(Integer.parseInt(orderRequest.getFood().get(i)));
 			listRequest.put(Integer.parseInt(orderRequest.getFood().get(i)), orderRequest.getQuantity().get(i));
 		}
-		//lay ra mon muon loai bo
+		// lay ra mon muon loai bo
 		listFoodId.removeAll(listFoodReq);
-		//lay ra mon moi muon them vao
+		// lay ra mon moi muon them vao
 		listFoodReq.removeAll(listFoodId2);
 		for (Integer listfoodid : listFoodId) {
 			listFoodId2.remove(listfoodid);
@@ -264,11 +256,11 @@ public class OrderController {
 		for (Integer foodid : listFoodId) {
 			orderDetailService.deleteOrderDetail(order.getId(), foodid);
 		}
-		//thay doi so luong cua mot mon an
+		// thay doi so luong cua mot mon an
 		orderDetail orderDetail = new orderDetail();
 		for (Integer listfoodid2 : listFoodId2) {
 			Food food = foodService.detailFood(listfoodid2);
-			if(food.getStatus() == 0) {
+			if (food.getStatus() == 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 			}
 			orderDetail = orderDetailService.detailOrder(order.getId(), listfoodid2);
@@ -280,7 +272,7 @@ public class OrderController {
 		// tao mon moi khi order them
 		for (Integer foodid : listFoodReq) {
 			Food food = foodService.detailFood(foodid);
-			if(food.getStatus() == 0) {
+			if (food.getStatus() == 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 			}
 			orderDetail.setFood(food);

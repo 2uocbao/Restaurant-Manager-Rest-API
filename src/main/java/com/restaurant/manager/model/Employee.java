@@ -1,7 +1,7 @@
 package com.restaurant.manager.model;
 
-import java.util.Collection;
 import java.sql.Date;
+import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -79,7 +79,7 @@ public class Employee {
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	private Restaurants restaurant;
-	
+
 	// một nhân viên quản lý nhiều gọi gọi món
 	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
 	@EqualsAndHashCode.Exclude

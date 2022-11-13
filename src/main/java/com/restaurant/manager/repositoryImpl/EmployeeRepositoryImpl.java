@@ -2,6 +2,7 @@ package com.restaurant.manager.repositoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -50,8 +51,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			employee = (Employee) session
-					.createQuery("FROM com.restaurant.manager.model.Employee e WHERE e.id = :id")
+			employee = (Employee) session.createQuery("FROM com.restaurant.manager.model.Employee e WHERE e.id = :id")
 					.setParameter("id", id).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
@@ -148,9 +148,9 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			if (branchId == "") {
-			listEmployee = session
-					.createQuery("FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantId AND e.branch.id = null")
-					.setParameter("restaurantId", restaurantId).list();
+				listEmployee = session.createQuery(
+						"FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantId AND e.branch.id = null")
+						.setParameter("restaurantId", restaurantId).list();
 			} else {
 				listEmployee = session.createQuery(
 						"FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantId AND e.branch.id = :branchId")
@@ -367,5 +367,29 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 		}
 		return successful;
+	}
+
+	@Override
+	public Optional<Employee> findByPhone(String phone) {
+		Employee employee = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			employee = (Employee) session
+					.createQuery("FROM com.restaurant.manager.model.Employee e WHERE e.phone = :phone")
+					.setParameter("phone", phone).uniqueResult();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return Optional.ofNullable(employee);
 	}
 }

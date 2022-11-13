@@ -1,10 +1,11 @@
 package com.restaurant.manager.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.restaurant.manager.model.Employee;
 
-public interface EmployeeRepository {
+public interface EmployeeRepository{
 
 	public boolean createEmployee(Employee employee);
 
@@ -33,4 +34,6 @@ public interface EmployeeRepository {
 	public boolean changeStatusEmployeeByRestaurantId(String restaurantId, int status);
 
 	public boolean changeStatusEmployeeByBranchId(String branchId, int status);
+
+	public Optional<Employee> findByPhone(String phone);
 }

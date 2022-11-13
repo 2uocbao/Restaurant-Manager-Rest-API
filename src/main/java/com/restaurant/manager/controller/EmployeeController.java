@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +21,7 @@ import com.restaurant.manager.model.Branch;
 import com.restaurant.manager.model.Employee;
 import com.restaurant.manager.model.Restaurants;
 import com.restaurant.manager.request.EmployeeRequest;
+import com.restaurant.manager.request.LoginRequest;
 import com.restaurant.manager.service.BranchService;
 import com.restaurant.manager.service.CheckService;
 import com.restaurant.manager.service.EmployeeService;
@@ -42,7 +42,6 @@ public class EmployeeController {
 	@Autowired
 	CheckService checkService;
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/create")
 	ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
 		String message = null;
@@ -89,7 +88,6 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/detail")
 	ResponseEntity<?> detailEmployee(@RequestParam("id") String id) {
 		EmployeeRequest employeeRequest = new EmployeeRequest();
@@ -99,7 +97,8 @@ public class EmployeeController {
 		}
 		employeeRequest.setEmployeeId(employee.getId());
 		employeeRequest.setRestaurantId(employee.getRestaurant().getId());
-		employeeRequest.setBranchId(employee.getBranch().getId());
+		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : null;
+		employeeRequest.setBranchId(branchId);
 		employeeRequest.setFirstName(employee.getFirstName());
 		employeeRequest.setLastName(employee.getLastName());
 		employeeRequest.setFullName(employee.getFullName());
@@ -114,7 +113,6 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(employeeRequest);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@PutMapping("/update")
 	ResponseEntity<String> updateEmployee(@RequestBody EmployeeRequest employeeRequest, @RequestParam("id") String id) {
 		String message;
@@ -155,7 +153,6 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
-//	@CrossOrigin(origins = "http://localhost:3000")
 	@DeleteMapping("/delete")
 	ResponseEntity<String> deleteEmployee(@RequestParam("id") String id) {
 		String message;
@@ -163,7 +160,6 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/list")
 	ResponseEntity<?> listEmployeeFromBranch(@RequestParam("branchId") String branchId,
 			@RequestParam("restaurantId") String restaurantId) {
@@ -231,5 +227,13 @@ public class EmployeeController {
 			message = employeeService.changeStatusEmployee(id, status) ? "Bạn không hoạt động" : "Không thành công";
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
+	}
+
+	@PostMapping("/signin")
+	ResponseEntity<String> authenticateEmploy(@RequestBody LoginRequest loginRequest) {
+		if (!employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())) {
+			return ResponseEntity.status(HttpStatus.OK).body("Đăng nhập không thành công");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body("Đăng nhập thành công");
 	}
 }
