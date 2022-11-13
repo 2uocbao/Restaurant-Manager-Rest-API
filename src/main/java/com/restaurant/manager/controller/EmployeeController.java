@@ -22,6 +22,7 @@ import com.restaurant.manager.model.Employee;
 import com.restaurant.manager.model.Restaurants;
 import com.restaurant.manager.request.EmployeeRequest;
 import com.restaurant.manager.request.LoginRequest;
+import com.restaurant.manager.response.BaseResponse;
 import com.restaurant.manager.service.BranchService;
 import com.restaurant.manager.service.CheckService;
 import com.restaurant.manager.service.EmployeeService;
@@ -228,15 +229,20 @@ public class EmployeeController {
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
-
+	
 	@PostMapping("/signin")
-	ResponseEntity<?> authenticateEmploy(@RequestBody LoginRequest loginRequest) {
+	ResponseEntity<BaseResponse> authenticateEmploy(@RequestBody LoginRequest loginRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		Employee employee = employeeService.getEmployeeByPhone(loginRequest.getUsername());
 		if (employee == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tên đăng nhập không chính xác");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Tên đăng nhập không chính xác");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
 		if (!employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Mật khẩu không chính xác");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Mật khẩu không chính xác");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
 		EmployeeRequest employeeRequest = new EmployeeRequest();
 		employeeRequest.setEmployeeId(employee.getId());
@@ -251,6 +257,9 @@ public class EmployeeController {
 		employeeRequest.setCity(employee.getCity());
 		employeeRequest.setDistrict(employee.getDistrict());
 		employeeRequest.setAddress(employee.getAddress());
-		return ResponseEntity.status(HttpStatus.OK).body(employeeRequest);
+		baseResponse.setStatus(1);
+		baseResponse.setMessage("Đăng nhập thành công");
+		baseResponse.setData(employeeRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

@@ -1,6 +1,7 @@
 package com.restaurant.manager.response;
 
 public class BaseResponse {
+	private int status;
 	private String message;
 	private Object data;
 
@@ -8,15 +9,25 @@ public class BaseResponse {
 
 	}
 
-	public BaseResponse(String message) {
+	public BaseResponse(int status, String message) {
 		super();
+		this.status = status;
 		this.message = message;
 	}
 
-	public BaseResponse(String message, Object data) {
+	public BaseResponse(int status, String message, Object data) {
 		super();
+		this.status = status;
 		this.message = message;
 		this.data = data;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	public String getMessage() {
