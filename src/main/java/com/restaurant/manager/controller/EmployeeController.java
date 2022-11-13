@@ -230,10 +230,27 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/signin")
-	ResponseEntity<String> authenticateEmploy(@RequestBody LoginRequest loginRequest) {
-		if (!employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Đăng nhập không thành công");
+	ResponseEntity<?> authenticateEmploy(@RequestBody LoginRequest loginRequest) {
+		Employee employee = employeeService.getEmployeeByPhone(loginRequest.getUsername());
+		if (employee == null) {
+			return ResponseEntity.status(HttpStatus.OK).body("Tên đăng nhập không chính xác");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body("Đăng nhập thành công");
+		if (!employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())) {
+			return ResponseEntity.status(HttpStatus.OK).body("Mật khẩu không chính xác");
+		}
+		EmployeeRequest employeeRequest = new EmployeeRequest();
+		employeeRequest.setEmployeeId(employee.getId());
+		employeeRequest.setFirstName(employee.getFirstName());
+		employeeRequest.setLastName(employee.getLastName());
+		employeeRequest.setFullName(employee.getFullName());
+		employeeRequest.setGender(employee.getGender());
+		employeeRequest.setDateOfbirth(employee.getDateOfBirth());
+		employeeRequest.setEmail(employee.getEmail());
+		employeeRequest.setPhone(employee.getPhone());
+		employeeRequest.setRole(employee.getRole());
+		employeeRequest.setCity(employee.getCity());
+		employeeRequest.setDistrict(employee.getDistrict());
+		employeeRequest.setAddress(employee.getAddress());
+		return ResponseEntity.status(HttpStatus.OK).body(employeeRequest);
 	}
 }
