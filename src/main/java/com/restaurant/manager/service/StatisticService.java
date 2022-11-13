@@ -2,13 +2,13 @@ package com.restaurant.manager.service;
 
 import java.util.List;
 
-import com.restaurant.manager.model.Statistics;
+import com.restaurant.manager.model.ReportEntity;
 
 public interface StatisticService {
-	public boolean createStatistic(Statistics statistic);
+	public boolean createStatistic(ReportEntity statistic);
 
-	public Statistics detailStatistic(String restaurantId, String branchId);
+	public ReportEntity detailStatistic(String restaurantId, String branchId);
 
-	public List<Statistics> listStatistic(String restaurantId, String branchId);
+	public List<ReportEntity> listStatistic(String restaurantId, String branchId);
 
 }

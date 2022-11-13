@@ -9,7 +9,7 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.restaurant.manager.model.Statistics;
+import com.restaurant.manager.model.ReportEntity;
 import com.restaurant.manager.repository.StatisticRepository;
 
 @Repository
@@ -21,7 +21,7 @@ public class StatisticRepositoryImpl implements StatisticRepository {
 	SessionFactory sessionFactory;
 
 	@Override
-	public boolean createStatistic(Statistics statistic) {
+	public boolean createStatistic(ReportEntity statistic) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -44,12 +44,12 @@ public class StatisticRepositoryImpl implements StatisticRepository {
 	}
 
 	@Override
-	public Statistics detailStatistic(String restaurantId, String branchId) {
-		Statistics statistic = new Statistics();
+	public ReportEntity detailStatistic(String restaurantId, String branchId) {
+		ReportEntity statistic = new ReportEntity();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			statistic = (Statistics) session.createQuery(
+			statistic = (ReportEntity) session.createQuery(
 					"FROM com.restaurant.manager.model.Statistics s WHERE s.restaurantId = :restaurantId AND s.branchId = :branchId")
 					.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).uniqueResult();
 			transaction.commit();
@@ -69,8 +69,8 @@ public class StatisticRepositoryImpl implements StatisticRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Statistics> listStatistic(String restaurantId, String branchId) {
-		List<Statistics> listStatistic = new ArrayList<>();
+	public List<ReportEntity> listStatistic(String restaurantId, String branchId) {
+		List<ReportEntity> listStatistic = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
