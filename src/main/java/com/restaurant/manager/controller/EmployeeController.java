@@ -233,7 +233,7 @@ public class EmployeeController {
 	ResponseEntity<?> authenticateEmploy(@RequestBody LoginRequest loginRequest) {
 		Employee employee = employeeService.getEmployeeByPhone(loginRequest.getUsername());
 		if (employee == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Tên đăng nhập không chính xác");
+			return ResponseEntity.status(-1).body("Tên đăng nhập không chính xác");
 		}
 		if (!employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Mật khẩu không chính xác");
