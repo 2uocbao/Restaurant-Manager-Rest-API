@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -230,12 +229,11 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/signin")
 	ResponseEntity<?> authenticateEmploy(@RequestBody LoginRequest loginRequest) {
 		Employee employee = employeeService.getEmployeeByPhone(loginRequest.getUsername());
 		if (employee == null) {
-			return ResponseEntity.status(-1).body("Tên đăng nhập không chính xác");
+			return ResponseEntity.status(HttpStatus.OK).body("Tên đăng nhập không chính xác");
 		}
 		if (!employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Mật khẩu không chính xác");
