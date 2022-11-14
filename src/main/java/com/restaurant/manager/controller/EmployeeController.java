@@ -44,29 +44,40 @@ public class EmployeeController {
 	CheckService checkService;
 
 	@PostMapping("/create")
-	ResponseEntity<String> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
-		String message = null;
+	ResponseEntity<BaseResponse> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		Branch branch = branchService.detailBranch(employeeRequest.getBranchId());
 		Restaurants restaurant = restaurantService.detailRestaurant(employeeRequest.getRestaurantId());
 		Employee employee = new Employee();
 		if (branch == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh không tồn tại");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Chi nhánh không tồn tại");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		} else {
 			employee.setBranch(branch);
 		}
 		if (!checkService.checkName(employeeRequest.getFirstName())
 				|| !checkService.checkName(employeeRequest.getLastName())
 				|| !checkService.checkName(employeeRequest.getFullName())) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body("Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		} else if (!checkService.checkPhone(employeeRequest.getPhone())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không đúng, số điện thoại gồm 10 số");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Số điện thoại không đúng, số điện thoại gồm 10 số");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		} else if (!checkService.isValidEmail(employeeRequest.getEmail())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Email không đúng, vui lòng nhập lại");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Email không đúng, vui lòng nhập lại");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		} else if (employeeService.getEmployeeByEmail(employeeRequest.getEmail()) != null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Email này đã được sử dụng");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Email này đã được sử dụng");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		} else if (employeeService.getEmployeeByPhone(employeeRequest.getPhone()) != null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Số điện thoại đã được sử dụng");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		} else {
 			employee.setId(employeeRequest.getPhone().trim());
 			employee.setRestaurant(restaurant);
@@ -84,17 +95,24 @@ public class EmployeeController {
 			employee.setAddress(employeeRequest.getAddress().replaceAll("\\s+", " ").trim());
 			employee.setPassword(employeeRequest.getPassword());
 			employee.setStatus(1);
-			message = employeeService.createEmployee(employee) ? "Tạo nhân viên mới thành công" : "Không thành công";
+			if (employeeService.createEmployee(employee)) {
+				baseResponse.setStatus(1);
+				baseResponse.setMessage("Tạo nhân viên mới thành công");
+				baseResponse.setData(employee);
+			}
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<?> detailEmployee(@RequestParam("id") String id) {
+	ResponseEntity<BaseResponse> detailEmployee(@RequestParam("id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		EmployeeRequest employeeRequest = new EmployeeRequest();
 		Employee employee = employeeService.detailEmployee(id);
 		if (employee == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không tìm thấy nhân viên");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Không tìm thấy nhân viên");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
 		employeeRequest.setEmployeeId(employee.getId());
 		employeeRequest.setRestaurantId(employee.getRestaurant().getId());
@@ -111,33 +129,48 @@ public class EmployeeController {
 		employeeRequest.setCity(employee.getCity());
 		employeeRequest.setDistrict(employee.getDistrict());
 		employeeRequest.setAddress(employee.getAddress());
-		return ResponseEntity.status(HttpStatus.OK).body(employeeRequest);
+		baseResponse.setStatus(1);
+		baseResponse.setMessage("Thông tin cá nhân");
+		baseResponse.setData(employeeRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/update")
-	ResponseEntity<String> updateEmployee(@RequestBody EmployeeRequest employeeRequest, @RequestParam("id") String id) {
-		String message;
+	ResponseEntity<BaseResponse> updateEmployee(@RequestBody EmployeeRequest employeeRequest,
+			@RequestParam("id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		Employee employee = employeeService.detailEmployee(id);
 		if (employee == null) {
-			return ResponseEntity.badRequest().body("Không có dữ liệu về nhân viên này");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Không có dữ liệu về nhân viên này");
+			return ResponseEntity.badRequest().body(baseResponse);
 		}
 		if (!checkService.checkName(employeeRequest.getFirstName())
 				|| !checkService.checkName(employeeRequest.getLastName())
 				|| !checkService.checkName(employeeRequest.getFullName())) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body("Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		} else if (!checkService.checkPhone(employeeRequest.getPhone())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không đúng, số điện thoại gồm 10 số");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Số điện thoại không đúng, số điện thoại gồm 10 số");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		} else if (!checkService.isValidEmail(employeeRequest.getEmail())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Email không đúng, vui lòng nhập lại");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Email không đúng, vui lòng nhập lại");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
 		if (employeeService.getEmployeeByEmail(employeeRequest.getEmail()) != null) {
 			if (!employee.getEmail().equals(employeeRequest.getEmail()))
-				return ResponseEntity.status(HttpStatus.OK).body("Email này đã được sử dụng");
+				baseResponse.setStatus(-1);
+			baseResponse.setMessage("Email này đã được sử dụng");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
 		if (employeeService.getEmployeeByPhone(employeeRequest.getPhone()) != null) {
 			if (!employee.getPhone().equals(employeeRequest.getPhone()))
-				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
+				baseResponse.setStatus(-1);
+			baseResponse.setMessage("Số điện thoại đã được sử dụng");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
 		employee.setFirstName(employeeRequest.getFirstName().replaceAll("\\s+", " ").trim());
 		employee.setLastName(employeeRequest.getLastName().replaceAll("\\s+", " ").trim());
@@ -150,20 +183,28 @@ public class EmployeeController {
 		employee.setCity(employeeRequest.getCity().replaceAll("\\s+", " ").trim());
 		employee.setDistrict(employeeRequest.getDistrict().replaceAll("\\s+", " ").trim());
 		employee.setAddress(employeeRequest.getAddress().replaceAll("\\s+", " ").trim());
-		message = employeeService.updateEmployee(employee) ? "Cập nhật thông tin thành công" : "Không thành công";
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		if (employeeService.updateEmployee(employee)) {
+			baseResponse.setStatus(1);
+			baseResponse.setMessage("Cập nhật thông tin thành công");
+			baseResponse.setData(employeeRequest);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@DeleteMapping("/delete")
-	ResponseEntity<String> deleteEmployee(@RequestParam("id") String id) {
-		String message;
-		message = employeeService.deleteEmployee(id) ? "Thành công" : "Không thành công";
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+	ResponseEntity<BaseResponse> deleteEmployee(@RequestParam("id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
+		if (employeeService.deleteEmployee(id)) {
+			baseResponse.setStatus(1);
+			baseResponse.setMessage("Xóa thông tin cá nhân thành công");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/list")
-	ResponseEntity<?> listEmployeeFromBranch(@RequestParam("branchId") String branchId,
+	ResponseEntity<BaseResponse> listEmployeeFromBranch(@RequestParam("branchId") String branchId,
 			@RequestParam("restaurantId") String restaurantId) {
+		BaseResponse baseResponse = new BaseResponse();
 		List<EmployeeRequest> listEmployeeShow = new ArrayList<>();
 		List<Employee> listEmployeeDB = null;
 		if (branchId == "") {
@@ -175,7 +216,9 @@ public class EmployeeController {
 			EmployeeRequest employeeRequest = new EmployeeRequest();
 			employeeRequest.setEmployeeId(employee.getId());
 			employeeRequest.setRestaurantId(employee.getRestaurant().getId());
-			employeeRequest.setBranchId(employee.getBranch().getId());
+			if (employee.getBranch() != null) {
+				employeeRequest.setBranchId(employee.getBranch().getId());
+			}
 			employeeRequest.setFirstName(employee.getFirstName());
 			employeeRequest.setLastName(employee.getLastName());
 			employeeRequest.setFullName(employee.getFullName());
@@ -189,47 +232,61 @@ public class EmployeeController {
 			employeeRequest.setAddress(employee.getAddress());
 			listEmployeeShow.add(employeeRequest);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(listEmployeeShow);
+		baseResponse.setStatus(1);
+		baseResponse.setMessage("Danh sách nhân viên");
+		baseResponse.setData(listEmployeeShow);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PostMapping("/change-password")
-	ResponseEntity<String> changepasswordEmployee(@RequestParam("id") String id,
+	ResponseEntity<BaseResponse> changepasswordEmployee(@RequestParam("id") String id,
 			@RequestParam("newPassword") String newPassword, @RequestParam("oldPassword") String oldPassword) {
-		String message;
+		BaseResponse baseResponse = new BaseResponse();
 		Employee employee = employeeService.detailEmployee(id);
 		if (!employeeService.loginEmployee(employee.getPhone(), oldPassword)) {
-			return ResponseEntity.status(HttpStatus.OK).body("Mật khẩu cũ không chính xác");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Mật khẩu cũ không chính xác");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
-		message = employeeService.changePasswordEmployee(id, newPassword) ? "Thay đổi mật khẩu thành công"
-				: "Không thành công";
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		employeeService.changePasswordEmployee(id, newPassword);
+		baseResponse.setStatus(1);
+		baseResponse.setMessage("Thay đổi mật khẩu thành công");
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/change-status")
-	ResponseEntity<String> changestatusEmployee(@RequestParam("id") String id) {
-		String message = null;
+	ResponseEntity<BaseResponse> changestatusEmployee(@RequestParam("id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		Employee employee = employeeService.detailEmployee(id);
 		if (employee == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Người dùng không tồn tại");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Người dùng không tồn tại");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
 		if (restaurantService.getStatusById(employee.getRestaurant().getId()) == 0) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không thể hoạt động, vì nhà hàng đang ngưng hoạt động");
+			baseResponse.setStatus(-1);
+			baseResponse.setMessage("Không thể hoạt động, vì nhà hàng đang ngưng hoạt động");
+			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 		}
 		if (employee.getBranch() != null) {
 			if (branchService.getStatusbyId(employee.getBranch().getId()) == 0) {
-				return ResponseEntity.status(HttpStatus.OK)
-						.body("Không thể hoạt động, vì chi nhánh đang ngưng hoạt động");
+				baseResponse.setStatus(-1);
+				baseResponse.setMessage("Không thể hoạt động, vì chi nhánh đang ngưng hoạt động");
+				return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 			}
 		}
 		int status = employee.getStatus() == 0 ? 1 : 0;
 		if (status == 1) {
-			message = employeeService.changeStatusEmployee(id, status) ? "Bạn đang hoạt động" : "Không thành công";
+			employeeService.changeStatusEmployee(id, status);
+			baseResponse.setMessage("Bạn đang hoạt động");
 		} else {
-			message = employeeService.changeStatusEmployee(id, status) ? "Bạn không hoạt động" : "Không thành công";
+			employeeService.changeStatusEmployee(id, status);
+			baseResponse.setMessage("Bạn đang ngưng hoạt động");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		baseResponse.setStatus(1);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
-	
+
 	@PostMapping("/signin")
 	ResponseEntity<BaseResponse> authenticateEmploy(@RequestBody LoginRequest loginRequest) {
 		BaseResponse baseResponse = new BaseResponse();
@@ -246,6 +303,9 @@ public class EmployeeController {
 		}
 		EmployeeRequest employeeRequest = new EmployeeRequest();
 		employeeRequest.setEmployeeId(employee.getId());
+		employeeRequest.setRestaurantId(employee.getRestaurant().getId());
+		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : null;
+		employeeRequest.setBranchId(branchId);
 		employeeRequest.setFirstName(employee.getFirstName());
 		employeeRequest.setLastName(employee.getLastName());
 		employeeRequest.setFullName(employee.getFullName());

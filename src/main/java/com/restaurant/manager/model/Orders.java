@@ -1,6 +1,5 @@
 package com.restaurant.manager.model;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
 
@@ -18,7 +17,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

@@ -3,6 +3,7 @@ package com.restaurant.manager.request;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OrderRequest {
 	

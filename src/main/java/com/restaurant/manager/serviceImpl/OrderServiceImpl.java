@@ -44,4 +44,8 @@ public class OrderServiceImpl implements OrderService {
 		return orderRepository.detailOrder(tableId);
 	}
 
+	@Override
+	public Orders detailOrders(String employeeId, int tableId, int status) {
+		return orderRepository.detailOrders(employeeId, tableId, status);
+	}
 }

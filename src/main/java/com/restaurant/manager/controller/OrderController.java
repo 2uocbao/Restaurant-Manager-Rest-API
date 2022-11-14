@@ -170,10 +170,13 @@ public class OrderController {
 		List<String> foodName = new ArrayList<>();
 		List<Integer> quantity = new ArrayList<>();
 
+		HashMap<String, String> listFood = new HashMap<>();
+		
 		for (orderDetail orderDetail : listorderDetail) {
 			Food food = foodService.detailFood(orderDetail.getFood().getId());
 			foodName.add(food.getName());
 			quantity.add(orderDetail.getQuatity());
+			listFood.put(("name"),food.getName() + " " + String.valueOf(orderDetail.getQuatity()));
 		}
 		orderRequest.setTableId(table.getName());
 		orderRequest.setFood(foodName);
@@ -184,13 +187,14 @@ public class OrderController {
 		} else {
 			orderRequest.setStatus("Chưa thanh toán");
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(orderRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(listFood);
 	}
 
 	@GetMapping("/pay")
-	ResponseEntity<String> payOrder(@RequestParam("tableId") int tableId) {
+	ResponseEntity<String> payOrder(@RequestParam("employeeId") String employeeId,
+			@RequestParam("tableId") int tableId) {
 		float total = 0;
-		Orders orders = orderService.detailOrder(tableId);
+		Orders orders = orderService.detailOrders(employeeId, tableId, 0);
 		if (orders == null) {
 			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu order của bàn này, vui lòng xem lại");
 		} else if (orders.getStatus() == 1) {

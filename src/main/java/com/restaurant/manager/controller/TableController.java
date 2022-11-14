@@ -152,7 +152,7 @@ public class TableController {
 
 	@PutMapping("/change-status")
 	ResponseEntity<String> changeStatusTable(@Valid @RequestParam(name = "id") int id) {
-		String message = null;
+		String message;
 		Tables table = tableService.detailTable(id);
 		String branchId = table.getBranch() != null ? table.getBranch().getId() : null;
 		if (restaurantService.getStatusById(table.getRestaurant().getId()) == 0) {
@@ -161,13 +161,12 @@ public class TableController {
 			if (branchService.getStatusbyId(branchId) == 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh đang ngưng hoạt động");
 			}
+		}
+		int status = table.getStatus() == 1 ? 0 : 1;
+		if (status == 0) {
+			message = tableService.changeStatusById(id, status) ? "Đã sẳn sàng phục vụ" : "Không thành công";
 		} else {
-			int status = table.getStatus() == 1 ? 0 : 1;
-			if (status == 0) {
-				message = tableService.changeStatusById(id, status) ? "Đã sẳn sàng phục vụ" : "Không thành công";
-			} else {
-				message = tableService.changeStatusById(id, status) ? "Bàn này đã được sử dụng" : "Không thành công";
-			}
+			message = tableService.changeStatusById(id, status) ? "Bàn này đã được sử dụng" : "Không thành công";
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
@@ -178,14 +177,10 @@ public class TableController {
 		List<Tables> listTablebyStatus = new ArrayList<>();
 		List<TableRequest> listTableRequest = new ArrayList<>();
 		Employee employee = employeeService.detailEmployee(employeeId);
-		if (employee.getBranch() == null) {
-			listTablebyStatus = tableService.listTableByBranchIdandRestaurantId(employee.getRestaurant().getId(), "");
-		} else {
-			listTablebyStatus = tableService.listTableByBranchIdandRestaurantId(employee.getRestaurant().getId(),
-					employee.getBranch().getId());
-		}
+		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
+		listTablebyStatus = tableService.listTableByBranchIdandRestaurantId(employee.getRestaurant().getId(), branchId);
 		for (Tables table : listTablebyStatus) {
-			if (status == table.getStatus() && employee.getBranch() == table.getBranch()) {
+			if (status == table.getStatus()) {
 				TableRequest tableRequest = new TableRequest();
 				tableRequest.setName(table.getName());
 				tableRequest.setDescription(table.getDescription());

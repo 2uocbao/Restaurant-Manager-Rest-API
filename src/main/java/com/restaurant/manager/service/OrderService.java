@@ -16,4 +16,6 @@ public interface OrderService {
 	public List<Orders> listOrderByEmployeeId(String employeeId);
 
 	public boolean changeStatus(int tableId, int status);
+	
+	public Orders detailOrders(String employeeId, int tableId, int status);
 }
