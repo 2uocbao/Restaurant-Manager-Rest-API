@@ -101,7 +101,6 @@ public class EmployeeController {
 			if (employeeService.createEmployee(employee)) {
 				baseResponse.setStatus(1);
 				baseResponse.setMessage("Tạo nhân viên mới thành công");
-				baseResponse.setData(employeeRequest);
 			}
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
