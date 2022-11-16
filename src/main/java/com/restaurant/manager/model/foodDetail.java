@@ -24,6 +24,9 @@ public class foodDetail {
 
 	@Column(name = "material_code")
 	private String materialCode;
+	
+	@Column(name = "quantity")
+	private float quantity;
 
 	public int getId() {
 		return id;
@@ -47,5 +50,13 @@ public class foodDetail {
 
 	public void setMaterialCode(String materialCode) {
 		this.materialCode = materialCode;
+	}
+
+	public float getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(float quantity) {
+		this.quantity = quantity;
 	}
 }

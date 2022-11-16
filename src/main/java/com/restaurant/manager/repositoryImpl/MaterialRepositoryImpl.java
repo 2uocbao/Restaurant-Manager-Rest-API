@@ -71,9 +71,9 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId == "") {
+			if (branchId.equals("")) {
 				material = (Material) session.createQuery(
-						"FROM com.restaurant.manager.model.Material i WHERE i.code = :code AND i.restaurant.id = :restaurantId")
+						"FROM com.restaurant.manager.model.Material i WHERE i.code = :code AND i.restaurant.id = :restaurantId AND i.branch.id = null")
 						.setParameter("code", code).setParameter("restaurantId", restaurantId).uniqueResult();
 			} else {
 				material = (Material) session.createQuery(
@@ -102,7 +102,7 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId == "") {
+			if (branchId.equals("")) {
 				listMaterial = session.createQuery(
 						"FROM com.restaurant.manager.model.Material m WHERE m.restaurant.id = :restaurantId AND m.branch.id = null")
 						.setParameter("restaurantId", restaurantId).list();

@@ -3,27 +3,55 @@ package com.restaurant.manager.request;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OrderRequest {
+	@JsonProperty("restaurantId")
+	private String restaurantId;
+	
+	@JsonProperty("branchId")
+	private String branchId;
 	
 	@JsonProperty("employeeId")
 	private String employeeId;
 	
 	@JsonProperty("table")
 	private String tableId;
+	
+	@JsonProperty("orderId")
+	private int orderId;
 
 	@JsonProperty("food")
-	private List<String> food;
-
-	@JsonProperty("quantity")
-	private List<Integer> quantity;
+	private List<foodOrderRequest> foodQuantity;
 
 	@JsonProperty("description")
 	private String description;
 	
 	@JsonProperty("status")
-	private String status;
+	private int status;
+	
+	public String getRestaurantId() {
+		return restaurantId;
+	}
+
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
+	public int getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
 
 	public String getEmployeeId() {
 		return employeeId;
@@ -49,23 +77,19 @@ public class OrderRequest {
 		this.description = description;
 	}
 
-	public List<String> getFood() {
-		return food;
-	}
-
-	public void setFood(List<String> food) {
-		this.food = food;
-	}
-
-	public List<Integer> getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(List<Integer> quantity) {
-		this.quantity = quantity;
-	}
-
-	public void setStatus(String status) {
+	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public List<foodOrderRequest> getFoodQuantity() {
+		return foodQuantity;
+	}
+
+	public void setFoodQuantity(List<foodOrderRequest> foodQuantity) {
+		this.foodQuantity = foodQuantity;
+	}
+
+	public int getStatus() {
+		return status;
 	}
 }

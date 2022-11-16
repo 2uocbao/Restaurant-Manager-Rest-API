@@ -19,7 +19,13 @@ public class WarehouseRequest {
 	private int cost;
 
 	@JsonProperty("quantity")
-	private int quantity;
+	private float quantity;
+	
+	@JsonProperty("description")
+	private String description;
+	
+	@JsonProperty("status")
+	private int status;
 	
 	@JsonProperty("date")
 	private Timestamp date;
@@ -56,15 +62,31 @@ public class WarehouseRequest {
 		this.cost = cost;
 	}
 
-	public int getQuantity() {
+	public float getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(float quantity) {
 		this.quantity = quantity;
 	}
 
 	public void setDate(Timestamp date) {
 		this.date = date;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

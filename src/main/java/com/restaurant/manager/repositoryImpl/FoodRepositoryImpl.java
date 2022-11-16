@@ -118,7 +118,7 @@ public class FoodRepositoryImpl implements FoodRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.createQuery("UPDATE com.restaurant.model.Food f SET f.status = :status WHERE f.id = :id")
+			session.createQuery("UPDATE com.restaurant.manager.model.Food f SET f.status = :status WHERE f.id = :id")
 					.setParameter("id", id).setParameter("status", status).executeUpdate();
 			transaction.commit();
 			successful = true;
@@ -143,7 +143,7 @@ public class FoodRepositoryImpl implements FoodRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId == "") {
+			if (branchId.equals("")) {
 				listFoodId = session.createQuery(
 						"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = null")
 						.setParameter("restaurantId", restaurantId).list();

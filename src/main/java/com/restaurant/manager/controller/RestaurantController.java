@@ -49,8 +49,7 @@ public class RestaurantController {
 				restaurant.setInfo(restaurantRequest.getInfo().replaceAll("\\s+", " ").trim());
 				restaurant.setAddress(restaurantRequest.getAddress().replaceAll("\\s+", " ").trim());
 				restaurant.setStatus(1);
-				message = restaurantService.createRestaurant(restaurant) ? "Tạo nhà hàng thành công"
-						: "Không thành công";
+				message = restaurantService.createRestaurant(restaurant) ? "Tạo nhà hàng thành công" : "";
 			}
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
@@ -68,29 +67,26 @@ public class RestaurantController {
 		} else if (!checkService.checkName(restaurantRequest.getName())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Tên không hợp lệ");
 		} else {
-			if (restaurantService.getRestaurantbyEmail(restaurantRequest.getEmail()) != null) {
-				if (!restaurant.getEmail().equals(restaurantRequest.getEmail())) {
-					return ResponseEntity.status(HttpStatus.OK).body("Email đã được sử dụng");
-				}
+			if (restaurantService.getRestaurantbyEmail(restaurantRequest.getEmail()) != null
+					&& !restaurant.getEmail().equals(restaurantRequest.getEmail())) {
+				return ResponseEntity.status(HttpStatus.OK).body("Email đã được sử dụng");
 			}
-			if (restaurantService.getRestaurantbyPhone(restaurantRequest.getPhone()) != null) {
-				if (!restaurant.getPhone().equalsIgnoreCase(restaurantRequest.getPhone())) {
-					return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
-				}
+			if (restaurantService.getRestaurantbyPhone(restaurantRequest.getPhone()) != null
+					&& !restaurant.getPhone().equalsIgnoreCase(restaurantRequest.getPhone())) {
+				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
 			}
 			restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
 			restaurant.setEmail(restaurantRequest.getEmail().trim());
 			restaurant.setPhone(restaurantRequest.getPhone().trim());
 			restaurant.setInfo(restaurantRequest.getInfo().replaceAll("\\s\\s+", " ").trim());
 			restaurant.setAddress(restaurantRequest.getAddress().replaceAll("\\s\\s+", " ").trim());
-			message = restaurantService.updateRestaurant(restaurant) ? "Cập nhật thông tin thành công"
-					: "Không thành công";
+			message = restaurantService.updateRestaurant(restaurant) ? "Cập nhật thông tin thành công" : "";
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<?> detailRestaurant(@Valid @RequestParam(name = "id") String id) {
+	ResponseEntity<Object> detailRestaurant(@Valid @RequestParam(name = "id") String id) {
 		Restaurants restaurant = restaurantService.detailRestaurant(id);
 		RestaurantRequest restaurantRequest = new RestaurantRequest();
 		if (restaurant == null) {
@@ -109,6 +105,9 @@ public class RestaurantController {
 	@PutMapping("/change-status")
 	ResponseEntity<String> changeStatusRestaurant(@Valid @RequestParam(name = "id") String id) {
 		String message;
+		if (restaurantService.detailRestaurant(id) == null) {
+			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng không tồn tại");
+		}
 		int statusNow = restaurantService.getStatusById(id) == 1 ? 0 : 1;
 		if (statusNow == 1) {
 			message = restaurantService.changeStatusRestaurant(id, statusNow) ? "Nhà hàng đang hoạt động"

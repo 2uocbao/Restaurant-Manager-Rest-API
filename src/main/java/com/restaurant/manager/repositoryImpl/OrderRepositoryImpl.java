@@ -46,14 +46,14 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
-	public Integer getStatusByTableId(int tableId) {
+	public Integer getStatusByOrderId(int orderId) {
 		int status = 0;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			status = (int) session.createQuery(
-					"SELECT o.status FROM com.restaurant.manager.model.Orders o WHERE o.table.id = :tableId")
-					.setParameter("tableId", tableId).uniqueResult();
+			status = (int) session
+					.createQuery("SELECT o.status FROM com.restaurant.manager.model.Orders o WHERE o.id = :orderId")
+					.setParameter("orderId", orderId).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -101,8 +101,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 			transaction = session.beginTransaction();
 			listOrder = session
 					.createQuery("FROM com.restaurant.manager.model.Orders o WHERE o.employee.id = :employeeId")
-					.setParameter("employeeId", employeeId)
-					.list();
+					.setParameter("employeeId", employeeId).list();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -119,14 +118,14 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
-	public boolean changeStatus(int tableId, int status) {
+	public boolean changeStatus(int orderId, int status) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			session.createQuery(
-					"UPDATE com.restaurant.manager.model.Orders o SET o.status = :status WHERE o.table.id = :tableId")
-					.setParameter("tableId", tableId).setParameter("status", status).executeUpdate();
+					"UPDATE com.restaurant.manager.model.Orders o SET o.status = :status WHERE o.id = :orderId")
+					.setParameter("orderId", orderId).setParameter("status", status).executeUpdate();
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -144,14 +143,13 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
-	public Orders detailOrder(int tableId) {
+	public Orders detailOrder(int orderId) {
 		Orders order = new Orders();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			order = (Orders) session
-					.createQuery("FROM com.restaurant.manager.model.Orders o WHERE o.table.id = :tableId")
-					.setParameter("tableId", tableId).uniqueResult();
+			order = (Orders) session.createQuery("FROM com.restaurant.manager.model.Orders o WHERE o.id = :orderId")
+					.setParameter("orderId", orderId).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -173,12 +171,10 @@ public class OrderRepositoryImpl implements OrderRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			order = (Orders) session
-					.createQuery("FROM com.restaurant.manager.model.Orders o WHERE o.table.id = :tableId AND o.employee.id = :employeeId AND o.status = :status")
-					.setParameter("tableId", tableId)
-					.setParameter("employeeId", employeeId)
-					.setParameter("status", status)
-					.uniqueResult();
+			order = (Orders) session.createQuery(
+					"FROM com.restaurant.manager.model.Orders o WHERE o.table.id = :tableId AND o.employee.id = :employeeId AND o.status = :status")
+					.setParameter("tableId", tableId).setParameter("employeeId", employeeId)
+					.setParameter("status", status).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -192,5 +188,36 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 		}
 		return order;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Orders> listOrder(String restaurantId, String branchId) {
+		List<Orders> listOrder = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			if(branchId.equals("")) {
+				listOrder = session.createQuery(
+						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.branch.id = null")
+						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
+			}else {
+				listOrder = session.createQuery(
+						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.branch.id = :branchId")
+						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();	
+			}
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return listOrder;
 	}
 }

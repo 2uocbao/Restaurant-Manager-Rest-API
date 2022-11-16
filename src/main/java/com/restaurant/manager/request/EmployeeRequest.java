@@ -47,6 +47,9 @@ public class EmployeeRequest {
 
 	@JsonProperty("address")
 	private String address;
+	
+	@JsonProperty("status")
+	private int status;
 
 	@JsonProperty("password")
 	private String password;
@@ -157,6 +160,14 @@ public class EmployeeRequest {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	public String getPassword() {

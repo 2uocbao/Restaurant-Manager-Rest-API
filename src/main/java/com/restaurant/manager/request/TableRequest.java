@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TableRequest {
 	
-	@JsonProperty("employeeId")
-	private String employeeId;
+	@JsonProperty("restaurantId")
+	private String restaurantId;
+	
+	@JsonProperty("branchId")
+	private String branchId;
 	
 	@JsonProperty("tableId")
 	private int tableId;
@@ -18,19 +21,34 @@ public class TableRequest {
 
 	@JsonProperty("totalSlot")
 	private int totalSlot;
+	
+	@JsonProperty("status")
+	private int status;
+
+	public String getRestaurantId() {
+		return restaurantId;
+	}
+
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
 
 	public void setTableId(int tableId) {
 		this.tableId = tableId;
 	}
-
-	public String getEmployeeId() {
-		return employeeId;
+	
+	public int getTableId() {
+		return tableId;
 	}
-
-	public void setEmployeeId(String employeeId) {
-		this.employeeId = employeeId;
-	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -53,5 +71,13 @@ public class TableRequest {
 
 	public void setTotalSlot(int totalSlot) {
 		this.totalSlot = totalSlot;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

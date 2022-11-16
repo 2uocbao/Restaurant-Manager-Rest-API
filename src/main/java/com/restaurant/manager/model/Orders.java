@@ -36,10 +36,24 @@ public class Orders {
 
 	@Column(name = "status")
 	private int status;
-	
+
 	@Column(name = "created_at")
 	@CreationTimestamp
 	private Timestamp createdAt;
+
+	// nhiều order của 1 chi nhánh
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "branch_id")
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	private Branch branch;
+
+	// nhiều order của 1 nhà hàng
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "restaurant_id")
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	private Restaurants restaurant;
 
 	// Nhiều gọi món của một nhân viên
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -59,6 +73,22 @@ public class Orders {
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	private Collection<orderDetail> orderDetail;
+
+	public Branch getBranch() {
+		return branch;
+	}
+
+	public void setBranch(Branch branch) {
+		this.branch = branch;
+	}
+
+	public Restaurants getRestaurant() {
+		return restaurant;
+	}
+
+	public void setRestaurant(Restaurants restaurant) {
+		this.restaurant = restaurant;
+	}
 
 	public Employee getEmployee() {
 		return employee;

@@ -3,8 +3,11 @@ package com.restaurant.manager.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MaterialRequest {
-	@JsonProperty("employeeId")
-	private String employeeId;
+	@JsonProperty("restaurantId")
+	private String restaurantId;
+	
+	@JsonProperty("branchId")
+	private String branchId;
 	
 	@JsonProperty("code")
 	private String code;
@@ -17,18 +20,32 @@ public class MaterialRequest {
 	
 	@JsonProperty("type")
 	private String type;
+	
+	@JsonProperty("quantity")
+	private float quantity;
+	
+	@JsonProperty("stockEnd")
+	private float stockEnd;
 
 	@JsonProperty("whereProduction")
 	private String whereProduction;
 	
 	
 
-	public String getEmployeeId() {
-		return employeeId;
+	public String getRestaurantId() {
+		return restaurantId;
 	}
 
-	public void setEmployeeId(String employeeId) {
-		this.employeeId = employeeId;
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 
 	public String getCode() {
@@ -69,5 +86,21 @@ public class MaterialRequest {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public float getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(float quantity) {
+		this.quantity = quantity;
+	}
+
+	public float getStockEnd() {
+		return stockEnd;
+	}
+
+	public void setStockEnd(float stockEnd) {
+		this.stockEnd = stockEnd;
 	}
 }

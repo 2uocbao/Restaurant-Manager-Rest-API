@@ -48,9 +48,8 @@ public class BranchController {
 		} else if (!checkService.checkPhone(branchRequest.getPhone())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hợp lệ");
 		} else {
-			if (restaurantService.getRestaurantbyPhone(branchRequest.getPhone()) != null) {
-				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại này đã được sử dụng");
-			} else if (branchService.getDetailByPhone(branchRequest.getPhone()) != null) {
+			if (restaurantService.getRestaurantbyPhone(branchRequest.getPhone()) != null
+					|| branchService.getDetailByPhone(branchRequest.getPhone()) != null) {
 				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại này đã được sử dụng");
 			} else {
 				branch.setId(branchRequest.getPhone().trim());
@@ -67,7 +66,7 @@ public class BranchController {
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<?> detailBranch(@Valid @RequestParam(name = "id") String id) {
+	ResponseEntity<Object> detailBranch(@Valid @RequestParam(name = "id") String id) {
 		BranchRequest branchRequest = new BranchRequest();
 		Branch branch = branchService.detailBranch(id);
 		if (branch == null) {
@@ -79,6 +78,7 @@ public class BranchController {
 			branchRequest.setPhone(branch.getPhone());
 			branchRequest.setAddress(branch.getAddress());
 			branchRequest.setStreet(branch.getStreet());
+			branchRequest.setStatus(branch.getStatus());
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(branchRequest);
 	}
@@ -94,12 +94,10 @@ public class BranchController {
 		if (!checkService.checkPhone(branchRequest.getPhone())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hợp lệ");
 		} else {
-			if (restaurantService.getRestaurantbyPhone(branchRequest.getPhone()) != null) {
+			if (restaurantService.getRestaurantbyPhone(branchRequest.getPhone()) != null
+					|| branchService.getDetailByPhone(branchRequest.getPhone()) != null
+							&& !branch.getPhone().equalsIgnoreCase(branchRequest.getPhone())) {
 				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại này đã được sử dụng");
-			} 
-			if (branchService.getDetailByPhone(branchRequest.getPhone()) != null) {
-				if (!branch.getPhone().equalsIgnoreCase(branchRequest.getPhone()))
-					return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại này đã được sử dụng");
 			}
 			branch.setName(branchRequest.getName().replace("//s+", " ").trim());
 			branch.setPhone(branchRequest.getPhone().trim());
@@ -113,6 +111,9 @@ public class BranchController {
 	@PutMapping("/change-status")
 	ResponseEntity<String> changeStatusBranch(@Valid @RequestParam(name = "id") String id) {
 		Branch branch = branchService.detailBranch(id);
+		if (branch == null) {
+			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu của chi nhánh này");
+		}
 		String message;
 		int statusFromRestaurant = restaurantService.getStatusById(branch.getRestaurant().getId());
 		if (statusFromRestaurant == 0) {
@@ -133,17 +134,18 @@ public class BranchController {
 	}
 
 	@GetMapping("/list-branch")
-	ResponseEntity<?> listBranchByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
+	ResponseEntity<Object> listBranchByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
 		List<Branch> listBranch = branchService.listBranchByRestaurantId(restaurantId);
 		List<BranchRequest> listBranchRequest = new ArrayList<>();
 		for (Branch branch : listBranch) {
 			BranchRequest branchRequest = new BranchRequest();
-			branchRequest.setBranchId(branch.getId());
 			branchRequest.setRestaurantId(branch.getRestaurant().getId());
+			branchRequest.setBranchId(branch.getId());
 			branchRequest.setName(branch.getName());
 			branchRequest.setPhone(branch.getPhone());
 			branchRequest.setStreet(branch.getStreet());
 			branchRequest.setAddress(branch.getAddress());
+			branchRequest.setStatus(branch.getStatus());
 			listBranchRequest.add(branchRequest);
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(listBranchRequest);

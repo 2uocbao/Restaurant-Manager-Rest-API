@@ -21,6 +21,9 @@ public class BranchRequest {
 
 	@JsonProperty("phone")
 	private String phone;
+	
+	@JsonProperty("status")
+	private int status;
 
 	public void setBranchId(String branchId) {
 		this.branchId = branchId;
@@ -66,4 +69,11 @@ public class BranchRequest {
 		this.phone = phone;
 	}
 
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
 }

@@ -124,9 +124,9 @@ public class TableRepositoryImpl implements TableRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId == "") {
+			if (branchId.equals("")) {
 				listTables = session
-						.createQuery("FROM com.restaurant.manager.model.Tables t WHERE t.restaurant.id = :restaurantId AND t.branch.id = NULL")
+						.createQuery("FROM com.restaurant.manager.model.Tables t WHERE t.restaurant.id = :restaurantId AND t.branch.id = null")
 						.setParameter("restaurantId", restaurantId).list();
 			} else {
 				listTables = session.createQuery(

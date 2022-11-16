@@ -29,7 +29,7 @@ public class orderDetail {
 	private Food food;
 
 	@Column(name = "quantity")
-	private int quatity;
+	private float quatity;
 
 	public Orders getOrder() {
 		return order;
@@ -47,11 +47,11 @@ public class orderDetail {
 		this.food = food;
 	}
 
-	public int getQuatity() {
+	public float getQuatity() {
 		return quatity;
 	}
 
-	public void setQuatity(int quatity) {
+	public void setQuatity(float quatity) {
 		this.quatity = quatity;
 	}
 }

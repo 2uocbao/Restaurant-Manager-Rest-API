@@ -43,8 +43,7 @@ public class WarehouseController {
 
 	@PostMapping("/create")
 	ResponseEntity<String> createWarehouse(@RequestBody WarehouseRequest warehouseRequest) {
-		String message = null;
-		boolean success;
+		String message;
 		Employee employee = employeeService.detailEmployee(warehouseRequest.getEmployeeId());
 		Warehouse warehouse = new Warehouse();
 		if (employee.getStatus() == 0) {
@@ -71,6 +70,8 @@ public class WarehouseController {
 				warehouseDetail.setVatAmount(warehouseRequest.getVatAmount());
 				warehouseDetail.setQuantity(warehouseRequest.getQuantity());
 				warehouseDetail.setTotalAmount(warehouseRequest.getQuantity() + material.getQuantity());
+				warehouseDetail.setDescription(warehouseRequest.getDescription());
+				warehouseDetail.setStatus(1);
 				warehouseDetailService.createWarehouseDetail(warehouseDetail);
 				material.setQuantity(warehouseDetail.getTotalAmount());
 				material.setCost(warehouseDetail.getCost());
@@ -81,18 +82,19 @@ public class WarehouseController {
 				warehouseDetail.setVatAmount(warehouseRequest.getVatAmount());
 				warehouseDetail.setQuantity(warehouseRequest.getQuantity());
 				warehouseDetail.setTotalAmount(warehouseRequest.getQuantity() + material.getQuantity());
+				warehouseDetail.setDescription(warehouseRequest.getDescription());
+				warehouseDetail.setStatus(1);
 				warehouseDetailService.createWarehouseDetail(warehouseDetail);
 				material.setQuantity(warehouseDetail.getTotalAmount());
 				material.setCost(warehouseDetail.getCost());
 			}
-			success = materialService.updateMaterial(material) ? true : false;
-			message = success ? "Thành công" : "Không thành công";
+			message = materialService.updateMaterial(material) ? "Thành công" : "Không thành công";
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
 	@GetMapping("/list-warehouse")
-	ResponseEntity<?> listWarehouse(@RequestParam("employeeId") String employeeId,
+	ResponseEntity<Object> listWarehouse(@RequestParam("employeeId") String employeeId,
 			@RequestParam("material code") String materialCode) {
 		List<WarehouseDetail> listWarehouseDetails = null;
 		List<WarehouseRequest> listWarehouseRequests = new ArrayList<>();
@@ -100,10 +102,13 @@ public class WarehouseController {
 		listWarehouseDetails = warehouseDetailService.listWarehouseDetail(warehouse.getId());
 		for (WarehouseDetail warehouseD : listWarehouseDetails) {
 			WarehouseRequest warehouseRequest = new WarehouseRequest();
+			warehouseRequest.setEmployeeId(warehouse.getEmployee().getId());
 			warehouseRequest.setMaterialCode(warehouse.getMaterialCode());
 			warehouseRequest.setQuantity(warehouseD.getQuantity());
 			warehouseRequest.setCost(warehouseD.getCost());
 			warehouseRequest.setVatAmount(warehouseD.getVatAmount());
+			warehouseRequest.setDescription(warehouseD.getDescription());
+			warehouseRequest.setStatus(warehouseD.getStatus());
 			warehouseRequest.setDate(warehouseD.getCreateAt());
 			listWarehouseRequests.add(warehouseRequest);
 		}
@@ -111,8 +116,8 @@ public class WarehouseController {
 	}
 
 	@SuppressWarnings("deprecation")
-	@GetMapping("/warehouse-in")
-	ResponseEntity<?> warehouseDay(@RequestParam("employeeId") String employeeId,
+	@GetMapping("/warehouse-from")
+	ResponseEntity<Object> warehouseDay(@RequestParam("employeeId") String employeeId,
 			@RequestParam("material code") String materialCode, @RequestParam("from_day") String day) {
 		List<WarehouseRequest> listWarehouseRequests = new ArrayList<>();
 		List<WarehouseDetail> listWarehouseDetails = null;
@@ -130,10 +135,13 @@ public class WarehouseController {
 					&& warehouseD.getCreateAt().getMonth() <= date.getMonth()
 					&& warehouseD.getCreateAt().getYear() <= date.getYear()) {
 				WarehouseRequest warehouseRequest = new WarehouseRequest();
+				warehouseRequest.setEmployeeId(warehouse.getEmployee().getId());
 				warehouseRequest.setMaterialCode(materialCode);
 				warehouseRequest.setQuantity(warehouseD.getQuantity());
 				warehouseRequest.setCost(warehouseD.getCost());
 				warehouseRequest.setVatAmount(warehouseD.getVatAmount());
+				warehouseRequest.setDescription(warehouseD.getDescription());
+				warehouseRequest.setStatus(warehouseD.getStatus());
 				warehouseRequest.setDate(warehouseD.getCreateAt());
 				listWarehouseRequests.add(warehouseRequest);
 			}

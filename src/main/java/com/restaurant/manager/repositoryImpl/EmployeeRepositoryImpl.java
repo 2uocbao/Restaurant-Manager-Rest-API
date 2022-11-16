@@ -147,7 +147,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId == "") {
+			if (branchId.equals("")) {
 				listEmployee = session.createQuery(
 						"FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantId AND e.branch.id = null")
 						.setParameter("restaurantId", restaurantId).list();

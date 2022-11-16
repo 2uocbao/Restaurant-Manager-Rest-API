@@ -5,8 +5,11 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FoodRequest {
-	@JsonProperty("employeeId")
-	private String employeeId;
+	@JsonProperty("restaurantId")
+	private String restaurantId;
+	
+	@JsonProperty("branchId")
+	private String branchId;
 
 	@JsonProperty("foodId")
 	private int foodId;
@@ -20,23 +23,35 @@ public class FoodRequest {
 	@JsonProperty("type")
 	private String type;
 
-	@JsonProperty("materialCode")
-	private List<String> materialCode;
+	@JsonProperty("material")
+	private List<materialFood> materialCode;
 	
+	@JsonProperty("status")
+	private int status;
+
+	
+	public String getRestaurantId() {
+		return restaurantId;
+	}
+
+	public void setRestaurantId(String restaurantId) {
+		this.restaurantId = restaurantId;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
 	public int getFoodId() {
 		return foodId;
 	}
 
 	public void setFoodId(int foodId) {
 		this.foodId = foodId;
-	}
-
-	public String getEmployeeId() {
-		return employeeId;
-	}
-
-	public void setEmployeeId(String employeeId) {
-		this.employeeId = employeeId;
 	}
 
 	public String getName() {
@@ -54,15 +69,7 @@ public class FoodRequest {
 	public void setPrice(int price) {
 		this.price = price;
 	}
-
-	public List<String> getMaterialCode() {
-		return materialCode;
-	}
-
-	public void setMaterialCode(List<String> materialCode) {
-		this.materialCode = materialCode;
-	}
-
+	
 	public String getType() {
 		return type;
 	}
@@ -70,6 +77,20 @@ public class FoodRequest {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public List<materialFood> getMaterialCode() {
+		return materialCode;
+	}
+
+	public void setMaterialCode(List<materialFood> materialCode) {
+		this.materialCode = materialCode;
+	}
 }

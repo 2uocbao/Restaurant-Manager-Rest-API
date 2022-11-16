@@ -5,6 +5,7 @@ import java.util.List;
 import com.restaurant.manager.model.foodDetail;
 
 public interface FoodDetailRepository {
+	public foodDetail detailFood(int foodId, String materialCode);
 
 	public boolean createFoodDetail(foodDetail foodDetail);
 

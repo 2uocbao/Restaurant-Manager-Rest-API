@@ -36,7 +36,10 @@ public class Material {
 	private String type;
 
 	@Column(name = "quantity")
-	private int quantity;
+	private float quantity;
+	
+	@Column(name = "stockEnd")
+	private float stockEnd;
 
 	@Column(name = "where_production")
 	private String whereProduction;
@@ -101,11 +104,11 @@ public class Material {
 		this.branch = branch;
 	}
 
-	public int getQuantity() {
+	public float getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(float quantity) {
 		this.quantity = quantity;
 	}
 
@@ -115,5 +118,13 @@ public class Material {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public float getStockEnd() {
+		return stockEnd;
+	}
+
+	public void setStockEnd(float stockEnd) {
+		this.stockEnd = stockEnd;
 	}
 }

@@ -46,6 +46,4 @@ public class Warehouse {
 	public void setMaterialCode(String materialCode) {
 		this.materialCode = materialCode;
 	}
-
-	
 }

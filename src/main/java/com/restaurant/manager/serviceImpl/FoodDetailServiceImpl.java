@@ -40,4 +40,9 @@ public class FoodDetailServiceImpl implements FoodDetailService {
 		return foodDetailRepository.deleteFoodDetailByMateCode(foodId, materialCode);
 	}
 
+	@Override
+	public foodDetail detailFood(int foodId, String materialCode) {
+		return foodDetailRepository.detailFood(foodId, materialCode);
+	}
+
 }

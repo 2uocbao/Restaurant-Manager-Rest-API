@@ -7,7 +7,7 @@ import com.restaurant.manager.model.Orders;
 public interface OrderRepository {
 	public boolean createOrder(Orders order);
 
-	public Integer getStatusByTableId(int tableId);
+	public Integer getStatusByOrderId(int orderId);
 	
 	public Orders detailOrder(int tableId);
 
@@ -18,4 +18,7 @@ public interface OrderRepository {
 	public boolean changeStatus(int tableId, int status);
 	
 	public Orders detailOrders(String employeeId, int tableId, int status);
+	
+	public List<Orders> listOrder(String restaurantId, String branchId);
+
 }

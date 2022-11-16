@@ -139,4 +139,28 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 		}
 		return success;
 	}
+
+	@Override
+	public foodDetail detailFood(int foodId, String materialCode) {
+		foodDetail foodDetail = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			foodDetail = (foodDetail) session.createQuery(
+					"FROM com.restaurant.manager.model.foodDetail f WHERE f.food.id = :foodId AND f.materialCode = :materialCode")
+					.setParameter("foodId", foodId).setParameter("materialCode", materialCode).uniqueResult();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return foodDetail;
+	}
 }

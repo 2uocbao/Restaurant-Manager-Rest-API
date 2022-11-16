@@ -20,8 +20,8 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Integer getStatusByTableId(int tableId) {
-		return orderRepository.getStatusByTableId(tableId);
+	public Integer getStatusByOrderId(int orderId) {
+		return orderRepository.getStatusByOrderId(orderId);
 	}
 
 	@Override
@@ -35,17 +35,22 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public boolean changeStatus(int tableId, int status) {
-		return orderRepository.changeStatus(tableId, status);
+	public boolean changeStatus(int orderId, int status) {
+		return orderRepository.changeStatus(orderId, status);
 	}
 
 	@Override
-	public Orders detailOrder(int tableId) {
-		return orderRepository.detailOrder(tableId);
+	public Orders detailOrder(int orderId) {
+		return orderRepository.detailOrder(orderId);
 	}
 
 	@Override
 	public Orders detailOrders(String employeeId, int tableId, int status) {
 		return orderRepository.detailOrders(employeeId, tableId, status);
+	}
+
+	@Override
+	public List<Orders> listOrder(String restaurantId, String branchId) {
+		return orderRepository.listOrder(restaurantId, branchId);
 	}
 }

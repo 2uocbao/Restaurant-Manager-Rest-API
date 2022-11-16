@@ -32,10 +32,16 @@ public class WarehouseDetail {
 	private BigDecimal vatAmount;
 
 	@Column(name = "quantity")
-	private int quantity;
+	private float quantity;
 
 	@Column(name = "total_amount")
-	private int totalAmount;
+	private float totalAmount;
+	
+	@Column(name = "description")
+	private String description;
+	
+	@Column(name = "status")
+	private int status;
 
 	@Column(name = "create_at")
 	@CreationTimestamp
@@ -65,24 +71,40 @@ public class WarehouseDetail {
 		this.vatAmount = vatAmount;
 	}
 
-	public int getQuantity() {
+	public float getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(float quantity) {
 		this.quantity = quantity;
 	}
 
-	public int getTotalAmount() {
+	public float getTotalAmount() {
 		return totalAmount;
 	}
 
-	public void setTotalAmount(int totalAmount) {
+	public void setTotalAmount(float totalAmount) {
 		this.totalAmount = totalAmount;
 	}
 
 	public Timestamp getCreateAt() {
 		return createAt;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	

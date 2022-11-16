@@ -32,8 +32,6 @@ public class RestaurantRequest {
 	@NotEmpty(message = "Địa chỉ không được để trống")
 	@JsonProperty("address")
 	private String address;
-	
-	
 
 	public void setRestaurantId(String restaurantId) {
 		this.restaurantId = restaurantId;
