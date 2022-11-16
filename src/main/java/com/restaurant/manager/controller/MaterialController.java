@@ -71,6 +71,7 @@ public class MaterialController {
 		material.setName(materialRequest.getName());
 		material.setCost(0);
 		material.setType(materialRequest.getType());
+		material.setStockEnd(materialRequest.getStockEnd());
 		material.setQuantity(0);
 		material.setWhereProduction(materialRequest.getWhereProduction());
 		message = materialService.createMaterial(material) ? "Nguyên liệu đã được thêm vào" : "Không thành công";
@@ -89,6 +90,7 @@ public class MaterialController {
 		materialTmp.setCode(materialRequest.getCode());
 		materialTmp.setName(materialRequest.getName());
 		materialTmp.setType(materialRequest.getType());
+		materialTmp.setStockEnd(materialRequest.getStockEnd());
 		materialTmp.setWhereProduction(materialRequest.getWhereProduction());
 		message = materialService.updateMaterial(materialTmp) ? "Cập nhật thông tin thành công" : "Không thành công";
 		return ResponseEntity.status(HttpStatus.OK).body(message);
@@ -117,6 +119,7 @@ public class MaterialController {
 		materialRequest.setCost(material.getCost());
 		materialRequest.setType(material.getType());
 		materialRequest.setQuantity(material.getQuantity());
+		materialRequest.setStockEnd(material.getStockEnd());
 		materialRequest.setWhereProduction(material.getWhereProduction());
 		return ResponseEntity.status(HttpStatus.OK).body(materialRequest);
 	}
@@ -136,6 +139,7 @@ public class MaterialController {
 			materialRequest.setCost(material.getCost());
 			materialRequest.setType(material.getType());
 			materialRequest.setQuantity(material.getQuantity());
+			materialRequest.setStockEnd(material.getStockEnd());
 			materialRequest.setWhereProduction(material.getWhereProduction());
 			listMaterialRequest.add(materialRequest);
 		}
