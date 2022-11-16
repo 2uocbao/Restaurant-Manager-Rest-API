@@ -209,9 +209,9 @@ public class EmployeeController {
 			@RequestParam("restaurantId") String restaurantId) {
 		BaseResponse baseResponse = new BaseResponse();
 		List<EmployeeRequest> listEmployeeShow = new ArrayList<>();
-		EmployeeRequest employeeRequest = new EmployeeRequest();
 		List<Employee> listEmployeeDB = employeeService.listEmpoyeeByResIdOrBranId(restaurantId, branchId);
 		for (Employee employee : listEmployeeDB) {
+			EmployeeRequest employeeRequest = new EmployeeRequest();
 			employeeRequest.setEmployeeId(employee.getId());
 			employeeRequest.setRestaurantId(employee.getRestaurant().getId());
 			employeeRequest.setBranchId(branchId);
