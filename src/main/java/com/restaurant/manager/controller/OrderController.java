@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.restaurant.manager.model.Branch;
 import com.restaurant.manager.model.Employee;
 import com.restaurant.manager.model.Food;
 import com.restaurant.manager.model.Material;
@@ -71,23 +72,19 @@ public class OrderController {
 		Orders orders = new Orders();
 		Employee employee = employeeService.detailEmployee(orderRequest.getEmployeeId());
 		Tables table = tableService.detailTable(Integer.parseInt(orderRequest.getTableId()));
-		String branchIdT = table.getBranch() != null ? table.getBranch().getId() : "";
 		List<foodOrderRequest> foodOrderList = orderRequest.getFoodQuantity();
 		for (foodOrderRequest foodOrderRequest : foodOrderList) {
 			Food food = foodService.detailFood(Integer.parseInt(foodOrderRequest.getFood()));
-			String branchId = food.getBranch() != null ? food.getBranch().getId() : "";
-			if (!food.getRestaurant().getId().equals(table.getRestaurant().getId()) || !branchIdT.equals(branchId)) {
-				return ResponseEntity.status(HttpStatus.OK).body("Không có món ăn này");
-			}
 			if (food.getStatus() == 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("Món ăn này đã hết");
 			}
 		}
-		if (employee.getStatus() == 0) {
-			return ResponseEntity.status(HttpStatus.OK).body("Bạn không hoạt động nên không thể tạo gọi món");
-		} else if (table.getStatus() == 1) {
+		if (table.getStatus() == 1) {
 			return ResponseEntity.status(HttpStatus.OK).body("Bàn này đã có người ngồi");
 		} else {
+			orders.setRestaurant(employee.getRestaurant());
+			Branch branch =	 employee.getBranch() != null ? branchService.detailBranch(employee.getBranch().getId()) : null;
+			orders.setBranch(branch);
 			orders.setEmployee(employee);
 			orders.setTable(table);
 			orders.setDescription(orderRequest.getDescription());
@@ -137,6 +134,8 @@ public class OrderController {
 				// tao orderrequest, set cac thuoc tinh
 				OrderRequest orderRequest = new OrderRequest();
 				Tables table = tableService.detailTable(order.getTable().getId());
+				orderRequest.setRestaurantId(order.getRestaurant().getId());
+				orderRequest.setBranchId(order.getBranch() != null ? order.getBranch().getId() : null);
 				orderRequest.setEmployeeId(order.getEmployee().getId());
 				orderRequest.setTableId(table.getName());
 				orderRequest.setOrderId(order.getId());
@@ -187,6 +186,8 @@ public class OrderController {
 			foodOrderRequest.setQuantity(orderDetail.getQuatity());
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
+		orderRequest.setRestaurantId(order.getRestaurant().getId());
+		orderRequest.setBranchId(order.getBranch() != null ? order.getBranch().getId() : null);
 		orderRequest.setEmployeeId(order.getEmployee().getId());
 		orderRequest.setTableId(table.getName());
 		orderRequest.setOrderId(order.getId());
