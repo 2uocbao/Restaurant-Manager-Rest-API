@@ -19,6 +19,6 @@ public interface OrderRepository {
 	
 	public Orders detailOrders(String employeeId, int tableId, int status);
 	
-	public List<Orders> listOrder(String restaurantId, String branchId);
+	public List<Orders> listOrder(String restaurantId, String branchId, int status);
 
 }

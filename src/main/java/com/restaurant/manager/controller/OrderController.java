@@ -1,5 +1,8 @@
 package com.restaurant.manager.controller;
 
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +86,8 @@ public class OrderController {
 			return ResponseEntity.status(HttpStatus.OK).body("Bàn này đã có người ngồi");
 		} else {
 			orders.setRestaurant(employee.getRestaurant());
-			Branch branch =	 employee.getBranch() != null ? branchService.detailBranch(employee.getBranch().getId()) : null;
+			Branch branch = employee.getBranch() != null ? branchService.detailBranch(employee.getBranch().getId())
+					: null;
 			orders.setBranch(branch);
 			orders.setEmployee(employee);
 			orders.setTable(table);
@@ -107,10 +111,9 @@ public class OrderController {
 	@SuppressWarnings("deprecation")
 	@GetMapping("/list-order")
 	ResponseEntity<Object> listOrderByEmployeeId(@RequestParam("employeeId") String employeeId,
-			@RequestParam("status") int status) {
+			@RequestParam("status") int status, @RequestParam("day") String day) throws ParseException {
 		// lay danh sach order
-		long millis = System.currentTimeMillis();
-		java.sql.Date date = new java.sql.Date(millis);
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(day);
 		List<Orders> listOrder = orderService.listOrderByEmployeeId(employeeId);
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
 		// duyet theo danh sach order
@@ -118,45 +121,45 @@ public class OrderController {
 			if (order.getStatus() == status && order.getCreatedAt().getDate() == date.getDate()
 					&& order.getCreatedAt().getMonth() == date.getMonth()
 					&& order.getCreatedAt().getYear() == date.getYear()) {
-				// voi moi order lay ra danh sach cac orderdetail tuong ung voi idorder
-				List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
-				// list mon an
-				// list so luong order
-				List<foodOrderRequest> listFoodOrderRequests = new ArrayList<>();
-				// lay ra danh sach mon an va so luong chinh xac order cua tung mon
-				for (orderDetail orderdetail : listOrderDetails) {
-					Food food = foodService.detailFood(orderdetail.getFood().getId());
-					foodOrderRequest foodOrderRequest = new foodOrderRequest();
-					foodOrderRequest.setFood(food.getName());
-					foodOrderRequest.setQuantity(orderdetail.getQuatity());
-					listFoodOrderRequests.add(foodOrderRequest);
-				}
-				// tao orderrequest, set cac thuoc tinh
-				OrderRequest orderRequest = new OrderRequest();
-				Tables table = tableService.detailTable(order.getTable().getId());
-				orderRequest.setRestaurantId(order.getRestaurant().getId());
-				orderRequest.setBranchId(order.getBranch() != null ? order.getBranch().getId() : null);
-				orderRequest.setEmployeeId(order.getEmployee().getId());
-				orderRequest.setTableId(table.getName());
-				orderRequest.setOrderId(order.getId());
-				orderRequest.setDescription(order.getDescription());
-				orderRequest.setFoodQuantity(listFoodOrderRequests);
-				orderRequest.setStatus(order.getStatus());
-				listOrderRequests.add(orderRequest);
+				listOrderRequests.add(orderRequests(order));
 			}
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(listOrderRequests);
 	}
 
+	public OrderRequest orderRequests(Orders order) {
+		List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
+		// list mon an
+		// list so luong order
+		List<foodOrderRequest> listFoodOrderRequests = new ArrayList<>();
+		// lay ra danh sach mon an va so luong chinh xac order cua tung mon
+		for (orderDetail orderdetail : listOrderDetails) {
+			Food food = foodService.detailFood(orderdetail.getFood().getId());
+			foodOrderRequest foodOrderRequest = new foodOrderRequest();
+			foodOrderRequest.setFood(food.getName());
+			foodOrderRequest.setQuantity(orderdetail.getQuatity());
+			listFoodOrderRequests.add(foodOrderRequest);
+		}
+		// tao orderrequest, set cac thuoc tinh
+		OrderRequest orderRequest = new OrderRequest();
+		Tables table = tableService.detailTable(order.getTable().getId());
+		orderRequest.setRestaurantId(order.getRestaurant().getId());
+		orderRequest.setBranchId(order.getBranch() != null ? order.getBranch().getId() : null);
+		orderRequest.setEmployeeId(order.getEmployee().getId());
+		orderRequest.setTableId(table.getName());
+		orderRequest.setOrderId(order.getId());
+		orderRequest.setDescription(order.getDescription());
+		orderRequest.setFoodQuantity(listFoodOrderRequests);
+		orderRequest.setStatus(order.getStatus());
+		return orderRequest;
+	}
+
 	@PutMapping("/change-status")
 	ResponseEntity<String> changeStatusOrder(@RequestParam("orderId") int orderId) {
 		String message = null;
-		if (orderService.detailOrder(orderId) == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu order này");
-		}
 		int status = orderService.getStatusByOrderId(orderId) == 0 ? 1 : 0;
 		if (status == 0) {
-			message = orderService.changeStatus(orderId, status) ? "Chưa thanh toán" : "Không thành công";
+			message = orderService.changeStatus(orderId, status) ? "Chưa thanh toán" : "";
 		} else {
 			message = orderService.changeStatus(orderId, status) ? "Đã thanh toán" : "Không thành công";
 		}
@@ -166,34 +169,12 @@ public class OrderController {
 	@GetMapping("/detail")
 	ResponseEntity<Object> detailOrder(@RequestParam("employeeId") String employeeId,
 			@RequestParam("tableId") int tableId) {
-		OrderRequest orderRequest = new OrderRequest();
 		Tables table = tableService.detailTable(tableId);
-		if (table == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu của bàn này");
-		}
 		Orders order = orderService.detailOrders(employeeId, table.getId(), 0);
 		if (order == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có order nào của bàn này");
+			return ResponseEntity.status(HttpStatus.OK).body("Không có order nào của bàn này hoặc nó đã được thanh toán");
 		}
-		List<orderDetail> listorderDetail = orderDetailService.listOrderbyIdorder(order.getId());
-
-		List<foodOrderRequest> listFoodOrderRequests = new ArrayList<>();
-
-		for (orderDetail orderDetail : listorderDetail) {
-			Food food = foodService.detailFood(orderDetail.getFood().getId());
-			foodOrderRequest foodOrderRequest = new foodOrderRequest();
-			foodOrderRequest.setFood(food.getName());
-			foodOrderRequest.setQuantity(orderDetail.getQuatity());
-			listFoodOrderRequests.add(foodOrderRequest);
-		}
-		orderRequest.setRestaurantId(order.getRestaurant().getId());
-		orderRequest.setBranchId(order.getBranch() != null ? order.getBranch().getId() : null);
-		orderRequest.setEmployeeId(order.getEmployee().getId());
-		orderRequest.setTableId(table.getName());
-		orderRequest.setOrderId(order.getId());
-		orderRequest.setFoodQuantity(listFoodOrderRequests);
-		orderRequest.setDescription(order.getDescription());
-		orderRequest.setStatus(order.getStatus());
+		OrderRequest orderRequest = orderRequests(order);
 		return ResponseEntity.status(HttpStatus.OK).body(orderRequest);
 	}
 
@@ -204,11 +185,7 @@ public class OrderController {
 		BaseResponse baseResponse = new BaseResponse();
 		OrderRequest orderRequest = new OrderRequest();
 		Orders orders = orderService.detailOrders(employeeId, tableId, 0);
-		if (orders == null) {
-			baseResponse.setStatus(-1);
-			baseResponse.setMessage("Không có dữ liệu order của bàn này, vui lòng xem lại");
-			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
-		} else if (orders.getStatus() == 1) {
+		if (orders.getStatus() == 1) {
 			baseResponse.setStatus(-1);
 			baseResponse.setMessage("Order này đã thanh toán");
 			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
@@ -269,10 +246,7 @@ public class OrderController {
 		String message = null;
 		Orders order = orderService.detailOrders(orderRequest.getEmployeeId(),
 				Integer.parseInt(orderRequest.getTableId()), 0);
-		Tables table = tableService.detailTable(Integer.parseInt(orderRequest.getTableId()));
-		if (table.getStatus() == 0) {
-			return ResponseEntity.status(HttpStatus.OK).body("Bàn này chưa có order");
-		} else if (order.getStatus() == 1) {
+		if (order.getStatus() == 1) {
 			return ResponseEntity.status(HttpStatus.OK).body("order này đã thanh toán, không thể cập nhật");
 		}
 		// update cho order
@@ -307,9 +281,6 @@ public class OrderController {
 		for (Integer foodid : listFoodReq) {
 			orderDetail orderDetail = new orderDetail();
 			Food food = foodService.detailFood(foodid);
-			if (food == null) {
-				return ResponseEntity.status(HttpStatus.OK).body("Món ăn này không có");
-			}
 			if (food.getStatus() == 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 			}

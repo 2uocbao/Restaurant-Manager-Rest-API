@@ -192,19 +192,23 @@ public class OrderRepositoryImpl implements OrderRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Orders> listOrder(String restaurantId, String branchId) {
+	public List<Orders> listOrder(String restaurantId, String branchId, int status) {
 		List<Orders> listOrder = null;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			if(branchId.equals("")) {
 				listOrder = session.createQuery(
-						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.branch.id = null")
-						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
+						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.status = :status AND o.branch.id = null")
+						.setParameter("restaurantId", restaurantId)
+						.setParameter("status", status)
+						.list();
 			}else {
 				listOrder = session.createQuery(
-						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.branch.id = :branchId")
-						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();	
+						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.status = :status AND o.branch.id = :branchId")
+						.setParameter("restaurantId", restaurantId)
+						.setParameter("status", status)
+						.setParameter("branchId", branchId).list();	
 			}
 			transaction.commit();
 		} catch (Exception e) {

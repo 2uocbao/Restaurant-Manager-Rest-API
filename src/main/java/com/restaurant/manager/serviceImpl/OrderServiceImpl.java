@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<Orders> listOrder(String restaurantId, String branchId) {
-		return orderRepository.listOrder(restaurantId, branchId);
+	public List<Orders> listOrder(String restaurantId, String branchId, int status) {
+		return orderRepository.listOrder(restaurantId, branchId, status);
 	}
 }
