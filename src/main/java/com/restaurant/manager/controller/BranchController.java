@@ -39,9 +39,7 @@ public class BranchController {
 		Branch branch = new Branch();
 		Restaurants restaurant = restaurantService.detailRestaurant(branchRequest.getRestaurantId());
 		String message;
-		if (restaurant == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có thông tin về nhà hàng này");
-		} else if (restaurantService.getStatusById(branchRequest.getRestaurantId()) == 0) {
+		if (restaurantService.getStatusById(branchRequest.getRestaurantId()) == 0) {
 			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng đang tạm ngưng hoạt động");
 		} else if (!checkService.checkName(branchRequest.getName())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Tên không hợp lệ");
@@ -69,17 +67,13 @@ public class BranchController {
 	ResponseEntity<Object> detailBranch(@Valid @RequestParam(name = "id") String id) {
 		BranchRequest branchRequest = new BranchRequest();
 		Branch branch = branchService.detailBranch(id);
-		if (branch == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh không tồn tại");
-		} else {
-			branchRequest.setBranchId(branch.getId());
-			branchRequest.setRestaurantId(branch.getRestaurant().getId());
-			branchRequest.setName(branch.getName());
-			branchRequest.setPhone(branch.getPhone());
-			branchRequest.setAddress(branch.getAddress());
-			branchRequest.setStreet(branch.getStreet());
-			branchRequest.setStatus(branch.getStatus());
-		}
+		branchRequest.setBranchId(branch.getId());
+		branchRequest.setRestaurantId(branch.getRestaurant().getId());
+		branchRequest.setName(branch.getName());
+		branchRequest.setPhone(branch.getPhone());
+		branchRequest.setAddress(branch.getAddress());
+		branchRequest.setStreet(branch.getStreet());
+		branchRequest.setStatus(branch.getStatus());
 		return ResponseEntity.status(HttpStatus.OK).body(branchRequest);
 	}
 
@@ -88,9 +82,6 @@ public class BranchController {
 			@Valid @RequestBody BranchRequest branchRequest) {
 		String message;
 		Branch branch = branchService.detailBranch(id);
-		if (branch == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu của chi nhánh này");
-		}
 		if (!checkService.checkPhone(branchRequest.getPhone())) {
 			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hợp lệ");
 		} else {
@@ -111,9 +102,6 @@ public class BranchController {
 	@PutMapping("/change-status")
 	ResponseEntity<String> changeStatusBranch(@Valid @RequestParam(name = "id") String id) {
 		Branch branch = branchService.detailBranch(id);
-		if (branch == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu của chi nhánh này");
-		}
 		String message;
 		int statusFromRestaurant = restaurantService.getStatusById(branch.getRestaurant().getId());
 		if (statusFromRestaurant == 0) {

@@ -111,11 +111,6 @@ public class EmployeeController {
 		BaseResponse baseResponse = new BaseResponse();
 		EmployeeRequest employeeRequest = new EmployeeRequest();
 		Employee employee = employeeService.detailEmployee(id);
-		if (employee == null) {
-			baseResponse.setStatus(-1);
-			baseResponse.setMessage("Không tìm thấy nhân viên");
-			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
-		}
 		employeeRequest.setEmployeeId(employee.getId());
 		employeeRequest.setRestaurantId(employee.getRestaurant().getId());
 		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
@@ -143,11 +138,6 @@ public class EmployeeController {
 			@RequestParam("id") String id) {
 		BaseResponse baseResponse = new BaseResponse();
 		Employee employee = employeeService.detailEmployee(id);
-		if (employee == null) {
-			baseResponse.setStatus(-1);
-			baseResponse.setMessage("Không có dữ liệu về nhân viên này");
-			return ResponseEntity.badRequest().body(baseResponse);
-		}
 		if (!checkService.checkName(employeeRequest.getFirstName())
 				|| !checkService.checkName(employeeRequest.getLastName())
 				|| !checkService.checkName(employeeRequest.getFullName())) {
@@ -240,11 +230,6 @@ public class EmployeeController {
 			@RequestParam("newPassword") String newPassword, @RequestParam("oldPassword") String oldPassword) {
 		BaseResponse baseResponse = new BaseResponse();
 		Employee employee = employeeService.detailEmployee(id);
-		if (employee == null) {
-			baseResponse.setStatus(-1);
-			baseResponse.setMessage("Không có dữ liệu về nhân viên này");
-			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
-		}
 		if (!employeeService.loginEmployee(employee.getPhone(), oldPassword)) {
 			baseResponse.setStatus(-1);
 			baseResponse.setMessage("Mật khẩu cũ không chính xác");
@@ -260,11 +245,6 @@ public class EmployeeController {
 	ResponseEntity<BaseResponse> changestatusEmployee(@RequestParam("id") String id) {
 		BaseResponse baseResponse = new BaseResponse();
 		Employee employee = employeeService.detailEmployee(id);
-		if (employee == null) {
-			baseResponse.setStatus(-1);
-			baseResponse.setMessage("Người dùng không tồn tại");
-			return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
-		}
 		if (restaurantService.getStatusById(employee.getRestaurant().getId()) == 0) {
 			baseResponse.setStatus(-1);
 			baseResponse.setMessage("Không thể hoạt động, vì nhà hàng đang ngưng hoạt động");

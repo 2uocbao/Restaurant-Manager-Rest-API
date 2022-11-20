@@ -138,6 +138,7 @@ public class OrderController {
 			foodOrderRequest foodOrderRequest = new foodOrderRequest();
 			foodOrderRequest.setFood(food.getName());
 			foodOrderRequest.setQuantity(orderdetail.getQuatity());
+			foodOrderRequest.setPrice(food.getPrice() * orderdetail.getQuatity());
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
 		// tao orderrequest, set cac thuoc tinh
@@ -150,6 +151,7 @@ public class OrderController {
 		orderRequest.setOrderId(order.getId());
 		orderRequest.setDescription(order.getDescription());
 		orderRequest.setFoodQuantity(listFoodOrderRequests);
+		orderRequest.setTotalAmount(order.getTotalAmount());
 		orderRequest.setStatus(order.getStatus());
 		return orderRequest;
 	}
@@ -259,7 +261,7 @@ public class OrderController {
 		List<Integer> listFoodIdOrder = new ArrayList<>();
 		List<Integer> listFoodIdOrder1 = new ArrayList<>();
 
-		HashMap<Integer, Float> listRequest = new HashMap<>();
+		HashMap<Integer, Integer> listRequest = new HashMap<>();
 		List<Integer> listFoodReq = new ArrayList<>();
 		for (orderDetail orderDetail : listOrderDetails) {
 			listFoodIdOrder.add(orderDetail.getFood().getId());

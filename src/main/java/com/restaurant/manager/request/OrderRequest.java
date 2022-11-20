@@ -23,6 +23,9 @@ public class OrderRequest {
 	@JsonProperty("food")
 	private List<foodOrderRequest> foodQuantity;
 
+	@JsonProperty("totalAmount")
+	private float totalAmount;
+	
 	@JsonProperty("description")
 	private String description;
 	
@@ -91,5 +94,13 @@ public class OrderRequest {
 
 	public int getStatus() {
 		return status;
+	}
+
+	public float getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(float totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 }

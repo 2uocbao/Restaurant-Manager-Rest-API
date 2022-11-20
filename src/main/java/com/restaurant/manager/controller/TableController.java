@@ -52,9 +52,6 @@ public class TableController {
 		Tables table = new Tables();
 		List<Tables> listTable = null;
 		Restaurants restaurants = restaurantService.detailRestaurant(tableRequest.getRestaurantId());
-		if (restaurants == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng không tồn tại");
-		}
 		Branch branch = null;
 		if (tableRequest.getBranchId() != null) {
 			branch = branchService.detailBranch(tableRequest.getBranchId());

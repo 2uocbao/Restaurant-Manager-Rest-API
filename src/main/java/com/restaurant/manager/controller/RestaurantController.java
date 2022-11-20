@@ -105,9 +105,6 @@ public class RestaurantController {
 	@PutMapping("/change-status")
 	ResponseEntity<String> changeStatusRestaurant(@Valid @RequestParam(name = "id") String id) {
 		String message;
-		if (restaurantService.detailRestaurant(id) == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng không tồn tại");
-		}
 		int statusNow = restaurantService.getStatusById(id) == 1 ? 0 : 1;
 		if (statusNow == 1) {
 			message = restaurantService.changeStatusRestaurant(id, statusNow) ? "Nhà hàng đang hoạt động"

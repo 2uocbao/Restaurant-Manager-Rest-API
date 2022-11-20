@@ -7,7 +7,10 @@ public class foodOrderRequest {
 	private String food;
 
 	@JsonProperty("quantity")
-	private float quantity;
+	private int quantity;
+	
+	@JsonProperty("price")
+	private int price;
 
 	public String getFood() {
 		return food;
@@ -17,12 +20,19 @@ public class foodOrderRequest {
 		this.food = food;
 	}
 
-	public float getQuantity() {
+	public int getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(float quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
 }

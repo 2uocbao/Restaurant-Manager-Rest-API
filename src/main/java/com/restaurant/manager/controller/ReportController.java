@@ -148,6 +148,7 @@ public class ReportController {
 			foodOrderRequest foodOrderRequest = new foodOrderRequest();
 			foodOrderRequest.setFood(food.getName());
 			foodOrderRequest.setQuantity(orderdetail.getQuatity());
+			foodOrderRequest.setPrice(orderdetail.getQuatity() * food.getPrice());
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
 		// tao orderrequest, set cac thuoc tinh
@@ -160,6 +161,7 @@ public class ReportController {
 		orderRequest.setOrderId(order.getId());
 		orderRequest.setDescription(order.getDescription());
 		orderRequest.setFoodQuantity(listFoodOrderRequests);
+		orderRequest.setTotalAmount(order.getTotalAmount());
 		orderRequest.setStatus(order.getStatus());
 		return orderRequest;
 	}
