@@ -153,6 +153,7 @@ public class OrderController {
 		orderRequest.setFoodQuantity(listFoodOrderRequests);
 		orderRequest.setTotalAmount(order.getTotalAmount());
 		orderRequest.setStatus(order.getStatus());
+		orderRequest.setCreateAt(order.getCreatedAt());
 		return orderRequest;
 	}
 
@@ -240,6 +241,7 @@ public class OrderController {
 		baseResponse.setStatus(1);
 		baseResponse.setMessage("Số tiền cần thanh toán là" + total);
 		baseResponse.setData(orderRequest);
+		orderRequest.setCreateAt(orders.getCreatedAt());
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 

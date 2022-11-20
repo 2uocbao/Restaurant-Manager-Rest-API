@@ -163,6 +163,7 @@ public class ReportController {
 		orderRequest.setFoodQuantity(listFoodOrderRequests);
 		orderRequest.setTotalAmount(order.getTotalAmount());
 		orderRequest.setStatus(order.getStatus());
+		orderRequest.setCreateAt(order.getCreatedAt());
 		return orderRequest;
 	}
 }

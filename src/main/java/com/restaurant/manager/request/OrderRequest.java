@@ -1,5 +1,6 @@
 package com.restaurant.manager.request;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,6 +32,9 @@ public class OrderRequest {
 	
 	@JsonProperty("status")
 	private int status;
+	
+	@JsonProperty("createAt")
+	private Timestamp createAt;
 	
 	public String getRestaurantId() {
 		return restaurantId;
@@ -102,5 +106,13 @@ public class OrderRequest {
 
 	public void setTotalAmount(float totalAmount) {
 		this.totalAmount = totalAmount;
+	}
+
+	public Timestamp getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(Timestamp createAt) {
+		this.createAt = createAt;
 	}
 }
