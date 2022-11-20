@@ -44,9 +44,6 @@ public class MaterialController {
 		Material materialTmp = null;
 		Branch branch = null;
 		Restaurants restaurants = restaurantService.detailRestaurant(materialRequest.getRestaurantId());
-		if (restaurants == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng không tồn tại");
-		}
 		if (materialRequest.getBranchId() != null) {
 			branch = branchService.detailBranch(materialRequest.getBranchId());
 			if (branch == null || !branch.getRestaurant().getId().equals(restaurants.getId())) {
@@ -84,9 +81,6 @@ public class MaterialController {
 		String branchId = materialRequest.getBranchId() != null ? materialRequest.getBranchId() : "";
 		Material materialTmp = materialService.detailMaterial(materialRequest.getCode(),
 				materialRequest.getRestaurantId(), branchId);
-		if (materialTmp == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu này chưa có");
-		}
 		materialTmp.setCode(materialRequest.getCode());
 		materialTmp.setName(materialRequest.getName());
 		materialTmp.setType(materialRequest.getType());

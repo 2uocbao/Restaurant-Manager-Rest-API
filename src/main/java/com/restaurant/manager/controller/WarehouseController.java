@@ -46,9 +46,6 @@ public class WarehouseController {
 		String message;
 		Employee employee = employeeService.detailEmployee(warehouseRequest.getEmployeeId());
 		Warehouse warehouse = new Warehouse();
-		if (employee.getStatus() == 0) {
-			return ResponseEntity.status(HttpStatus.OK).body("Bạn không hoạt động");
-		}
 		Material material = null;
 		if (employee.getBranch() == null) {
 			material = materialService.detailMaterial(warehouseRequest.getMaterialCode(), employee.getRestaurant().getId(), "");

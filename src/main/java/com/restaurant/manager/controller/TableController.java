@@ -82,18 +82,14 @@ public class TableController {
 	ResponseEntity<Object> detailTable(@Valid @RequestParam(name = "id") int id) {
 		Tables table = tableService.detailTable(id);
 		TableRequest tableRequest = new TableRequest();
-		if (table == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu");
-		} else {
-			tableRequest.setTableId(table.getId());
-			tableRequest.setRestaurantId(table.getRestaurant().getId());
-			String branchId = table.getBranch() != null ? table.getBranch().getId() : null;
-			tableRequest.setBranchId(branchId);
-			tableRequest.setName(table.getName());
-			tableRequest.setTotalSlot(table.getTotalSlot());
-			tableRequest.setDescription(table.getDescription());
-			tableRequest.setStatus(table.getStatus());
-		}
+		tableRequest.setTableId(table.getId());
+		tableRequest.setRestaurantId(table.getRestaurant().getId());
+		String branchId = table.getBranch() != null ? table.getBranch().getId() : null;
+		tableRequest.setBranchId(branchId);
+		tableRequest.setName(table.getName());
+		tableRequest.setTotalSlot(table.getTotalSlot());
+		tableRequest.setDescription(table.getDescription());
+		tableRequest.setStatus(table.getStatus());
 		return ResponseEntity.status(HttpStatus.OK).body(tableRequest);
 	}
 
@@ -123,9 +119,6 @@ public class TableController {
 			@Valid @RequestBody TableRequest tableRequest) {
 		String message = null;
 		Tables table = tableService.detailTable(id);
-		if (table == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Bàn này chưa có");
-		}
 		String branchId = table.getBranch() != null ? table.getBranch().getId() : "";
 		List<Tables> listTable = tableService.listTableByBranchIdandRestaurantId(table.getRestaurant().getId(),
 				branchId);
@@ -146,9 +139,6 @@ public class TableController {
 	ResponseEntity<String> changeStatusTable(@Valid @RequestParam(name = "id") int id) {
 		String message;
 		Tables table = tableService.detailTable(id);
-		if (table == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Bàn này chưa có");
-		}
 		String branchId = table.getBranch() != null ? table.getBranch().getId() : null;
 		if (restaurantService.getStatusById(table.getRestaurant().getId()) == 0) {
 			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng đang ngưng hoạt động");
