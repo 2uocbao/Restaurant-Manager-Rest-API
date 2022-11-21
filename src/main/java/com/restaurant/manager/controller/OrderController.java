@@ -78,7 +78,7 @@ public class OrderController {
 		List<foodOrderRequest> foodOrderList = orderRequest.getFoodQuantity();
 		for (foodOrderRequest foodOrderRequest : foodOrderList) {
 			Food food = foodService.detailFood(Integer.parseInt(foodOrderRequest.getFood()));
-			if (food.getStatus() == 0) {
+			if (food.getStatus() == 1) {
 				return ResponseEntity.status(HttpStatus.OK).body("Món ăn này đã hết");
 			}
 		}
