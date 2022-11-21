@@ -172,9 +172,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			order = (Orders) session.createQuery(
-					"FROM com.restaurant.manager.model.Orders o WHERE o.table.id = :tableId AND o.employee.id = :employeeId AND o.status = :status")
-					.setParameter("tableId", tableId).setParameter("employeeId", employeeId)
-					.setParameter("status", status).uniqueResult();
+					"FROM com.restaurant.manager.model.Orders o WHERE o.table.id = :tableId AND o.status = :status")
+					.setParameter("tableId", tableId).setParameter("status", status).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -197,18 +196,15 @@ public class OrderRepositoryImpl implements OrderRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if(branchId.equals("")) {
+			if (branchId.equals("")) {
 				listOrder = session.createQuery(
 						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.status = :status AND o.branch.id = null")
-						.setParameter("restaurantId", restaurantId)
-						.setParameter("status", status)
-						.list();
-			}else {
+						.setParameter("restaurantId", restaurantId).setParameter("status", status).list();
+			} else {
 				listOrder = session.createQuery(
 						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.status = :status AND o.branch.id = :branchId")
-						.setParameter("restaurantId", restaurantId)
-						.setParameter("status", status)
-						.setParameter("branchId", branchId).list();	
+						.setParameter("restaurantId", restaurantId).setParameter("status", status)
+						.setParameter("branchId", branchId).list();
 			}
 			transaction.commit();
 		} catch (Exception e) {

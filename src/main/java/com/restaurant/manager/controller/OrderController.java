@@ -174,9 +174,6 @@ public class OrderController {
 			@RequestParam("tableId") int tableId) {
 		Tables table = tableService.detailTable(tableId);
 		Orders order = orderService.detailOrders(employeeId, table.getId(), 0);
-		if (order == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có order nào của bàn này hoặc nó đã được thanh toán");
-		}
 		OrderRequest orderRequest = orderRequests(order);
 		return ResponseEntity.status(HttpStatus.OK).body(orderRequest);
 	}
