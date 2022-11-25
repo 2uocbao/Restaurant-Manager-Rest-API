@@ -7,7 +7,7 @@ import com.restaurant.manager.model.orderDetail;
 public interface orderDetailService {
 	public boolean createOrderDetail(orderDetail orderDetail);
 
-	public orderDetail detailOrder(int orderId, int foodId);
+	public orderDetail detailOrder(int orderId);
 
 	public boolean updateOrderDetail(orderDetail orderDetail);
 	

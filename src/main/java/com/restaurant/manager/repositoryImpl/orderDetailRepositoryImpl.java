@@ -44,14 +44,14 @@ public class orderDetailRepositoryImpl implements orderDetailRepository {
 	}
 
 	@Override
-	public orderDetail detailOrder(int orderId, int foodId) {
+	public orderDetail detailOrder(int orderId) {
 		orderDetail orderDetail = new orderDetail();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			orderDetail = (orderDetail) session.createQuery(
-					"FROM com.restaurant.manager.model.orderDetail o WHERE o.order.id = :orderId AND o.food.id = :foodId")
-					.setParameter("orderId", orderId).setParameter("foodId", foodId).uniqueResult();
+					"FROM com.restaurant.manager.model.orderDetail o WHERE o.order.id = :orderId")
+					.setParameter("orderId", orderId).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {

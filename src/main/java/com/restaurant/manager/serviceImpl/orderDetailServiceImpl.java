@@ -21,8 +21,8 @@ public class orderDetailServiceImpl implements orderDetailService {
 	}
 
 	@Override
-	public orderDetail detailOrder(int orderId, int foodId) {
-		return orderDetailRepository.detailOrder(orderId, foodId);
+	public orderDetail detailOrder(int orderId) {
+		return orderDetailRepository.detailOrder(orderId);
 	}
 
 	@Override

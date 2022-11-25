@@ -190,7 +190,7 @@ public class FoodController {
 		String message;
 		Food food = foodService.detailFood(id);
 		int status = food.getStatus() == 1 ? 0 : 1;
-		if (status == 1) {
+		if (status == 0) {
 			message = foodService.changeStatusFood(id, status) ? "Món này đã hết" : "";
 		} else {
 			message = foodService.changeStatusFood(id, status) ? "Món này vẫn còn" : "";

@@ -1,11 +1,12 @@
 package com.restaurant.manager.controller;
 
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -78,7 +79,7 @@ public class OrderController {
 		List<foodOrderRequest> foodOrderList = orderRequest.getFoodQuantity();
 		for (foodOrderRequest foodOrderRequest : foodOrderList) {
 			Food food = foodService.detailFood(Integer.parseInt(foodOrderRequest.getFood()));
-			if (food.getStatus() == 1) {
+			if (food.getStatus() == 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("Món ăn này đã hết");
 			}
 		}
@@ -247,8 +248,8 @@ public class OrderController {
 		String message = null;
 		Orders order = orderService.detailOrders(orderRequest.getEmployeeId(),
 				Integer.parseInt(orderRequest.getTableId()), 0);
-		if (order.getStatus() == 1) {
-			return ResponseEntity.status(HttpStatus.OK).body("order này đã thanh toán, không thể cập nhật");
+		if (order == null) {
+			return ResponseEntity.status(HttpStatus.OK).body("Không có order cho bàn này hoặc đã được thanh toán");
 		}
 		// update cho order
 		order.setDescription(orderRequest.getDescription());
@@ -282,7 +283,7 @@ public class OrderController {
 		for (Integer foodid : listFoodReq) {
 			orderDetail orderDetail = new orderDetail();
 			Food food = foodService.detailFood(foodid);
-			if (food.getStatus() == 0) {
+			if (food.getStatus() == 1) {
 				return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 			}
 			orderDetail.setFood(food);
@@ -296,16 +297,53 @@ public class OrderController {
 			if (food.getStatus() == 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 			}
-			orderDetail orderDetail = orderDetailService.detailOrder(order.getId(), foodIdOrder1);
-			orderDetail.setFood(food);
-			orderDetail.setOrder(order);
-			orderDetail.setQuatity(listRequest.get(foodIdOrder1));
-			orderDetailService.updateOrderDetail(orderDetail);
+			List<orderDetail> orderDetail = orderDetailService.listOrderbyIdorder(order.getId());
+			for (orderDetail orderd : orderDetail) {
+				if (orderd.getFood().getId() == food.getId()) {
+					orderd.setFood(food);
+					orderd.setOrder(order);
+					orderd.setQuatity(listRequest.get(foodIdOrder1));
+					orderDetailService.updateOrderDetail(orderd);
+				}
+			}
 		}
 
 		for (Integer foodid : listFoodIdOrder) {
 			orderDetailService.deleteOrderDetail(order.getId(), foodid);
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
+	}
+
+	@GetMapping("/report")
+	ResponseEntity<Object> reportFood(@RequestParam("employeeId") String employeeId) {
+		List<foodOrderRequest> listFoodOrderRequests = new ArrayList<>();
+		Employee employee = employeeService.detailEmployee(employeeId);
+		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
+		List<Orders> listOrders = orderService.listOrder(employee.getRestaurant().getId(), branchId, 1);
+		List<orderDetail> listOrderDetails = null;
+		HashMap<Integer, Integer> foodquantity = new HashMap<>();
+		int quantity = 0;
+		for (Orders order : listOrders) {
+			listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
+			for (orderDetail orderd : listOrderDetails) {
+				if (foodquantity.get(orderd.getFood().getId()) != null) {
+					foodquantity.put(orderd.getFood().getId(),
+							foodquantity.get(orderd.getFood().getId()) + orderd.getQuatity());
+				} else {
+					foodquantity.put(orderd.getFood().getId(), orderd.getQuatity());
+				}
+				quantity = quantity + orderd.getQuatity();
+			}
+		}
+		for (Map.Entry<Integer, Integer> entity : foodquantity.entrySet()) {
+			foodOrderRequest foodOrderRequest = new foodOrderRequest();
+			Food food = foodService.detailFood(entity.getKey());
+			foodOrderRequest.setFood(food.getName());
+			float i = entity.getValue()*10/quantity*10;
+			foodOrderRequest.setPrice(i);
+
+			listFoodOrderRequests.add(foodOrderRequest);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(listFoodOrderRequests);
 	}
 }
