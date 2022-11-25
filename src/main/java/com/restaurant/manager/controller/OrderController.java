@@ -314,6 +314,7 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
+	@SuppressWarnings("deprecation")
 	@GetMapping("/report")
 	ResponseEntity<Object> reportFood(@RequestParam("employeeId") String employeeId) {
 		List<foodOrderRequest> listFoodOrderRequests = new ArrayList<>();
@@ -323,24 +324,28 @@ public class OrderController {
 		List<orderDetail> listOrderDetails = null;
 		HashMap<Integer, Integer> foodquantity = new HashMap<>();
 		int quantity = 0;
+		Date date = new Date(System.currentTimeMillis());
 		for (Orders order : listOrders) {
-			listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
-			for (orderDetail orderd : listOrderDetails) {
-				if (foodquantity.get(orderd.getFood().getId()) != null) {
-					foodquantity.put(orderd.getFood().getId(),
-							foodquantity.get(orderd.getFood().getId()) + orderd.getQuatity());
-				} else {
-					foodquantity.put(orderd.getFood().getId(), orderd.getQuatity());
+			if (order.getCreatedAt().getDate() == date.getDate() && order.getCreatedAt().getMonth() == date.getMonth()
+					&& order.getCreatedAt().getYear() == date.getYear()) {
+				listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
+				for (orderDetail orderd : listOrderDetails) {
+					if (foodquantity.get(orderd.getFood().getId()) != null) {
+						foodquantity.put(orderd.getFood().getId(),
+								foodquantity.get(orderd.getFood().getId()) + orderd.getQuatity());
+					} else {
+						foodquantity.put(orderd.getFood().getId(), orderd.getQuatity());
+					}
+					quantity = quantity + orderd.getQuatity();
 				}
-				quantity = quantity + orderd.getQuatity();
 			}
 		}
 		for (Map.Entry<Integer, Integer> entity : foodquantity.entrySet()) {
 			foodOrderRequest foodOrderRequest = new foodOrderRequest();
 			Food food = foodService.detailFood(entity.getKey());
 			foodOrderRequest.setFood(food.getName());
-			float i = entity.getValue()*10/quantity*10;
-			foodOrderRequest.setPrice(i);
+//			float i = entity.getValue() * 10 / quantity * 10;
+			foodOrderRequest.setPrice(entity.getValue());
 
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
