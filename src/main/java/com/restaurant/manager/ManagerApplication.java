@@ -15,9 +15,9 @@ public class ManagerApplication {
 		SpringApplication.run(ManagerApplication.class, args);
 	}
 
-	@PostConstruct
-	public void init() {
-		// Setting Spring Boot SetTimeZone
-		TimeZone.setDefault(TimeZone.getTimeZone("GMT+7"));
-	}
+//	@PostConstruct
+//	public void init() {
+//		// Setting Spring Boot SetTimeZone
+//		TimeZone.setDefault(TimeZone.getTimeZone("GMT+7"));
+//	}
 }
