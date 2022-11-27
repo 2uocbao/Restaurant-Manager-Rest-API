@@ -56,12 +56,13 @@ public class ReportController {
 
 	@SuppressWarnings("deprecation")
 	@GetMapping("/in-day")
-	ResponseEntity<BaseResponse> reportTurnoverInDay(@RequestParam("employeeId") String employeeId) {
+	ResponseEntity<BaseResponse> reportTurnoverInDay(@RequestParam("employeeId") String employeeId,
+			@RequestParam("day") String day, @RequestParam("status") int status) throws ParseException {
 		Employee employee = employeeService.detailEmployee(employeeId);
 		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
-		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, 1);
+		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, status);
 		float total = 0;
-		Date date = new Date(System.currentTimeMillis());
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(day);
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
 		for (Orders order : listOrder) {
 			if (order.getCreatedAt().getDate() == date.getDate() && order.getCreatedAt().getMonth() == date.getMonth()
@@ -80,17 +81,20 @@ public class ReportController {
 	@SuppressWarnings("deprecation")
 	@GetMapping("/in-month")
 	ResponseEntity<BaseResponse> reportTurnoverInMonth(@RequestParam("employeeId") String employeeId,
-			@RequestParam("month") int month) {
+			@RequestParam("day") String day) throws ParseException {
 		Employee employee = employeeService.detailEmployee(employeeId);
 		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
 		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, 1);
 		float total = 0;
-		Date date = new Date(System.currentTimeMillis());
+		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(day);
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
+		int month = 0;
 		for (Orders order : listOrder) {
-			if (order.getCreatedAt().getMonth() <= month && order.getCreatedAt().getYear() <= date.getYear()) {
+			if (order.getCreatedAt().getMonth() == date.getMonth()
+					&& order.getCreatedAt().getYear() == date.getYear()) {
 				listOrderRequests.add(orderRequests(order));
 				total = total + order.getTotalAmount();
+				month = order.getCreatedAt().getMonth() + 1;
 			}
 		}
 		BaseResponse baseResponse = new BaseResponse();
@@ -136,7 +140,7 @@ public class ReportController {
 		}
 		return ResponseEntity.status(HttpStatus.OK).body("Những nguyên liệu sắp hết cần nhập hàng ngay" + listCode);
 	}
-	
+
 	public OrderRequest orderRequests(Orders order) {
 		List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(order.getId());
 		// list mon an
@@ -166,4 +170,5 @@ public class ReportController {
 		orderRequest.setCreateAt(order.getCreatedAt());
 		return orderRequest;
 	}
+
 }

@@ -283,7 +283,7 @@ public class OrderController {
 		for (Integer foodid : listFoodReq) {
 			orderDetail orderDetail = new orderDetail();
 			Food food = foodService.detailFood(foodid);
-			if (food.getStatus() == 1) {
+			if (food.getStatus() == 0) {
 				return ResponseEntity.status(HttpStatus.OK).body("Mon an nay hien da het");
 			}
 			orderDetail.setFood(food);
@@ -345,8 +345,7 @@ public class OrderController {
 			Food food = foodService.detailFood(entity.getKey());
 			foodOrderRequest.setFood(food.getName());
 //			float i = entity.getValue() * 10 / quantity * 10;
-			foodOrderRequest.setPrice(entity.getValue());
-
+			foodOrderRequest.setQuantity(entity.getValue());
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(listFoodOrderRequests);
