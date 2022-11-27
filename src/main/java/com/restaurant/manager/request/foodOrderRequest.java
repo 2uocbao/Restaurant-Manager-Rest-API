@@ -11,6 +11,9 @@ public class foodOrderRequest {
 	
 	@JsonProperty("price")
 	private float price;
+	
+	@JsonProperty("total")
+	private float total;
 
 	public String getFood() {
 		return food;
@@ -35,4 +38,14 @@ public class foodOrderRequest {
 	public void setPrice(float price) {
 		this.price = price;
 	}
+
+	public float getTotal() {
+		return total;
+	}
+
+	public void setTotal(float total) {
+		this.total = total;
+	}
+	
+	
 }

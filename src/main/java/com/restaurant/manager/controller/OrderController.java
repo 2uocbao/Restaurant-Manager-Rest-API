@@ -139,7 +139,8 @@ public class OrderController {
 			foodOrderRequest foodOrderRequest = new foodOrderRequest();
 			foodOrderRequest.setFood(food.getName());
 			foodOrderRequest.setQuantity(orderdetail.getQuatity());
-			foodOrderRequest.setPrice(food.getPrice() * orderdetail.getQuatity());
+			foodOrderRequest.setPrice(food.getPrice());
+			foodOrderRequest.setTotal(food.getPrice() * orderdetail.getQuatity());
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
 		// tao orderrequest, set cac thuoc tinh
