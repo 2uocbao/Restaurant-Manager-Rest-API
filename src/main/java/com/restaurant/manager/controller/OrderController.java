@@ -114,7 +114,7 @@ public class OrderController {
 	ResponseEntity<Object> listOrderByEmployeeId(@RequestParam("employeeId") String employeeId,
 			@RequestParam("status") int status, @RequestParam("day") String day) throws ParseException {
 		// lay danh sach order
-		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(day);
+		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(day);
 		List<Orders> listOrder = orderService.listOrderByEmployeeId(employeeId);
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
 		// duyet theo danh sach order
