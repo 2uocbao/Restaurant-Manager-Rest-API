@@ -94,7 +94,7 @@ public class ReportController {
 					&& order.getCreatedAt().getYear() == date.getYear()) {
 				listOrderRequests.add(orderRequests(order));
 				total = total + order.getTotalAmount();
-				month = order.getCreatedAt().getMonth() + 1;
+//				month = order.getCreatedAt().getMonth() + 1;
 			}
 		}
 		BaseResponse baseResponse = new BaseResponse();
