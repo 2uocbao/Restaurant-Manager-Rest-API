@@ -25,7 +25,7 @@ public class PhotoController {
 	ImageService photoService;
 
 	@PostMapping("/upload")
-	ResponseEntity<?> uploadPhoto(@RequestParam("photo") MultipartFile multipartFile,
+	ResponseEntity<Object> uploadPhoto(@RequestParam("photo") MultipartFile multipartFile,
 			@RequestParam("userId") String userId) throws IOException {
 		photoService.uploadPhoto(
 				Image.builder().userId(userId).image(PhotoUtils.compressImage(multipartFile.getBytes())).build());
@@ -33,7 +33,7 @@ public class PhotoController {
 	}
 
 	@GetMapping("/display")
-	ResponseEntity<?> displayPhoto(@RequestParam("userId") String userId) {
+	ResponseEntity<Object> displayPhoto(@RequestParam("userId") String userId) {
 		Optional<Image> photodb = photoService.displayPhoto(userId);
 		byte[] photo = PhotoUtils.decompressImage(photodb.get().getImage());
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/jpg")).body(photo);

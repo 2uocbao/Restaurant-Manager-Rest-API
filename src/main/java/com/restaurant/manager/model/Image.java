@@ -18,7 +18,7 @@ public class Image {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "user_id")
+	@Column(name = "imgId")
 	private String userId;
 
 	@Column(nullable = true, length = 64)

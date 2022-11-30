@@ -22,6 +22,9 @@ public class FoodRequest {
 
 	@JsonProperty("type")
 	private String type;
+	
+	@JsonProperty("image")
+	private String image;
 
 	@JsonProperty("material")
 	private List<materialFood> materialCode;

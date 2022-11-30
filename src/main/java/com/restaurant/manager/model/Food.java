@@ -35,6 +35,9 @@ public class Food {
 
 	@Column(name = "typefood")
 	private String type;
+	
+//	@Column(name = "image")
+//	private String image;
 
 	@Column(name = "status")
 	private int status;
@@ -110,4 +113,12 @@ public class Food {
 	public void setBranch(Branch branch) {
 		this.branch = branch;
 	}
+
+//	public String getImage() {
+//		return image;
+//	}
+//
+//	public void setImage(String image) {
+//		this.image = image;
+//	}
 }
