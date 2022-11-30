@@ -86,7 +86,7 @@ public class ReportController {
 		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
 		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, 1);
 		float total = 0;
-		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(day);
+		Date date = new SimpleDateFormat("yyyy/MM/dd").parse(day);
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
 		int month = 0;
 		for (Orders order : listOrder) {
