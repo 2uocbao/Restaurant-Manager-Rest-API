@@ -1,9 +1,7 @@
 package com.restaurant.manager.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,12 +55,12 @@ public class ReportController {
 	@SuppressWarnings("deprecation")
 	@GetMapping("/in-day")
 	ResponseEntity<BaseResponse> reportTurnoverInDay(@RequestParam("employeeId") String employeeId,
-			@RequestParam("day") String day, @RequestParam("status") int status) throws ParseException {
+			@RequestParam("day") String day, @RequestParam("status") int status) {
 		Employee employee = employeeService.detailEmployee(employeeId);
 		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
 		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, status);
 		float total = 0;
-		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(day);
+		Date date = Date.valueOf(day);
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
 		for (Orders order : listOrder) {
 			if (order.getCreatedAt().getDate() == date.getDate() && order.getCreatedAt().getMonth() == date.getMonth()
@@ -73,7 +71,7 @@ public class ReportController {
 		}
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.setData(listOrderRequests);
-		baseResponse.setMessage("Doanh thu ngày " + date + "là: " + total);
+		baseResponse.setMessage("Doanh thu ngày " + date + " là: " + total);
 		baseResponse.setStatus(1);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
@@ -81,20 +79,19 @@ public class ReportController {
 	@SuppressWarnings("deprecation")
 	@GetMapping("/in-month")
 	ResponseEntity<BaseResponse> reportTurnoverInMonth(@RequestParam("employeeId") String employeeId,
-			@RequestParam("day") String day) throws ParseException {
+			@RequestParam("day") String day) {
 		Employee employee = employeeService.detailEmployee(employeeId);
 		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
 		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, 1);
 		float total = 0;
-		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(day);
+		Date date = Date.valueOf(day);
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
-		int month = 0;
+		int month = date.getMonth() + 1;
 		for (Orders order : listOrder) {
 			if (order.getCreatedAt().getMonth() == date.getMonth()
 					&& order.getCreatedAt().getYear() == date.getYear()) {
 				listOrderRequests.add(orderRequests(order));
 				total = total + order.getTotalAmount();
-				month = order.getCreatedAt().getMonth() + 1;
 			}
 		}
 		BaseResponse baseResponse = new BaseResponse();
@@ -107,22 +104,22 @@ public class ReportController {
 	@SuppressWarnings("deprecation")
 	@GetMapping("/by-year")
 	ResponseEntity<BaseResponse> reportTurnoverInYear(@RequestParam("employeeId") String employeeId,
-			@RequestParam("year") String year) throws ParseException {
+			@RequestParam("day") String day) {
 		Employee employee = employeeService.detailEmployee(employeeId);
 		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
 		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, 1);
 		float total = 0;
-		Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(year);
+		Date date = Date.valueOf(day);
 		List<OrderRequest> listOrderRequests = new ArrayList<>();
 		for (Orders order : listOrder) {
-			if (order.getCreatedAt().getYear() == date1.getYear()) {
+			if (order.getCreatedAt().getYear() == date.getYear()) {
 				total = total + order.getTotalAmount();
 				listOrderRequests.add(orderRequests(order));
 			}
 		}
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.setData(listOrderRequests);
-		baseResponse.setMessage("Doanh thu nam " + date1 + " là: " + total);
+		baseResponse.setMessage("Doanh thu nam " + day.substring(0, 4) + " là: " + total);
 		baseResponse.setStatus(1);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
