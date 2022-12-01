@@ -30,6 +30,9 @@ public class orderDetail {
 
 	@Column(name = "quantity")
 	private int quatity;
+	
+	@Column(name = "status")
+	private int status;
 
 	public Orders getOrder() {
 		return order;
@@ -53,5 +56,13 @@ public class orderDetail {
 
 	public void setQuatity(int quatity) {
 		this.quatity = quatity;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

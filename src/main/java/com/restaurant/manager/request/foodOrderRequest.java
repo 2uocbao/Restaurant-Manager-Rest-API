@@ -14,6 +14,9 @@ public class foodOrderRequest {
 	
 	@JsonProperty("total")
 	private float total;
+	
+	@JsonProperty("status")
+	private int status;
 
 	public String getFood() {
 		return food;
@@ -45,5 +48,13 @@ public class foodOrderRequest {
 
 	public void setTotal(float total) {
 		this.total = total;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

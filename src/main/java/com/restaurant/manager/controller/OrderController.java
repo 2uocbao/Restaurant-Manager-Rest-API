@@ -102,6 +102,7 @@ public class OrderController {
 				orderDetail.setFood(food);
 				orderDetail.setOrder(orders);
 				orderDetail.setQuatity(foodOrderRequest.getQuantity());
+				orderDetail.setStatus(0);
 				orderDetailService.createOrderDetail(orderDetail);
 			}
 			tableService.changeStatusById(table.getId(), 1);
@@ -142,6 +143,7 @@ public class OrderController {
 			foodOrderRequest.setQuantity(orderdetail.getQuatity());
 			foodOrderRequest.setPrice(food.getPrice());
 			foodOrderRequest.setTotal(food.getPrice() * orderdetail.getQuatity());
+			foodOrderRequest.setStatus(orderdetail.getStatus());
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
 		// tao orderrequest, set cac thuoc tinh
@@ -366,7 +368,27 @@ public class OrderController {
 		reportOrder.setDoanhthu(total);
 		BaseResponse baseResponse = new BaseResponse();
 		baseResponse.setData(reportOrder);
-		baseResponse.setMessage("Hôm nay "+ date);
+		baseResponse.setMessage("Hôm nay " + date);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
+	}
+
+	@PutMapping("change-status-food")
+	ResponseEntity<Object> changestatusfood(@RequestParam("orderId") int orderId, @RequestParam("foodId") int foodId,
+			@RequestParam("status") int status) {
+		List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(orderId);
+		String message = null;
+		for (orderDetail orderDetail : listOrderDetails) {
+			if (orderDetail.getFood().getId() == foodId) {
+//				int statusFoodOrder = orderDetail.getStatus();
+				if (status == 1) {
+					orderDetail.setStatus(1);
+					message = orderDetailService.updateOrderDetail(orderDetail) ? "đang được chế biến" : "";
+				} else if (status == 2) {
+					orderDetail.setStatus(2);
+					message = orderDetailService.updateOrderDetail(orderDetail) ? "đã phục vụ" : "";
+				}
+			}
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 }
