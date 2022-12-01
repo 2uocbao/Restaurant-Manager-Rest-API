@@ -119,6 +119,7 @@ public class FoodController {
 		food.setName(foodRequest.getName());
 		food.setPrice(foodRequest.getPrice());
 		food.setType(foodRequest.getType());
+		food.setImage(foodRequest.getImage());
 		message = foodService.updateFood(food) ? "Cập nhật thông tin thành công" : "";
 		List<foodDetail> listFoodDetails = foodDetailService.listFoodDetail(foodRequest.getFoodId());
 		List<String> materialCode = new ArrayList<>();
