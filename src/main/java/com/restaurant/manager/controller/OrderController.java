@@ -29,6 +29,7 @@ import com.restaurant.manager.model.foodDetail;
 import com.restaurant.manager.model.orderDetail;
 import com.restaurant.manager.request.OrderRequest;
 import com.restaurant.manager.request.foodOrderRequest;
+import com.restaurant.manager.request.reportOrder;
 import com.restaurant.manager.response.BaseResponse;
 import com.restaurant.manager.service.BranchService;
 import com.restaurant.manager.service.EmployeeService;
@@ -326,6 +327,7 @@ public class OrderController {
 		List<orderDetail> listOrderDetails = null;
 		HashMap<Integer, Integer> foodquantity = new HashMap<>();
 		int quantity = 0;
+		float total = 0;
 		Date date = new Date(System.currentTimeMillis());
 		int size = 0;
 		for (Orders order : listOrder) {
@@ -347,6 +349,7 @@ public class OrderController {
 					}
 					quantity = quantity + 1;
 				}
+				total = total + order.getTotalAmount();
 			}
 		}
 		for (Map.Entry<Integer, Integer> entity : foodquantity.entrySet()) {
@@ -356,9 +359,14 @@ public class OrderController {
 			foodOrderRequest.setQuantity(entity.getValue());
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
+		reportOrder reportOrder = new reportOrder();
+		reportOrder.setListfoodtrend(listFoodOrderRequests);
+		reportOrder.setChuathanhtoan(size);
+		reportOrder.setDathanhtoan(quantity);
+		reportOrder.setDoanhthu(total);
 		BaseResponse baseResponse = new BaseResponse();
-		baseResponse.setData(listFoodOrderRequests);
-		baseResponse.setMessage("Số đơn đã thanh toán: " + quantity + "\nSố đơn chưa thanh toán: " + size);
+		baseResponse.setData(reportOrder);
+		baseResponse.setMessage("Hôm nay "+ date);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }
