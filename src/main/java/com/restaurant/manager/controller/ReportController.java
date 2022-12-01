@@ -1,7 +1,7 @@
 package com.restaurant.manager.controller;
 
-import java.util.ArrayList;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +136,31 @@ public class ReportController {
 			}
 		}
 		return ResponseEntity.status(HttpStatus.OK).body("Những nguyên liệu sắp hết cần nhập hàng ngay" + listCode);
+	}
+
+	@GetMapping("/amount-order")
+	ResponseEntity<Object> resportAmount(@RequestParam("employeeId") String employeeId) {
+		Employee employee = employeeService.detailEmployee(employeeId);
+		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
+		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, 0);
+		List<Orders> listOrders = orderService.listOrder(employee.getRestaurant().getId(), branchId, 1);
+		int sizeOrder = loopOrder(listOrder);
+		int sizeOrders = loopOrder(listOrders);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body("Số đơn đã thanh toán: " + sizeOrder + "\nSố đơn chưa thanh toán: " + sizeOrders);
+	}
+
+	@SuppressWarnings("deprecation")
+	public Integer loopOrder(List<Orders> listOrder) {
+		int size = 0;
+		java.util.Date date = new java.util.Date();
+		for (Orders order : listOrder) {
+			if (order.getCreatedAt().getDate() == date.getDate() && order.getCreatedAt().getMonth() == date.getMonth()
+					&& order.getCreatedAt().getYear() == date.getYear()) {
+				size = size + 1;
+			}
+		}
+		return size;
 	}
 
 	public OrderRequest orderRequests(Orders order) {

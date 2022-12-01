@@ -96,4 +96,12 @@ public class FoodRequest {
 	public void setMaterialCode(List<materialFood> materialCode) {
 		this.materialCode = materialCode;
 	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
 }

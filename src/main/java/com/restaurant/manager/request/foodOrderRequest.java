@@ -46,6 +46,4 @@ public class foodOrderRequest {
 	public void setTotal(float total) {
 		this.total = total;
 	}
-	
-	
 }

@@ -78,6 +78,7 @@ public class FoodController {
 		food.setName(foodRequest.getName());
 		food.setPrice(foodRequest.getPrice());
 		food.setType(foodRequest.getType());
+		food.setImage(foodRequest.getImage());
 		food.setStatus(1);
 		message = foodService.createFood(food) ? "Thêm món ăn mới thành công" : "";
 		foodDetail fooddetail = new foodDetail();
@@ -218,6 +219,7 @@ public class FoodController {
 		foodRequest.setPrice(food.getPrice());
 		foodRequest.setType(food.getType());
 		foodRequest.setMaterialCode(nameMaterial);
+		foodRequest.setImage(food.getImage());
 		foodRequest.setStatus(food.getStatus());
 		return foodRequest;
 	}
