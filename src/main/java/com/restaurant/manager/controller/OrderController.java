@@ -317,15 +317,23 @@ public class OrderController {
 
 	@SuppressWarnings("deprecation")
 	@GetMapping("/report")
-	ResponseEntity<Object> reportFood(@RequestParam("employeeId") String employeeId) {
+	ResponseEntity<BaseResponse> reportFood(@RequestParam("employeeId") String employeeId) {
 		List<foodOrderRequest> listFoodOrderRequests = new ArrayList<>();
 		Employee employee = employeeService.detailEmployee(employeeId);
 		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
 		List<Orders> listOrders = orderService.listOrder(employee.getRestaurant().getId(), branchId, 1);
+		List<Orders> listOrder = orderService.listOrder(employee.getRestaurant().getId(), branchId, 0);
 		List<orderDetail> listOrderDetails = null;
 		HashMap<Integer, Integer> foodquantity = new HashMap<>();
 		int quantity = 0;
 		Date date = new Date(System.currentTimeMillis());
+		int size = 0;
+		for (Orders order : listOrder) {
+			if (order.getCreatedAt().getDate() == date.getDate() && order.getCreatedAt().getMonth() == date.getMonth()
+					&& order.getCreatedAt().getYear() == date.getYear()) {
+				size = size + 1;
+			}
+		}
 		for (Orders order : listOrders) {
 			if (order.getCreatedAt().getDate() == date.getDate() && order.getCreatedAt().getMonth() == date.getMonth()
 					&& order.getCreatedAt().getYear() == date.getYear()) {
@@ -337,7 +345,7 @@ public class OrderController {
 					} else {
 						foodquantity.put(orderd.getFood().getId(), orderd.getQuatity());
 					}
-					quantity = quantity + orderd.getQuatity();
+					quantity = quantity + 1;
 				}
 			}
 		}
@@ -345,10 +353,12 @@ public class OrderController {
 			foodOrderRequest foodOrderRequest = new foodOrderRequest();
 			Food food = foodService.detailFood(entity.getKey());
 			foodOrderRequest.setFood(food.getName());
-//			float i = entity.getValue() * 10 / quantity * 10;
 			foodOrderRequest.setQuantity(entity.getValue());
 			listFoodOrderRequests.add(foodOrderRequest);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(listFoodOrderRequests);
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setData(listFoodOrderRequests);
+		baseResponse.setMessage("Số đơn đã thanh toán: " + quantity + "\nSố đơn chưa thanh toán: " + size);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }
