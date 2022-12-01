@@ -372,7 +372,7 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
-	@PutMapping("change-status-food")
+	@PutMapping("/change-status-food")
 	ResponseEntity<Object> changestatusfood(@RequestParam("orderId") int orderId, @RequestParam("foodId") int foodId,
 			@RequestParam("status") int status) {
 		List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(orderId);
