@@ -373,13 +373,12 @@ public class OrderController {
 	}
 
 	@PutMapping("/change-status-food")
-	ResponseEntity<Object> changestatusfood(@RequestParam("orderId") int orderId, @RequestParam("foodId") int foodId,
+	ResponseEntity<BaseResponse> changestatusfood(@RequestParam("orderId") int orderId, @RequestParam("foodId") int foodId,
 			@RequestParam("status") int status) {
 		List<orderDetail> listOrderDetails = orderDetailService.listOrderbyIdorder(orderId);
 		String message = null;
 		for (orderDetail orderDetail : listOrderDetails) {
 			if (orderDetail.getFood().getId() == foodId) {
-//				int statusFoodOrder = orderDetail.getStatus();
 				if (status == 1) {
 					orderDetail.setStatus(1);
 					message = orderDetailService.updateOrderDetail(orderDetail) ? "đang được chế biến" : "";
@@ -389,6 +388,9 @@ public class OrderController {
 				}
 			}
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setStatus(status);
+		baseResponse.setData(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }
