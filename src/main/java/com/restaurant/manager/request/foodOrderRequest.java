@@ -3,6 +3,9 @@ package com.restaurant.manager.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class foodOrderRequest {
+	@JsonProperty("foodId")
+	private int foodId;
+	
 	@JsonProperty("food")
 	private String food;
 
@@ -56,5 +59,13 @@ public class foodOrderRequest {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public int getFoodId() {
+		return foodId;
+	}
+
+	public void setFoodId(int foodId) {
+		this.foodId = foodId;
 	}
 }

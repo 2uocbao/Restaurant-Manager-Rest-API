@@ -139,6 +139,7 @@ public class OrderController {
 		for (orderDetail orderdetail : listOrderDetails) {
 			Food food = foodService.detailFood(orderdetail.getFood().getId());
 			foodOrderRequest foodOrderRequest = new foodOrderRequest();
+			foodOrderRequest.setFoodId(food.getId());
 			foodOrderRequest.setFood(food.getName());
 			foodOrderRequest.setQuantity(orderdetail.getQuatity());
 			foodOrderRequest.setPrice(food.getPrice());
