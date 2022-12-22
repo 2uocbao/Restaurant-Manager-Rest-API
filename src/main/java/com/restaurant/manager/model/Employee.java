@@ -1,7 +1,11 @@
 package com.restaurant.manager.model;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,7 +28,12 @@ import lombok.ToString;
 @Entity
 @Table(name = "employee")
 @DynamicUpdate
-public class Employee {
+public class Employee implements UserDetails, Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "id")
@@ -85,6 +97,9 @@ public class Employee {
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	private Collection<Orders> order;
+	
+	
+	
 
 	public String getId() {
 		return id;
@@ -212,5 +227,48 @@ public class Employee {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		List<GrantedAuthority> list = new ArrayList<>();
+		list.add(new SimpleGrantedAuthority(role));
+		return list;
+	}
+
+	@Override
+	public String getUsername() {
+		return phone;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+	
+	
+	private void writeObject(java.io.ObjectOutputStream stream)
+	        throws IOException {
+	    stream.defaultWriteObject();
+	}
+
+	private void readObject(java.io.ObjectInputStream stream)
+	        throws IOException, ClassNotFoundException {
+	    stream.defaultReadObject();
 	}
 }

@@ -26,7 +26,6 @@ import com.restaurant.manager.response.BaseResponse;
 import com.restaurant.manager.service.BranchService;
 import com.restaurant.manager.service.CheckService;
 import com.restaurant.manager.service.EmployeeService;
-import com.restaurant.manager.service.ImageService;
 import com.restaurant.manager.service.RestaurantService;
 
 @RestController
@@ -38,8 +37,6 @@ public class EmployeeController {
 	RestaurantService restaurantService;
 	@Autowired
 	BranchService branchService;
-	@Autowired
-	ImageService imageService;
 	@Autowired
 	CheckService checkService;
 

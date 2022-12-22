@@ -15,11 +15,12 @@ import com.restaurant.manager.repository.BranchRepository;
 
 @Repository
 @Transactional
+
 public class BranchRepositoryImpl implements BranchRepository {
 	Transaction transaction = null;
 	Session session = null;
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
 	@Override
 	public boolean createBranch(Branch branch) {

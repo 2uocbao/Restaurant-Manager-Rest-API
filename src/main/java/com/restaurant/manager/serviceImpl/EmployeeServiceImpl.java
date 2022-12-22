@@ -1,28 +1,33 @@
 package com.restaurant.manager.serviceImpl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.restaurant.manager.model.Employee;
 import com.restaurant.manager.repository.EmployeeRepository;
-import com.restaurant.manager.sercurity.hashingwithBCrypt;
 import com.restaurant.manager.service.EmployeeService;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService, UserDetailsService {
 	@Autowired
 	EmployeeRepository employeeRepository;
-	@Autowired
-	hashingwithBCrypt hashingwithBCrypt;
+
+	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	@Override
 	public boolean createEmployee(Employee employee) {
-		String pass = hashingwithBCrypt.encodePassword(employee.getPassword());
+		String pass = passwordEncoder.encode(employee.getPassword());
 		employee.setPassword(pass);
 		return employeeRepository.createEmployee(employee);
 	}
@@ -45,7 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 	@Override
 	public boolean loginEmployee(String phone, String password) {
 		String passwordDB = employeeRepository.getPasswordByPhone(phone);
-		return hashingwithBCrypt.matchedPassword(password, passwordDB);
+		return passwordEncoder.matches(password, passwordDB);
 	}
 
 	@Override
@@ -54,7 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 	}
 
 	@Override
-	public Employee getEmployeeByPhone(String phone) throws UsernameNotFoundException{
+	public Employee getEmployeeByPhone(String phone) throws UsernameNotFoundException {
 		return employeeRepository.getEmployeeByPhone(phone);
 	}
 
@@ -65,7 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
 	@Override
 	public boolean changePasswordEmployee(String id, String password) {
-		String pass = hashingwithBCrypt.encodePassword(password);
+		String pass = passwordEncoder.encode(password);
 		return employeeRepository.changePasswordEmployee(id, pass);
 	}
 
@@ -79,9 +84,32 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 		return employeeRepository.getStatusById(id);
 	}
 
+	// override from userdetailservice
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return (UserDetails) employeeRepository.findByPhone(username).orElseThrow(
-				() -> new UsernameNotFoundException("User with username not found"));
+		Employee employee = employeeRepository.getEmployeeByPhone(username);
+		if (employee == null) {
+			throw new UsernameNotFoundException("Could not find user");
+		}
+
+//		Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+//		grantedAuthorities.add(new SimpleGrantedAuthority(employee.getRole()));
+
+//		return new MyUserDetails(employee);
+//		return new org.springframework.security.core.userdetails.User(employee.getPhone(), employee.getPassword(),
+//				grantedAuthorities);
+
+		UserDetails user = User.withUsername(employee.getEmail()).password(employee.getPassword())
+				.authorities(employee.getRole()).build();
+
+		return user;
+	}
+
+	@SuppressWarnings("unused")
+	private Collection<GrantedAuthority> getAuthorities(Employee user) {
+		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority(user.getRole()));
+		return authorities;
 	}
 }

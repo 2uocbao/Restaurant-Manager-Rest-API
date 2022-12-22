@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,7 +25,7 @@ import com.restaurant.manager.service.CheckService;
 import com.restaurant.manager.service.RestaurantService;
 
 @RestController
-@RequestMapping("/branch")
+@RequestMapping("/admin")
 public class BranchController {
 
 	@Autowired
@@ -64,6 +65,7 @@ public class BranchController {
 	}
 
 	@GetMapping("/detail")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	ResponseEntity<Object> detailBranch(@Valid @RequestParam(name = "id") String id) {
 		BranchRequest branchRequest = new BranchRequest();
 		Branch branch = branchService.detailBranch(id);
@@ -121,6 +123,7 @@ public class BranchController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/list-branch")
 	ResponseEntity<Object> listBranchByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
 		List<Branch> listBranch = branchService.listBranchByRestaurantId(restaurantId);

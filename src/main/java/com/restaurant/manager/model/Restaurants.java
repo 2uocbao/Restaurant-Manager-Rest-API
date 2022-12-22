@@ -54,11 +54,6 @@ public class Restaurants {
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	private Collection<Tables> table;
-	
-//	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-//	@EqualsAndHashCode.Exclude
-//	@ToString.Exclude
-//	private Collection<Orders> order;
 
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
 	@EqualsAndHashCode.Exclude
