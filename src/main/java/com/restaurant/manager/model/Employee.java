@@ -90,7 +90,7 @@ public class Employee implements UserDetails, Serializable{
 	@JoinColumn(name = "restaurant_id")
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
-	private Restaurants restaurant;
+	private Restaurant restaurant;
 
 	// một nhân viên quản lý nhiều gọi gọi món
 	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
@@ -117,11 +117,11 @@ public class Employee implements UserDetails, Serializable{
 		this.branch = branch;
 	}
 
-	public Restaurants getRestaurant() {
+	public Restaurant getRestaurant() {
 		return restaurant;
 	}
 
-	public void setRestaurant(Restaurants restaurant) {
+	public void setRestaurant(Restaurant restaurant) {
 		this.restaurant = restaurant;
 	}
 

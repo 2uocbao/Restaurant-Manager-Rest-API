@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.restaurant.manager.model.Restaurants;
 import com.restaurant.manager.request.RestaurantRequest;
-import com.restaurant.manager.service.CheckService;
+import com.restaurant.manager.response.BaseResponse;
 import com.restaurant.manager.service.RestaurantService;
 
 @RestController
@@ -23,96 +22,57 @@ import com.restaurant.manager.service.RestaurantService;
 public class RestaurantController {
 	@Autowired
 	RestaurantService restaurantService;
-	@Autowired
-	CheckService checkService;
+	private BaseResponse baseResponse = new BaseResponse();
+	private String success = "success";
 
 	@PostMapping("/create")
-	ResponseEntity<String> createRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest) {
-		String message;
-		Restaurants restaurant = new Restaurants();
-		if (!checkService.isValidEmail(restaurantRequest.getEmail())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Email không hợp lệ");
-		} else if (!checkService.checkPhone(restaurantRequest.getPhone())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hơp lệ");
-		} else if (!checkService.checkName(restaurantRequest.getName())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Tên không hợp lệ");
+	ResponseEntity<BaseResponse> createRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest) {
+		String message = restaurantService.createRestaurant(restaurantRequest);
+		if (message.equals(success)) {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(restaurantRequest);
 		} else {
-			if (restaurantService.getRestaurantbyEmail(restaurantRequest.getEmail()) != null) {
-				return ResponseEntity.status(HttpStatus.OK).body("Email đã được sử dụng");
-			} else if (restaurantService.getRestaurantbyPhone(restaurantRequest.getPhone()) != null) {
-				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
-			} else {
-				restaurant.setId(restaurantRequest.getPhone().trim());
-				restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
-				restaurant.setEmail(restaurantRequest.getEmail().trim());
-				restaurant.setPhone(restaurantRequest.getPhone().trim());
-				restaurant.setInfo(restaurantRequest.getInfo().replaceAll("\\s+", " ").trim());
-				restaurant.setAddress(restaurantRequest.getAddress().replaceAll("\\s+", " ").trim());
-				restaurant.setStatus(1);
-				message = restaurantService.createRestaurant(restaurant) ? "Tạo nhà hàng thành công" : "";
-			}
+			baseResponse.setStatus(404);
+			baseResponse.setMessage(message);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/update")
-	ResponseEntity<String> updateRestaurant(@Valid @RequestParam(name = "id") String id,
+	ResponseEntity<BaseResponse> updateRestaurant(@Valid @RequestParam(name = "id") String id,
 			@Valid @RequestBody RestaurantRequest restaurantRequest) {
-		String message;
-		Restaurants restaurant = restaurantService.detailRestaurant(id);
-		if (!checkService.isValidEmail(restaurantRequest.getEmail())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Email không hợp lệ");
-		} else if (!checkService.checkPhone(restaurantRequest.getPhone())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại không hơp lệ");
-		} else if (!checkService.checkName(restaurantRequest.getName())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Tên không hợp lệ");
+		String message = restaurantService.updateRestaurant(id, restaurantRequest);
+		if (message.equals(success)) {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(restaurantRequest);
 		} else {
-			if (restaurantService.getRestaurantbyEmail(restaurantRequest.getEmail()) != null
-					&& !restaurant.getEmail().equals(restaurantRequest.getEmail())) {
-				return ResponseEntity.status(HttpStatus.OK).body("Email đã được sử dụng");
-			}
-			if (restaurantService.getRestaurantbyPhone(restaurantRequest.getPhone()) != null
-					&& !restaurant.getPhone().equalsIgnoreCase(restaurantRequest.getPhone())) {
-				return ResponseEntity.status(HttpStatus.OK).body("Số điện thoại đã được sử dụng");
-			}
-			restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
-			restaurant.setEmail(restaurantRequest.getEmail().trim());
-			restaurant.setPhone(restaurantRequest.getPhone().trim());
-			restaurant.setInfo(restaurantRequest.getInfo().replaceAll("\\s\\s+", " ").trim());
-			restaurant.setAddress(restaurantRequest.getAddress().replaceAll("\\s\\s+", " ").trim());
-			message = restaurantService.updateRestaurant(restaurant) ? "Cập nhật thông tin thành công" : "";
+			baseResponse.setStatus(404);
+			baseResponse.setMessage(message);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<Object> detailRestaurant(@Valid @RequestParam(name = "id") String id) {
-		Restaurants restaurant = restaurantService.detailRestaurant(id);
-		RestaurantRequest restaurantRequest = new RestaurantRequest();
-		if (restaurant == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nhà hàng không tồn tại");
+	ResponseEntity<BaseResponse> detailRestaurant(@Valid @RequestParam(name = "id") String id) {
+		RestaurantRequest restaurantRequest = restaurantService.detailRestaurant(id);
+		if (restaurantRequest == null) {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage("Not Found");
 		} else {
-			restaurantRequest.setRestaurantId(restaurant.getId());
-			restaurantRequest.setName(restaurant.getName());
-			restaurantRequest.setEmail(restaurant.getEmail());
-			restaurantRequest.setPhone(restaurant.getPhone());
-			restaurantRequest.setInfo(restaurant.getInfo());
-			restaurantRequest.setAddress(restaurant.getAddress());
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(restaurantRequest);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(restaurantRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/change-status")
-	ResponseEntity<String> changeStatusRestaurant(@Valid @RequestParam(name = "id") String id) {
-		String message;
-		int statusNow = restaurantService.getStatusById(id) == 1 ? 0 : 1;
-		if (statusNow == 1) {
-			message = restaurantService.changeStatusRestaurant(id, statusNow) ? "Nhà hàng đang hoạt động"
-					: "Không thành công";
-		} else {
-			message = restaurantService.changeStatusRestaurant(id, statusNow) ? "Nhà hàng đang tạm ngưng hoạt động"
-					: "Không thành công";
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+	ResponseEntity<BaseResponse> changeStatusRestaurant(@Valid @RequestParam(name = "id") String id) {
+		String message = restaurantService.changeStatusRestaurant(id);
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

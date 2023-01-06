@@ -45,7 +45,7 @@ public class Branch {
 	@JoinColumn(name = "restaurant_id")
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
-	private Restaurants restaurant;
+	private Restaurant restaurant;
 
 	// Một chi nhanh có nhiều nhân viên
 	@OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
@@ -65,11 +65,11 @@ public class Branch {
 	@ToString.Exclude
 	private Collection<Food> food;
 
-	public Restaurants getRestaurant() {
+	public Restaurant getRestaurant() {
 		return restaurant;
 	}
 
-	public void setRestaurant(Restaurants restaurant) {
+	public void setRestaurant(Restaurant restaurant) {
 		this.restaurant = restaurant;
 	}
 

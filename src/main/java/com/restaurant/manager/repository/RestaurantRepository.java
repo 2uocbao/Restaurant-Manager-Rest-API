@@ -1,19 +1,19 @@
 package com.restaurant.manager.repository;
 
-import com.restaurant.manager.model.Restaurants;
+import com.restaurant.manager.model.Restaurant;
 
 public interface RestaurantRepository {
-	public boolean createRestaurant(Restaurants restaurant);
+	public boolean createRestaurant(Restaurant restaurant);
 
-	public boolean updateRestaurant(Restaurants restaurant);
+	public boolean updateRestaurant(Restaurant restaurant);
 
-	public Restaurants detailRestaurant(String id);
+	public Restaurant detailRestaurant(String id);
 
 	public boolean changeStatusRestaurant(String id, int status);
 
-	public Restaurants getRestaurantbyPhone(String phone);
+	public Restaurant getRestaurantbyPhone(String phone);
 
-	public Restaurants getRestaurantbyEmail(String email);
+	public Restaurant getRestaurantbyEmail(String email);
 
 	public int getStatusById(String id);
 }

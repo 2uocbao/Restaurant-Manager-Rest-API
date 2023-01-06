@@ -2,20 +2,16 @@ package com.restaurant.manager.service;
 
 import java.util.List;
 
-import com.restaurant.manager.model.Branch;
+import com.restaurant.manager.request.BranchRequest;
 
 public interface BranchService {
-	public boolean createBranch(Branch branch);
+	public String createBranch(BranchRequest branchRequest);
 
-	public Branch detailBranch(String id);
+	public BranchRequest detailBranch(String branchId);
 
-	public boolean updateBranch(Branch branch);
+	public String updateBranch(String branchId, BranchRequest branchRequest);
 
-	public boolean changeStatusBranch(String id, int status);
+	public String changeStatusBranch(String branchId);
 	
-	public Branch getDetailByPhone(String phone);
-	
-	public Integer getStatusbyId(String id);
-	
-	public List<Branch> listBranchByRestaurantId(String restaurantId);
+	public List<BranchRequest> listBranchByRestaurantId(String restaurantId);
 }

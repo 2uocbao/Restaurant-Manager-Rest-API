@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.restaurant.manager.model.Branch;
 import com.restaurant.manager.model.Employee;
-import com.restaurant.manager.model.Restaurants;
+import com.restaurant.manager.model.Restaurant;
 import com.restaurant.manager.request.EmployeeRequest;
 import com.restaurant.manager.request.LoginRequest;
 import com.restaurant.manager.response.BaseResponse;
@@ -43,7 +43,7 @@ public class EmployeeController {
 	@PostMapping("/create")
 	ResponseEntity<BaseResponse> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
 		BaseResponse baseResponse = new BaseResponse();
-		Restaurants restaurant = restaurantService.detailRestaurant(employeeRequest.getRestaurantId());
+		Restaurant restaurant = restaurantService.detailRestaurant(employeeRequest.getRestaurantId());
 		Employee employee = new Employee();
 		Branch branch = null;
 		if (employeeRequest.getBranchId() != null) {

@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RestaurantRequest {
-	
+
 	@JsonProperty("restaurantId")
 	private String restaurantId;
 
@@ -32,6 +32,9 @@ public class RestaurantRequest {
 	@NotEmpty(message = "Địa chỉ không được để trống")
 	@JsonProperty("address")
 	private String address;
+
+	@JsonProperty("status")
+	private int status;
 
 	public void setRestaurantId(String restaurantId) {
 		this.restaurantId = restaurantId;
@@ -81,4 +84,11 @@ public class RestaurantRequest {
 		this.address = address;
 	}
 
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
 }

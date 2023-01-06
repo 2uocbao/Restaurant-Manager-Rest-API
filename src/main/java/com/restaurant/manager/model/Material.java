@@ -48,7 +48,7 @@ public class Material {
 	@JoinColumn(name = "restaurant_id")
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
-	private Restaurants restaurant;
+	private Restaurant restaurant;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "branch_id")
@@ -88,11 +88,11 @@ public class Material {
 		this.whereProduction = whereProduction;
 	}
 
-	public Restaurants getRestaurant() {
+	public Restaurant getRestaurant() {
 		return restaurant;
 	}
 
-	public void setRestaurant(Restaurants restaurant) {
+	public void setRestaurant(Restaurant restaurant) {
 		this.restaurant = restaurant;
 	}
 

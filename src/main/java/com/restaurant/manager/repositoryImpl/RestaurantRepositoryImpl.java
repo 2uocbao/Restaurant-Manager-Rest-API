@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.restaurant.manager.model.Restaurants;
+import com.restaurant.manager.model.Restaurant;
 import com.restaurant.manager.repository.RestaurantRepository;
 
 @Repository
@@ -20,7 +20,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	SessionFactory sessionFactory;
 
 	@Override
-	public boolean createRestaurant(Restaurants restaurant) {
+	public boolean createRestaurant(Restaurant restaurant) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -43,7 +43,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	}
 
 	@Override
-	public boolean updateRestaurant(Restaurants restaurant) {
+	public boolean updateRestaurant(Restaurant restaurant) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -66,12 +66,12 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	}
 
 	@Override
-	public Restaurants detailRestaurant(String id) {
-		Restaurants restaurant = null;
+	public Restaurant detailRestaurant(String id) {
+		Restaurant restaurant = null;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			restaurant = (Restaurants) session
+			restaurant = (Restaurant) session
 					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.id = :id")
 					.setParameter("id", id).uniqueResult();
 			transaction.commit();
@@ -115,12 +115,12 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	}
 
 	@Override
-	public Restaurants getRestaurantbyPhone(String phone) {
-		Restaurants restaurants = new Restaurants();
+	public Restaurant getRestaurantbyPhone(String phone) {
+		Restaurant restaurants = new Restaurant();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			restaurants = (Restaurants) session
+			restaurants = (Restaurant) session
 					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.phone = :phone")
 					.setParameter("phone", phone).uniqueResult();
 			transaction.commit();
@@ -139,12 +139,12 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	}
 
 	@Override
-	public Restaurants getRestaurantbyEmail(String email) {
-		Restaurants restaurant = new Restaurants();
+	public Restaurant getRestaurantbyEmail(String email) {
+		Restaurant restaurant = new Restaurant();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			restaurant = (Restaurants) session
+			restaurant = (Restaurant) session
 					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.email = :email")
 					.setParameter("email", email).uniqueResult();
 			transaction.commit();

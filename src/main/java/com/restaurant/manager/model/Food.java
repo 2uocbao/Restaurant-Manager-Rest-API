@@ -44,7 +44,7 @@ public class Food {
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "restaurant_id")
-	private Restaurants restaurant;
+	private Restaurant restaurant;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "branch_id")
@@ -98,11 +98,11 @@ public class Food {
 		this.status = status;
 	}
 
-	public Restaurants getRestaurant() {
+	public Restaurant getRestaurant() {
 		return restaurant;
 	}
 
-	public void setRestaurant(Restaurants restaurant) {
+	public void setRestaurant(Restaurant restaurant) {
 		this.restaurant = restaurant;
 	}
 

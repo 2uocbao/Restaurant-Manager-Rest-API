@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.restaurant.manager.model.Branch;
 import com.restaurant.manager.model.Employee;
-import com.restaurant.manager.model.Restaurants;
+import com.restaurant.manager.model.Restaurant;
 import com.restaurant.manager.model.Tables;
 import com.restaurant.manager.request.TableRequest;
 import com.restaurant.manager.service.BranchService;
@@ -51,7 +51,7 @@ public class TableController {
 		String message;
 		Tables table = new Tables();
 		List<Tables> listTable = null;
-		Restaurants restaurants = restaurantService.detailRestaurant(tableRequest.getRestaurantId());
+		Restaurant restaurants = restaurantService.detailRestaurant(tableRequest.getRestaurantId());
 		Branch branch = null;
 		if (tableRequest.getBranchId() != null) {
 			branch = branchService.detailBranch(tableRequest.getBranchId());

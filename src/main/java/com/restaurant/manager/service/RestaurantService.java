@@ -1,19 +1,13 @@
 package com.restaurant.manager.service;
 
-import com.restaurant.manager.model.Restaurants;
+import com.restaurant.manager.request.RestaurantRequest;
 
 public interface RestaurantService {
-	public boolean createRestaurant(Restaurants restaurant);
+	public String createRestaurant(RestaurantRequest restaurantRequest);
 
-	public boolean updateRestaurant(Restaurants restaurant);
+	public String updateRestaurant(String restaurantId, RestaurantRequest restaurantRequest);
 
-	public Restaurants detailRestaurant(String id);
+	public RestaurantRequest detailRestaurant(String restaurantId);
 
-	public boolean changeStatusRestaurant(String id, int status);
-
-	public Restaurants getRestaurantbyPhone(String phone);
-
-	public Restaurants getRestaurantbyEmail(String email);
-
-	public int getStatusById(String id);
+	public String changeStatusRestaurant(String restaurantId);
 }

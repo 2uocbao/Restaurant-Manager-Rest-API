@@ -20,7 +20,7 @@ import com.restaurant.manager.model.Branch;
 import com.restaurant.manager.model.Employee;
 import com.restaurant.manager.model.Food;
 import com.restaurant.manager.model.Material;
-import com.restaurant.manager.model.Restaurants;
+import com.restaurant.manager.model.Restaurant;
 import com.restaurant.manager.model.foodDetail;
 import com.restaurant.manager.request.FoodRequest;
 import com.restaurant.manager.request.materialFood;
@@ -56,7 +56,7 @@ public class FoodController {
 	@PostMapping("/create")
 	ResponseEntity<String> createFood(@RequestBody FoodRequest foodRequest) {
 		String message;
-		Restaurants restaurant = restaurantService.detailRestaurant(foodRequest.getRestaurantId());
+		Restaurant restaurant = restaurantService.detailRestaurant(foodRequest.getRestaurantId());
 		Branch branch = foodRequest.getBranchId() != null ? branchService.detailBranch(foodRequest.getBranchId())
 				: null;
 		String branchId = branch != null ? branch.getId() : "";

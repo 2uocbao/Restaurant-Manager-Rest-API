@@ -40,7 +40,7 @@ public class Tables {
 	@JoinColumn(name = "restaurant_id")
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
-	private Restaurants restaurant;
+	private Restaurant restaurant;
 
 	// nhiều bàn của 1 chi nhánh
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -65,11 +65,11 @@ public class Tables {
 		this.branch = branch;
 	}
 
-	public Restaurants getRestaurant() {
+	public Restaurant getRestaurant() {
 		return restaurant;
 	}
 
-	public void setRestaurant(Restaurants restaurant) {
+	public void setRestaurant(Restaurant restaurant) {
 		this.restaurant = restaurant;
 	}
 

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.restaurant.manager.model.Branch;
 import com.restaurant.manager.model.Material;
-import com.restaurant.manager.model.Restaurants;
+import com.restaurant.manager.model.Restaurant;
 import com.restaurant.manager.request.MaterialRequest;
 import com.restaurant.manager.service.BranchService;
 import com.restaurant.manager.service.CheckService;
@@ -43,7 +43,7 @@ public class MaterialController {
 		String message;
 		Material materialTmp = null;
 		Branch branch = null;
-		Restaurants restaurants = restaurantService.detailRestaurant(materialRequest.getRestaurantId());
+		Restaurant restaurants = restaurantService.detailRestaurant(materialRequest.getRestaurantId());
 		if (materialRequest.getBranchId() != null) {
 			branch = branchService.detailBranch(materialRequest.getBranchId());
 			if (branch == null || !branch.getRestaurant().getId().equals(restaurants.getId())) {

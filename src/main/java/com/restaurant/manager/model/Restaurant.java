@@ -17,7 +17,7 @@ import lombok.ToString;
 @Table(name = "restaurant")
 @Entity
 @DynamicUpdate
-public class Restaurants {
+public class Restaurant {
 	@Id
 	@Column(name = "id")
 	private String id;
