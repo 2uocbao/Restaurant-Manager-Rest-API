@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -81,7 +80,6 @@ public class BranchController {
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/list-branch")
 	ResponseEntity<Object> listBranchByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
 		List<BranchRequest> branchRequests = branchService.listBranchByRestaurantId(restaurantId);

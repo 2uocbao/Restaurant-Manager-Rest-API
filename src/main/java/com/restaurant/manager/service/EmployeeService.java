@@ -2,28 +2,20 @@ package com.restaurant.manager.service;
 
 import java.util.List;
 
-import com.restaurant.manager.model.Employee;
+import com.restaurant.manager.request.EmployeeRequest;
 
 public interface EmployeeService {
-	public boolean createEmployee(Employee employee);
+	public String createEmployee(EmployeeRequest employeeRequest);
 
-	public Employee detailEmployee(String id);
+	public EmployeeRequest detailEmployee(String employeeId);
 
-	public boolean updateEmployee(Employee employee);
+	public String updateEmployee(String employeeId, EmployeeRequest employeeRequest);
 
-	public boolean deleteEmployee(String id);
+	public String deleteEmployee(String employeeId);
 
-	public boolean loginEmployee(String phone, String password);
+	public List<EmployeeRequest> listEmpoyeeByResIdOrBranId(String restaurantId, String branchId);
 
-	public List<Employee> listEmpoyeeByResIdOrBranId(String restaurantId, String branchId);
-	
-	public Employee getEmployeeByPhone(String phone);
+	public String changePasswordEmployee(String employeeId, String password);
 
-	public Employee getEmployeeByEmail(String email);
-	
-	public boolean changePasswordEmployee(String id, String password);
-	
-	public boolean changeStatusEmployee(String id, int status);
-	
-	public boolean getStatusById(String id);
+	public String changeStatusEmployee(String employeeId);
 }
