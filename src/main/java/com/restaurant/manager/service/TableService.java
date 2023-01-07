@@ -2,23 +2,17 @@ package com.restaurant.manager.service;
 
 import java.util.List;
 
-import com.restaurant.manager.model.Tables;
+import com.restaurant.manager.request.TableRequest;
 
 public interface TableService {
-	public boolean createTable(Tables table);
+	public String createTable(TableRequest tableRequest);
 
-	public Tables detailTable(int id);
+	public TableRequest detailTable(int tableId);
 
-	public boolean updateTable(Tables tables);
+	public String updateTable(int tableId, TableRequest tableRequest);
 
-	public boolean changeStatusById(int id, int status);
+	public List<TableRequest> listTableByBranchIdandRestaurantId(String restaurantId, String branchId);
 
-	public List<Tables> listTableByBranchIdandRestaurantId(String restaurantId, String branchId);
-
-	public Integer getStatusById(int id);
-
-	public Tables getTablebyName(String restaurantId, String branchId, String name);
-
-	public List<Tables> listTableByStatus(String restaurantId, String branchId, int status);
+	public List<TableRequest> listTableByStatus(String restaurantId, String branchId, int status);
 
 }
