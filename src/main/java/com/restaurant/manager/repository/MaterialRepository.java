@@ -9,7 +9,7 @@ public interface MaterialRepository {
 
 	public boolean updateMaterial(Material material);
 
-	public Material detailMaterial(String code, String restaurantId, String branchId);
+	public Material detailMaterial(int materialId);
 	
 	public List<Material> listMaterial(String restaurantId, String branchId);
 }

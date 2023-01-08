@@ -58,9 +58,7 @@ public class FoodServiceImpl implements FoodService {
 		if (successful) {
 			foodDetail fooddetail = new foodDetail();
 			for (materialFood materialCode : foodRequest.getMaterialCode()) {
-				Material material = null;
-				material = materialRepository.detailMaterial(materialCode.getMaterial(), foodRequest.getRestaurantId(),
-						foodRequest.getBranchId() == null ? "" : foodRequest.getBranchId());
+				Material material = materialRepository.detailMaterial(Integer.parseInt(materialCode.getMaterial()));
 				fooddetail.setFood(food);
 				fooddetail.setMaterialCode(material.getCode());
 				fooddetail.setQuantity(materialCode.getQuantity());
@@ -176,8 +174,7 @@ public class FoodServiceImpl implements FoodService {
 		String branchId = food.getBranch() != null ? food.getBranch().getId() : "";
 		for (foodDetail listFooddetail : listFoodDetail) {
 			materialFood materiaL = new materialFood();
-			Material material = materialRepository.detailMaterial(listFooddetail.getMaterialCode(),
-					food.getRestaurant().getId(), branchId);
+			Material material = materialRepository.detailMaterial(Integer.parseInt(materiaL.getMaterial()));
 			materiaL.setMaterial(material.getName());
 			materiaL.setQuantity(listFooddetail.getQuantity());
 			nameMaterial.add(materiaL);

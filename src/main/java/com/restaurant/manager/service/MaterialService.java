@@ -2,14 +2,14 @@ package com.restaurant.manager.service;
 
 import java.util.List;
 
-import com.restaurant.manager.model.Material;
+import com.restaurant.manager.request.MaterialRequest;
 
 public interface MaterialService {
-	public boolean createMaterial(Material ingredient);
+	public String createMaterial(MaterialRequest materialRequest);
 
-	public boolean updateMaterial(Material ingredient);
+	public String updateMaterial(int materialId, MaterialRequest materialRequest);
 
-	public Material detailMaterial(String code, String restaurantId, String branchId);
+	public MaterialRequest detailMaterial(int materialId);
 
-	public List<Material> listMaterial(String restaurantId, String branchId);
+	public List<MaterialRequest> listMaterial(String restaurantId, String branchId);
 }

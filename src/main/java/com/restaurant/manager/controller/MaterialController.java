@@ -1,7 +1,8 @@
 package com.restaurant.manager.controller;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,129 +15,74 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.restaurant.manager.model.Branch;
-import com.restaurant.manager.model.Material;
-import com.restaurant.manager.model.Restaurant;
 import com.restaurant.manager.request.MaterialRequest;
-import com.restaurant.manager.service.BranchService;
-import com.restaurant.manager.service.CheckService;
+import com.restaurant.manager.response.BaseResponse;
 import com.restaurant.manager.service.MaterialService;
-import com.restaurant.manager.service.RestaurantService;
 
 @RestController
 @RequestMapping("/material")
 public class MaterialController {
 	@Autowired
 	MaterialService materialService;
-
-	@Autowired
-	CheckService checkService;
-
-	@Autowired
-	RestaurantService restaurantService;
-
-	@Autowired
-	BranchService branchService;
+	private BaseResponse baseResponse;
+	private String success = "success";
 
 	@PostMapping("/create")
-	ResponseEntity<String> creatematerial(@RequestBody MaterialRequest materialRequest) {
-		String message;
-		Material materialTmp = null;
-		Branch branch = null;
-		Restaurant restaurants = restaurantService.detailRestaurant(materialRequest.getRestaurantId());
-		if (materialRequest.getBranchId() != null) {
-			branch = branchService.detailBranch(materialRequest.getBranchId());
-			if (branch == null || !branch.getRestaurant().getId().equals(restaurants.getId())) {
-				return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh không tồn tại");
-			} else {
-				branch = branchService.detailBranch(materialRequest.getBranchId());
-			}
+	ResponseEntity<BaseResponse> creatematerial(@RequestBody MaterialRequest materialRequest) {
+		String message = materialService.createMaterial(materialRequest);
+		if (message.equals(success)) {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(materialRequest);
+		} else {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage(message);
 		}
-		String branchId = materialRequest.getBranchId() != null ? materialRequest.getBranchId() : "";
-		materialTmp = materialService.detailMaterial(materialRequest.getCode(), restaurants.getId(), branchId);
-		if (materialTmp != null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu có mã code này đã tồn tại");
-		} else if (checkService.checkCode(materialRequest.getCode())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Mã code chứa kí tự đặc biệt");
-		} else if (!checkService.checkName(materialRequest.getName())) {
-			return ResponseEntity.status(HttpStatus.OK).body("Tên nguyên liệu không hợp lệ");
-		}
-		Material material = new Material();
-		material.setRestaurant(restaurants);
-		material.setBranch(branch);
-		material.setCode(materialRequest.getCode().toUpperCase());
-		material.setName(materialRequest.getName());
-		material.setCost(0);
-		material.setType(materialRequest.getType());
-		material.setStockEnd(materialRequest.getStockEnd());
-		material.setQuantity(0);
-		material.setWhereProduction(materialRequest.getWhereProduction());
-		message = materialService.createMaterial(material) ? "Nguyên liệu đã được thêm vào" : "Không thành công";
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/update")
-	ResponseEntity<String> updateMaterial(@RequestBody MaterialRequest materialRequest) {
-		String message = null;
-		String branchId = materialRequest.getBranchId() != null ? materialRequest.getBranchId() : "";
-		Material materialTmp = materialService.detailMaterial(materialRequest.getCode(),
-				materialRequest.getRestaurantId(), branchId);
-		materialTmp.setCode(materialRequest.getCode());
-		materialTmp.setName(materialRequest.getName());
-		materialTmp.setType(materialRequest.getType());
-		materialTmp.setStockEnd(materialRequest.getStockEnd());
-		materialTmp.setWhereProduction(materialRequest.getWhereProduction());
-		message = materialService.updateMaterial(materialTmp) ? "Cập nhật thông tin thành công" : "Không thành công";
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+	ResponseEntity<BaseResponse> updateMaterial(@Valid @RequestParam("id") int id,
+			@RequestBody MaterialRequest materialRequest) {
+		String message = materialService.updateMaterial(id, materialRequest);
+		if (message.equals(success)) {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(message);
+			baseResponse.setData(materialRequest);
+		} else {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage(message);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<Object> detailMaterial(@RequestParam("code") String code, @RequestParam("branchId") String branchId,
-			@RequestParam("restaurantId") String restaurantId) {
-		MaterialRequest materialRequest = new MaterialRequest();
-		Branch branch = null;
-		if (!branchId.equals("")) {
-			branch = branchService.detailBranch(branchId);
-			if (branch == null || !branch.getRestaurant().getId().equals(restaurantId)) {
-				return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh không tồn tại");
-			}
+	ResponseEntity<BaseResponse> detailMaterial(@RequestParam("id") int id) {
+		MaterialRequest materialRequest = materialService.detailMaterial(id);
+		if (materialRequest == null) {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage("Not Found");
+		} else {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(materialRequest);
 		}
-		Material material = materialService.detailMaterial(code, restaurantId, branchId);
-		if (material == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu mã " + code +" chưa có");
-		}
-		materialRequest.setRestaurantId(material.getRestaurant().getId());
-		String branchid = material.getBranch() != null ? material.getBranch().getId() : null;
-		materialRequest.setBranchId(branchid);
-		materialRequest.setName(material.getName());
-		materialRequest.setCode(material.getCode());
-		materialRequest.setCost(material.getCost());
-		materialRequest.setType(material.getType());
-		materialRequest.setQuantity(material.getQuantity());
-		materialRequest.setStockEnd(material.getStockEnd());
-		materialRequest.setWhereProduction(material.getWhereProduction());
-		return ResponseEntity.status(HttpStatus.OK).body(materialRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/list-material")
 	ResponseEntity<Object> listMaterial(@RequestParam("branchId") String branchId,
 			@RequestParam("restaurantId") String restaurantId) {
-		List<Material> listMaterial = materialService.listMaterial(restaurantId, branchId);
-		List<MaterialRequest> listMaterialRequest = new ArrayList<>();
-		for (Material material : listMaterial) {
-			MaterialRequest materialRequest = new MaterialRequest();
-			materialRequest.setRestaurantId(material.getRestaurant().getId());
-			String branchid = material.getBranch() != null ? material.getBranch().getId() : null;
-			materialRequest.setBranchId(branchid);
-			materialRequest.setCode(material.getCode());
-			materialRequest.setName(material.getName());
-			materialRequest.setCost(material.getCost());
-			materialRequest.setType(material.getType());
-			materialRequest.setQuantity(material.getQuantity());
-			materialRequest.setStockEnd(material.getStockEnd());
-			materialRequest.setWhereProduction(material.getWhereProduction());
-			listMaterialRequest.add(materialRequest);
+		List<MaterialRequest> materialRequests = materialService.listMaterial(restaurantId, branchId);
+		if (materialRequests == null) {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage("Not Found");
+		} else {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(materialRequests);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(listMaterialRequest);
+
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

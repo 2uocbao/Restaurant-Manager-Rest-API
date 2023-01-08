@@ -66,20 +66,16 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 	}
 
 	@Override
-	public Material detailMaterial(String code, String restaurantId, String branchId) {
+	public Material detailMaterial(int materialId) {
 		Material material = new Material();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId.equals("")) {
-				material = (Material) session.createQuery(
-						"FROM com.restaurant.manager.model.Material i WHERE i.code = :code AND i.restaurant.id = :restaurantId AND i.branch.id = null")
-						.setParameter("code", code).setParameter("restaurantId", restaurantId).uniqueResult();
-			} else {
-				material = (Material) session.createQuery(
-						"FROM com.restaurant.manager.model.Material i WHERE i.code = :code AND i.branch.id = :branchId")
-						.setParameter("code", code).setParameter("branchId", branchId).uniqueResult();
-			}
+
+			material = (Material) session.createQuery(
+					"FROM com.restaurant.manager.model.Material i WHERE i.id = :id")
+					.setParameter("id", materialId).uniqueResult();
+
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
