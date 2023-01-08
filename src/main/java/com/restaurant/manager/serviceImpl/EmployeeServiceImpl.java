@@ -76,21 +76,23 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 	public EmployeeRequest detailEmployee(String employeeId) {
 		EmployeeRequest employeeRequest = new EmployeeRequest();
 		Employee employee = employeeRepository.detailEmployee(employeeId);
-		employeeRequest.setEmployeeId(employee.getId());
-		employeeRequest.setRestaurantId(employee.getRestaurant().getId());
-		employeeRequest.setBranchId(employee.getBranch() != null ? employee.getBranch().getId() : null);
-		employeeRequest.setFirstName(employee.getFirstName());
-		employeeRequest.setLastName(employee.getLastName());
-		employeeRequest.setFullName(employee.getFullName());
-		employeeRequest.setGender(employee.getGender());
-		employeeRequest.setDateOfbirth(employee.getDateOfBirth());
-		employeeRequest.setEmail(employee.getEmail());
-		employeeRequest.setPhone(employee.getPhone());
-		employeeRequest.setRole(employee.getRole());
-		employeeRequest.setCity(employee.getCity());
-		employeeRequest.setDistrict(employee.getDistrict());
-		employeeRequest.setAddress(employee.getAddress());
-		employeeRequest.setStatus(employee.getStatus());
+		if (employee != null) {
+			employeeRequest.setEmployeeId(employee.getId());
+			employeeRequest.setRestaurantId(employee.getRestaurant().getId());
+			employeeRequest.setBranchId(employee.getBranch() != null ? employee.getBranch().getId() : null);
+			employeeRequest.setFirstName(employee.getFirstName());
+			employeeRequest.setLastName(employee.getLastName());
+			employeeRequest.setFullName(employee.getFullName());
+			employeeRequest.setGender(employee.getGender());
+			employeeRequest.setDateOfbirth(employee.getDateOfBirth());
+			employeeRequest.setEmail(employee.getEmail());
+			employeeRequest.setPhone(employee.getPhone());
+			employeeRequest.setRole(employee.getRole());
+			employeeRequest.setCity(employee.getCity());
+			employeeRequest.setDistrict(employee.getDistrict());
+			employeeRequest.setAddress(employee.getAddress());
+			employeeRequest.setStatus(employee.getStatus());
+		}
 		return employeeRequest;
 	}
 
@@ -203,5 +205,10 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 			return "Email không đúng, vui lòng nhập lại";
 		}
 		return success;
+	}
+
+	@Override
+	public Employee getEmployeeByPhone(String phone) {
+		return employeeRepository.getEmployeeByPhone(phone);
 	}
 }

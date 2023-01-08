@@ -2,20 +2,20 @@ package com.restaurant.manager.service;
 
 import java.util.List;
 
-import com.restaurant.manager.model.Food;
+import com.restaurant.manager.request.FoodRequest;
 
 public interface FoodService {
-	public boolean createFood(Food food);
+	public String createFood(FoodRequest foodRequest);
 
-	public Food detailFood(int id);
+	public FoodRequest detailFood(int foodId);
 
-	public boolean updateFood(Food food);
+	public String updateFood(int foodId, FoodRequest foodRequest);
 
-	public boolean deleteFood(int id);
+	public String deleteFood(int id, String materialCode);
 
-	public boolean changeStatusFood(int id, int status);
+	public String changeStatusFood(int foodId);
 
-	public List<Food> getFoodIdByRestaurantIdAndBranchId(String restaurantId, String branchId);
-	
-	public List<Food> listFood(String restaurantId, String branchId, int status);
+	public List<FoodRequest> getFoodAll(String restaurantId, String branchId);
+
+	public List<FoodRequest> listFoodByStatus(String restaurantId, String branchId, int status);
 }

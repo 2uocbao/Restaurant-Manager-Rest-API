@@ -1,8 +1,8 @@
 package com.restaurant.manager.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,20 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.restaurant.manager.model.Branch;
-import com.restaurant.manager.model.Employee;
-import com.restaurant.manager.model.Food;
-import com.restaurant.manager.model.Material;
-import com.restaurant.manager.model.Restaurant;
-import com.restaurant.manager.model.foodDetail;
 import com.restaurant.manager.request.FoodRequest;
-import com.restaurant.manager.request.materialFood;
-import com.restaurant.manager.service.BranchService;
-import com.restaurant.manager.service.EmployeeService;
-import com.restaurant.manager.service.FoodDetailService;
+import com.restaurant.manager.response.BaseResponse;
 import com.restaurant.manager.service.FoodService;
-import com.restaurant.manager.service.MaterialService;
-import com.restaurant.manager.service.RestaurantService;
 
 @RestController
 @RequestMapping("/food")
@@ -38,190 +27,101 @@ public class FoodController {
 	@Autowired
 	FoodService foodService;
 
-	@Autowired
-	FoodDetailService foodDetailService;
-
-	@Autowired
-	RestaurantService restaurantService;
-
-	@Autowired
-	BranchService branchService;
-
-	@Autowired
-	EmployeeService employeeService;
-
-	@Autowired
-	MaterialService materialService;
+	private String success = "success";
+	private BaseResponse baseResponse = new BaseResponse();
 
 	@PostMapping("/create")
-	ResponseEntity<String> createFood(@RequestBody FoodRequest foodRequest) {
-		String message;
-		Restaurant restaurant = restaurantService.detailRestaurant(foodRequest.getRestaurantId());
-		Branch branch = foodRequest.getBranchId() != null ? branchService.detailBranch(foodRequest.getBranchId())
-				: null;
-		String branchId = branch != null ? branch.getId() : "";
-		if (!branchId.equals("")) {
-			branch = branchService.detailBranch(branchId);
-			if (branch == null || !branch.getRestaurant().getId().equals(restaurant.getId())) {
-				return ResponseEntity.status(HttpStatus.OK).body("Chi nhánh không tồn tại");
-			}
+	ResponseEntity<BaseResponse> createFood(@RequestBody FoodRequest foodRequest) {
+		String message = foodService.createFood(foodRequest);
+		if (message.equals(success)) {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(foodRequest);
+		} else {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage(message);
 		}
-		List<Food> listFood = foodService.getFoodIdByRestaurantIdAndBranchId(restaurant.getId(), branchId);
-		for (Food food : listFood) {
-			if (food.getName().equalsIgnoreCase(foodRequest.getName())) {
-				return ResponseEntity.status(HttpStatus.OK).body("Món ăn có tên này đã có");
-			}
-		}
-		Food food = new Food();
-		food.setRestaurant(restaurant);
-		food.setBranch(branch);
-		food.setName(foodRequest.getName());
-		food.setPrice(foodRequest.getPrice());
-		food.setType(foodRequest.getType());
-		food.setImage(foodRequest.getImage());
-		food.setStatus(1);
-		message = foodService.createFood(food) ? "Thêm món ăn mới thành công" : "";
-		foodDetail fooddetail = new foodDetail();
-		for (materialFood materialCode : foodRequest.getMaterialCode()) {
-			Material material = null;
-			material = materialService.detailMaterial(materialCode.getMaterial(), restaurant.getId(), branchId);
-			fooddetail.setFood(food);
-			fooddetail.setMaterialCode(material.getCode());
-			fooddetail.setQuantity(materialCode.getQuantity());
-			foodDetailService.createFoodDetail(fooddetail);
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<Object> detailFood(@RequestParam("id") int id) {
-		Food food = foodService.detailFood(id);
-		if (food == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Không có dữ liệu của món ăn này");
+	ResponseEntity<BaseResponse> detailFood(@RequestParam("id") int id) {
+		FoodRequest foodRequest = foodService.detailFood(id);
+		if (foodRequest == null) {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage("Not Found");
+		} else {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(foodRequest);
 		}
-		FoodRequest foodRequest = foodRequest(food);
-		return ResponseEntity.status(HttpStatus.OK).body(foodRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/update")
-	ResponseEntity<String> updateFood(@RequestBody FoodRequest foodRequest) {
-		String message;
-		Food food = foodService.detailFood(foodRequest.getFoodId());
-		Branch branch = food.getBranch() != null ? branchService.detailBranch(food.getBranch().getId()) : null;
-		String branchId = branch != null ? branch.getId() : "";
-		List<Food> listFood = foodService.getFoodIdByRestaurantIdAndBranchId(food.getRestaurant().getId(), branchId);
-		for (Food food1 : listFood) {
-			if (food1.getName().equalsIgnoreCase(foodRequest.getName())
-					&& !food.getName().equalsIgnoreCase(food1.getName())) {
-				return ResponseEntity.status(HttpStatus.OK).body("Món ăn có tên này đã có");
-			}
+	ResponseEntity<BaseResponse> updateFood(@Valid @RequestParam(name = "id") int id,
+			@RequestBody FoodRequest foodRequest) {
+		String message = foodService.updateFood(id, foodRequest);
+		if (message.equals(success)) {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(foodRequest);
+		} else {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage(message);
 		}
-		food.setName(foodRequest.getName());
-		food.setPrice(foodRequest.getPrice());
-		food.setType(foodRequest.getType());
-		food.setImage(foodRequest.getImage());
-		message = foodService.updateFood(food) ? "Cập nhật thông tin thành công" : "";
-		List<foodDetail> listFoodDetails = foodDetailService.listFoodDetail(foodRequest.getFoodId());
-		List<String> materialCode = new ArrayList<>();
-		List<String> materialCode2 = new ArrayList<>();
-		List<String> materialCodeReq = new ArrayList<>();
-		HashMap<String, Float> listReq = new HashMap<>();
-		for (foodDetail fooddetail : listFoodDetails) {
-			materialCode.add(fooddetail.getMaterialCode());
-			materialCode2.add(fooddetail.getMaterialCode());
-		}
-		for (materialFood materialFood : foodRequest.getMaterialCode()) {
-			materialCodeReq.add(materialFood.getMaterial());
-			listReq.put(materialFood.getMaterial(), materialFood.getQuantity());
-		}
-		materialCode.removeAll(materialCodeReq);
-		materialCodeReq.removeAll(materialCode2);
-
-		for (String materalC : materialCode) {
-			materialCode2.remove(materalC);
-		}
-
-		for (String materialcode : materialCode) {
-			message = foodDetailService.deleteFoodDetailByMateCode(food.getId(), materialcode)
-					? "Đã loại bỏ nguyên liệu" + materialcode
-					: "không thành công";
-		}
-		for (String materialcd : materialCodeReq) {
-			foodDetail fooddetail = new foodDetail();
-			Material material = materialService.detailMaterial(materialcd, food.getRestaurant().getId(), branchId);
-			fooddetail.setFood(food);
-			fooddetail.setMaterialCode(material.getCode());
-			fooddetail.setQuantity(listReq.get(materialcd));
-			message = foodDetailService.createFoodDetail(fooddetail) ? "Đã thêm nguyên liệu" + materialcd : "";
-		}
-		for (String materialcode2 : materialCode2) {
-			foodDetail fooddetail = foodDetailService.detailFood(food.getId(), materialcode2);
-			fooddetail.setMaterialCode(materialcode2);
-			fooddetail.setQuantity(listReq.get(materialcode2));
-			message = foodDetailService.updateFoodDetail(fooddetail) ? "Cập nhật thông tin thành công"
-					: "Không thành công";
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/list-food")
-	ResponseEntity<Object> listFood(@RequestParam("employeeId") String employeeId) {
-		Employee employee = employeeService.detailEmployee(employeeId);
-		String branchId = employee.getBranch() != null ? employee.getBranch().getId() : "";
-		List<Food> listFood = foodService.getFoodIdByRestaurantIdAndBranchId(employee.getRestaurant().getId(),
-				branchId);
-		List<FoodRequest> listFoodRequest = new ArrayList<>();
-		for (Food food : listFood) {
-			FoodRequest foodRequest = foodRequest(food);
-			listFoodRequest.add(foodRequest);
+	ResponseEntity<BaseResponse> listFood(@RequestParam("restaurantId") String restaurantId,
+			@RequestParam("branchId") String branchId) {
+		List<FoodRequest> foodRequests = foodService.getFoodAll(restaurantId, branchId);
+		if (foodRequests == null) {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage("Not Found");
+		} else {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(foodRequests);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(listFoodRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
-	@DeleteMapping("/delete")
-	ResponseEntity<String> deleteFood(@RequestParam("id") int id) {
-		String message = null;
-		Food food = foodService.detailFood(id);
-		message = foodService.deleteFood(id) ? "Đã xóa món ăn" : "Không thành công";
-		foodDetailService.deleteFoodDetail(food.getId());
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+	@DeleteMapping("/delete-material-food")
+	ResponseEntity<BaseResponse> deleteFood(@RequestParam("id") int id,
+			@RequestParam("materialCode") String materialCode) {
+		String message = foodService.deleteFood(id, materialCode);
+		if (message.equals(success)) {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+		} else {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage(message);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/change-status")
-	ResponseEntity<String> changeStatusFood(@RequestParam("id") int id) {
-		String message;
-		Food food = foodService.detailFood(id);
-		int status = food.getStatus() == 1 ? 0 : 1;
-		if (status == 0) {
-			message = foodService.changeStatusFood(id, status) ? "Món này đã hết" : "";
-		} else {
-			message = foodService.changeStatusFood(id, status) ? "Món này vẫn còn" : "";
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+	ResponseEntity<BaseResponse> changeStatusFood(@RequestParam("id") int id) {
+		String message = foodService.changeStatusFood(id);
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
-	
-	public FoodRequest foodRequest(Food food) {
-		List<foodDetail> listFoodDetail = foodDetailService.listFoodDetail(food.getId());
-		List<materialFood> nameMaterial = new ArrayList<>();
-		String branchId = food.getBranch() != null ? food.getBranch().getId() : "";
-		for (foodDetail listFooddetail : listFoodDetail) {
-			materialFood materiaL = new materialFood();
-			Material material = materialService.detailMaterial(listFooddetail.getMaterialCode(),
-					food.getRestaurant().getId(), branchId);
-			materiaL.setMaterial(material.getName());
-			materiaL.setQuantity(listFooddetail.getQuantity());
-			nameMaterial.add(materiaL);
+
+	@GetMapping("/list-food-status")
+	ResponseEntity<BaseResponse> listFoodbyStatus(@RequestParam("restaurantId") String restaurantId,
+			@RequestParam("branchId") String branchId, @RequestParam("status") int status) {
+		List<FoodRequest> foodRequests = foodService.listFoodByStatus(restaurantId, branchId, status);
+		if (foodRequests == null) {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage("Not Found");
+		} else {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(foodRequests);
 		}
-		FoodRequest foodRequest = new FoodRequest();
-		foodRequest.setRestaurantId(food.getRestaurant().getId());
-		foodRequest.setBranchId(branchId);
-		foodRequest.setFoodId(food.getId());
-		foodRequest.setName(food.getName());
-		foodRequest.setPrice(food.getPrice());
-		foodRequest.setType(food.getType());
-		foodRequest.setMaterialCode(nameMaterial);
-		foodRequest.setImage(food.getImage());
-		foodRequest.setStatus(food.getStatus());
-		return foodRequest;
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

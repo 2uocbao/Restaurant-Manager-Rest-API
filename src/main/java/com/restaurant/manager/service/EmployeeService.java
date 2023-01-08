@@ -2,6 +2,7 @@ package com.restaurant.manager.service;
 
 import java.util.List;
 
+import com.restaurant.manager.model.Employee;
 import com.restaurant.manager.request.EmployeeRequest;
 
 public interface EmployeeService {
@@ -18,4 +19,6 @@ public interface EmployeeService {
 	public String changePasswordEmployee(String employeeId, String password);
 
 	public String changeStatusEmployee(String employeeId);
+	
+	public Employee getEmployeeByPhone(String phone);
 }
