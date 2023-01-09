@@ -3,21 +3,16 @@ package com.restaurant.manager.service;
 import java.util.List;
 
 import com.restaurant.manager.model.Orders;
+import com.restaurant.manager.request.OrderRequest;
 
 public interface OrderService {
-	public boolean createOrder(Orders order);
+	public String createOrder(OrderRequest orderRequest);
 
-	public Integer getStatusByOrderId(int orderId);
-	
-	public Orders detailOrder(int tableId);
+	public String updateOrder(OrderRequest orderRequest);
 
-	public boolean updateOrder(Orders order);
+	public OrderRequest detailOrder(int tableId);
 
-	public List<Orders> listOrderByEmployeeId(String employeeId);
-
-	public boolean changeStatus(int orderId, int status);
-	
-	public Orders detailOrders(String employeeId, int tableId, int status);
-	
 	public List<Orders> listOrder(String restaurantId, String branchId, int status);
+
+	public Float payOrder(int tableId);
 }

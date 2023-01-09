@@ -56,6 +56,14 @@ public class Material {
 	@ToString.Exclude
 	private Branch branch;
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public String getCode() {
 		return code;
 	}

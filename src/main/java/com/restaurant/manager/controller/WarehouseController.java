@@ -1,10 +1,8 @@
 package com.restaurant.manager.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,14 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.restaurant.manager.model.Employee;
-import com.restaurant.manager.model.Material;
-import com.restaurant.manager.model.Warehouse;
-import com.restaurant.manager.model.WarehouseDetail;
 import com.restaurant.manager.request.WarehouseRequest;
-import com.restaurant.manager.service.EmployeeService;
-import com.restaurant.manager.service.MaterialService;
-import com.restaurant.manager.service.WarehouseDetailService;
+import com.restaurant.manager.response.BaseResponse;
 import com.restaurant.manager.service.WarehouseService;
 
 @RestController
@@ -31,118 +23,36 @@ import com.restaurant.manager.service.WarehouseService;
 public class WarehouseController {
 	@Autowired
 	WarehouseService warehouseService;
-
-	@Autowired
-	WarehouseDetailService warehouseDetailService;
-
-	@Autowired
-	EmployeeService employeeService;
-
-	@Autowired
-	MaterialService materialService;
+	private String success = "success";
+	private BaseResponse baseResponse = new BaseResponse();
 
 	@PostMapping("/create")
-	ResponseEntity<String> createWarehouse(@RequestBody WarehouseRequest warehouseRequest) {
-		String message;
-		Employee employee = employeeService.detailEmployee(warehouseRequest.getEmployeeId());
-		Warehouse warehouse = new Warehouse();
-		Material material = null;
-		if (employee.getBranch() == null) {
-			material = materialService.detailMaterial(warehouseRequest.getMaterialCode(), employee.getRestaurant().getId(), "");
+	ResponseEntity<BaseResponse> createWarehouse(@Valid @RequestParam("materialId") int id,
+			@RequestBody WarehouseRequest warehouseRequest) {
+		String message = warehouseService.createWarehouse(id, warehouseRequest);
+		if (message.equals(success)) {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(warehouseRequest);
 		} else {
-			material = materialService.detailMaterial(warehouseRequest.getMaterialCode(), employee.getRestaurant().getId(),
-					employee.getBranch().getId());
+			baseResponse.setStatus(404);
+			baseResponse.setMessage(message);
 		}
-		if (material == null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Nguyên liệu này chưa có");
-		} else {
-			Warehouse warehouseTmp = warehouseService.detailWarehouse(employee.getId(), material.getCode());
-			if (warehouseTmp == null) {
-				warehouse.setEmployee(employee);
-				warehouse.setMaterialCode(material.getCode());
-				warehouseService.createWarehouse(warehouse);
-				WarehouseDetail warehouseDetail = new WarehouseDetail();
-				warehouseDetail.setWarehouse(warehouse);
-				warehouseDetail.setCost(warehouseRequest.getCost());
-				warehouseDetail.setVatAmount(warehouseRequest.getVatAmount());
-				warehouseDetail.setQuantity(warehouseRequest.getQuantity());
-				warehouseDetail.setTotalAmount(warehouseRequest.getQuantity() + material.getQuantity());
-				warehouseDetail.setDescription(warehouseRequest.getDescription());
-				warehouseDetail.setStatus(1);
-				warehouseDetailService.createWarehouseDetail(warehouseDetail);
-				material.setQuantity(warehouseDetail.getTotalAmount());
-				material.setCost(warehouseDetail.getCost());
-			} else {
-				WarehouseDetail warehouseDetail = new WarehouseDetail();
-				warehouseDetail.setWarehouse(warehouseTmp);
-				warehouseDetail.setCost(warehouseRequest.getCost());
-				warehouseDetail.setVatAmount(warehouseRequest.getVatAmount());
-				warehouseDetail.setQuantity(warehouseRequest.getQuantity());
-				warehouseDetail.setTotalAmount(warehouseRequest.getQuantity() + material.getQuantity());
-				warehouseDetail.setDescription(warehouseRequest.getDescription());
-				warehouseDetail.setStatus(1);
-				warehouseDetailService.createWarehouseDetail(warehouseDetail);
-				material.setQuantity(warehouseDetail.getTotalAmount());
-				material.setCost(warehouseDetail.getCost());
-			}
-			message = materialService.updateMaterial(material) ? "Thành công" : "Không thành công";
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/list-warehouse")
-	ResponseEntity<Object> listWarehouse(@RequestParam("employeeId") String employeeId,
+	ResponseEntity<BaseResponse> listWarehouse(@RequestParam("employeeId") String employeeId,
 			@RequestParam("material code") String materialCode) {
-		List<WarehouseDetail> listWarehouseDetails = null;
-		List<WarehouseRequest> listWarehouseRequests = new ArrayList<>();
-		Warehouse warehouse = warehouseService.detailWarehouse(employeeId, materialCode);
-		listWarehouseDetails = warehouseDetailService.listWarehouseDetail(warehouse.getId());
-		for (WarehouseDetail warehouseD : listWarehouseDetails) {
-			WarehouseRequest warehouseRequest = new WarehouseRequest();
-			warehouseRequest.setEmployeeId(warehouse.getEmployee().getId());
-			warehouseRequest.setMaterialCode(warehouse.getMaterialCode());
-			warehouseRequest.setQuantity(warehouseD.getQuantity());
-			warehouseRequest.setCost(warehouseD.getCost());
-			warehouseRequest.setVatAmount(warehouseD.getVatAmount());
-			warehouseRequest.setDescription(warehouseD.getDescription());
-			warehouseRequest.setStatus(warehouseD.getStatus());
-			warehouseRequest.setDate(warehouseD.getCreateAt());
-			listWarehouseRequests.add(warehouseRequest);
+		List<WarehouseRequest> warehouseRequests = warehouseService.detailWarehouse(employeeId, materialCode);
+		if (warehouseRequests == null) {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage("Not Found");
+		} else {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(warehouseRequests);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(listWarehouseRequests);
-	}
-
-	@SuppressWarnings("deprecation")
-	@GetMapping("/warehouse-from")
-	ResponseEntity<Object> warehouseDay(@RequestParam("employeeId") String employeeId,
-			@RequestParam("material code") String materialCode, @RequestParam("from_day") String day) {
-		List<WarehouseRequest> listWarehouseRequests = new ArrayList<>();
-		List<WarehouseDetail> listWarehouseDetails = null;
-		Warehouse warehouse = warehouseService.detailWarehouse(employeeId, materialCode);
-		listWarehouseDetails = warehouseDetailService.listWarehouseDetail(warehouse.getId());
-		for (WarehouseDetail warehouseD : listWarehouseDetails) {
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-			Date date = null;
-			try {
-				date = formatter.parse(day);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			if (warehouseD.getCreateAt().getDate() <= date.getDate()
-					&& warehouseD.getCreateAt().getMonth() <= date.getMonth()
-					&& warehouseD.getCreateAt().getYear() <= date.getYear()) {
-				WarehouseRequest warehouseRequest = new WarehouseRequest();
-				warehouseRequest.setEmployeeId(warehouse.getEmployee().getId());
-				warehouseRequest.setMaterialCode(materialCode);
-				warehouseRequest.setQuantity(warehouseD.getQuantity());
-				warehouseRequest.setCost(warehouseD.getCost());
-				warehouseRequest.setVatAmount(warehouseD.getVatAmount());
-				warehouseRequest.setDescription(warehouseD.getDescription());
-				warehouseRequest.setStatus(warehouseD.getStatus());
-				warehouseRequest.setDate(warehouseD.getCreateAt());
-				listWarehouseRequests.add(warehouseRequest);
-			}
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(listWarehouseRequests);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

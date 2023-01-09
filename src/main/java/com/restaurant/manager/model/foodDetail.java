@@ -22,9 +22,10 @@ public class foodDetail {
 	@JoinColumn(name = "food_id")
 	private Food food;
 
-	@Column(name = "material_code")
-	private String materialCode;
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "material_id")
+	private Material material;
+
 	@Column(name = "quantity")
 	private float quantity;
 
@@ -44,12 +45,12 @@ public class foodDetail {
 		this.food = food;
 	}
 
-	public String getMaterialCode() {
-		return materialCode;
+	public Material getMaterial() {
+		return material;
 	}
 
-	public void setMaterialCode(String materialCode) {
-		this.materialCode = materialCode;
+	public void setMaterial(Material material) {
+		this.material = material;
 	}
 
 	public float getQuantity() {

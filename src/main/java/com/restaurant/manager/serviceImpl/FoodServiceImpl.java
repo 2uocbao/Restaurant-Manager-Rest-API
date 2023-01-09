@@ -34,6 +34,7 @@ public class FoodServiceImpl implements FoodService {
 	@Autowired
 	FoodDetailRepository foodDetailRepository;
 	private String success = "success";
+	private String nosuccess = "no success";
 
 	@Override
 	public String createFood(FoodRequest foodRequest) {
@@ -60,12 +61,12 @@ public class FoodServiceImpl implements FoodService {
 			for (materialFood materialCode : foodRequest.getMaterialCode()) {
 				Material material = materialRepository.detailMaterial(Integer.parseInt(materialCode.getMaterial()));
 				fooddetail.setFood(food);
-				fooddetail.setMaterialCode(material.getCode());
+				fooddetail.setMaterial(material);
 				fooddetail.setQuantity(materialCode.getQuantity());
 				successful = foodDetailRepository.createFoodDetail(fooddetail);
 			}
 		}
-		return successful ? success : "No success";
+		return successful ? success : nosuccess;
 	}
 
 	@Override
@@ -82,47 +83,46 @@ public class FoodServiceImpl implements FoodService {
 	public String updateFood(int foodId, FoodRequest foodRequest) {
 		boolean successful = false;
 		Food food = foodRepository.detailFood(foodId);
-		List<Food> foods = foodRepository.getFoodIdByRestaurantIdAndBranchId(food.getRestaurant().getId(),
-				food.getBranch() == null ? "" : food.getBranch().getId());
-		for (Food food1 : foods) {
-			if (food1.getName().equalsIgnoreCase(foodRequest.getName())
-					&& !food.getName().equalsIgnoreCase(food1.getName())) {
-				return "Món ăn có tên này đã có";
-			}
-		}
+//		List<Food> foods = foodRepository.getFoodIdByRestaurantIdAndBranchId(food.getRestaurant().getId(),
+//				food.getBranch() == null ? "" : food.getBranch().getId());
+//		for (Food food1 : foods) {
+//			if (food1.getName().equalsIgnoreCase(foodRequest.getName())
+//					&& !food.getName().equalsIgnoreCase(food1.getName())) {
+//				return "Món ăn có tên này đã có";
+//			}
+//		}
 		food.setName(foodRequest.getName());
 		food.setPrice(foodRequest.getPrice());
 		food.setType(foodRequest.getType());
 		food.setImage(foodRequest.getImage());
 		successful = foodRepository.updateFood(food);
-		if (successful) {
-			List<String> materialCode = new ArrayList<>();
-			Set<String> materialCF = new HashSet<>();
-			List<foodDetail> foodDetails = foodDetailRepository.listFoodDetail(foodId);
-			for (materialFood materialFood : foodRequest.getMaterialCode()) {
-				materialCode.add(materialFood.getMaterial());
-				for (foodDetail foodDetail : foodDetails) {
-					materialCF.add(foodDetail.getMaterialCode());
-					if (materialFood.getMaterial() == foodDetail.getMaterialCode()) {
-						foodDetail.setQuantity(materialFood.getQuantity());
-						successful = foodDetailRepository.updateFoodDetail(foodDetail);
-					}
-				}
-			}
-			materialCode.removeAll(materialCF);
-			for (String string : materialCode) {
-				for (materialFood materialFood : foodRequest.getMaterialCode()) {
-					if (string.equals(materialFood.getMaterial())) {
-						foodDetail fooddetail = new foodDetail();
-						fooddetail.setFood(food);
-						fooddetail.setMaterialCode(string);
-						fooddetail.setQuantity(materialFood.getQuantity());
-						successful = foodDetailRepository.createFoodDetail(fooddetail);
-					}
+		List<Integer> materialCode = new ArrayList<>();
+		Set<Integer> materialCF = new HashSet<>();
+		List<foodDetail> foodDetails = foodDetailRepository.listFoodDetail(foodId);
+		for (materialFood materialFood : foodRequest.getMaterialCode()) {
+			materialCode.add(Integer.parseInt(materialFood.getMaterial()));
+			for (foodDetail foodDetail : foodDetails) {
+				materialCF.add(foodDetail.getMaterial().getId());
+				if (Integer.parseInt(materialFood.getMaterial()) == foodDetail.getMaterial().getId()) {
+					foodDetail.setQuantity(materialFood.getQuantity());
+					successful = foodDetailRepository.updateFoodDetail(foodDetail);
 				}
 			}
 		}
-		return successful ? success : "No success";
+		materialCode.removeAll(materialCF);
+		for (Integer integer : materialCode) {
+			for (materialFood materialFood : foodRequest.getMaterialCode()) {
+				if (integer == Integer.parseInt(materialFood.getMaterial())) {
+					foodDetail fooddetail = new foodDetail();
+					Material material = materialRepository.detailMaterial(integer);
+					fooddetail.setFood(food);
+					fooddetail.setMaterial(material);
+					fooddetail.setQuantity(materialFood.getQuantity());
+					successful = foodDetailRepository.createFoodDetail(fooddetail);
+				}
+			}
+		}
+		return successful ? success : nosuccess;
 	}
 
 	@Override

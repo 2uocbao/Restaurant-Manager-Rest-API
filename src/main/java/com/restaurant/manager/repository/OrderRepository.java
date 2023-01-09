@@ -9,15 +9,13 @@ public interface OrderRepository {
 
 	public Integer getStatusByOrderId(int orderId);
 	
-	public Orders detailOrder(int tableId);
-
 	public boolean updateOrder(Orders order);
 
 	public List<Orders> listOrderByEmployeeId(String employeeId);
 
 	public boolean changeStatus(int tableId, int status);
 	
-	public Orders detailOrders(String employeeId, int tableId, int status);
+	public Orders detailOrders(int tableId, int status);
 	
 	public List<Orders> listOrder(String restaurantId, String branchId, int status);
 

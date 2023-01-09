@@ -1,10 +1,12 @@
 package com.restaurant.manager.service;
 
-import com.restaurant.manager.model.Warehouse;
+import java.util.List;
+
+import com.restaurant.manager.request.WarehouseRequest;
 
 public interface WarehouseService {
-	public boolean createWarehouse(Warehouse warehouse);
+	public String createWarehouse(int materailId, WarehouseRequest warehouseRequest);
 
-	public Warehouse detailWarehouse(String employeeId, String materialCode);
+	public List<WarehouseRequest> detailWarehouse(String employeeId, String materialCode);
 
 }

@@ -143,30 +143,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
-	public Orders detailOrder(int orderId) {
-		Orders order = new Orders();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			order = (Orders) session.createQuery("FROM com.restaurant.manager.model.Orders o WHERE o.id = :orderId")
-					.setParameter("orderId", orderId).uniqueResult();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return order;
-	}
-
-	@Override
-	public Orders detailOrders(String employeeId, int tableId, int status) {
+	public Orders detailOrders(int tableId, int status) {
 		Orders order = new Orders();
 		try {
 			session = sessionFactory.openSession();
