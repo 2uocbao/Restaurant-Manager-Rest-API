@@ -1,31 +1,32 @@
-package com.restaurant.manager.repositoryImpl;
+package com.restaurant.manager.repositoryimpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.restaurant.manager.model.Restaurant;
-import com.restaurant.manager.repository.RestaurantRepository;
+import com.restaurant.manager.model.Food;
+import com.restaurant.manager.repository.FoodRepository;
 
 @Repository
-@Transactional
-public class RestaurantRepositoryImpl implements RestaurantRepository {
-	Transaction transaction = null;
+public class FoodRepositoryImpl implements FoodRepository {
 	Session session = null;
+	Transaction transaction = null;
 
 	@Autowired
 	SessionFactory sessionFactory;
 
 	@Override
-	public boolean createRestaurant(Restaurant restaurant) {
+	public boolean createFood(Food food) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.save(restaurant);
+			session.save(food);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -43,12 +44,34 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	}
 
 	@Override
-	public boolean updateRestaurant(Restaurant restaurant) {
+	public Food detailFood(int id) {
+		Food food = new Food();
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			food = session.get(Food.class, id);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return food;
+	}
+
+	@Override
+	public boolean updateFood(Food food) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.update(restaurant);
+			session.update(food);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -66,38 +89,13 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	}
 
 	@Override
-	public Restaurant detailRestaurant(String id) {
-		Restaurant restaurant = null;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			restaurant = (Restaurant) session
-					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.id = :id")
-					.setParameter("id", id).uniqueResult();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			} 
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return restaurant;
-	}
-
-	@Override
-	public boolean changeStatusRestaurant(String id, int status) {
+	public boolean deleteFood(int id) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.createQuery(
-					"UPDATE com.restaurant.manager.model.Restaurants r SET r.status = :status WHERE r.id = :id")
-					.setParameter("status", status).setParameter("id", id).executeUpdate();
+			session.createQuery("DELETE com.restaurant.manager.model.Food f WHERE f.id = :id").setParameter("id", id)
+					.executeUpdate();
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -115,15 +113,15 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 	}
 
 	@Override
-	public Restaurant getRestaurantbyPhone(String phone) {
-		Restaurant restaurants = new Restaurant();
+	public boolean changeStatusFood(int id, int status) {
+		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			restaurants = (Restaurant) session
-					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.phone = :phone")
-					.setParameter("phone", phone).uniqueResult();
+			session.createQuery("UPDATE com.restaurant.manager.model.Food f SET f.status = :status WHERE f.id = :id")
+					.setParameter("id", id).setParameter("status", status).executeUpdate();
 			transaction.commit();
+			successful = true;
 		} catch (Exception e) {
 			if (transaction != null) {
 				transaction.rollback();
@@ -135,18 +133,25 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 					session.close();
 			}
 		}
-		return restaurants;
+		return successful;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Restaurant getRestaurantbyEmail(String email) {
-		Restaurant restaurant = new Restaurant();
+	public List<Food> getFoodIdByRestaurantIdAndBranchId(String restaurantId, String branchId) {
+		List<Food> listFoodId = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			restaurant = (Restaurant) session
-					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.email = :email")
-					.setParameter("email", email).uniqueResult();
+			if (branchId.equals("")) {
+				listFoodId = session.createQuery(
+						"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = null")
+						.setParameter("restaurantId", restaurantId).list();
+			} else {
+				listFoodId = session.createQuery(
+						"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = :branchId")
+						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
+			}
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -159,18 +164,19 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 					session.close();
 			}
 		}
-		return restaurant;
+		return listFoodId;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public int getStatusById(String id) {
-		int status = 0;
+	public List<Food> listFood(String restaurantId, String branchId, int status) {
+		List<Food> listFood = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			status = (Integer) session
-					.createQuery("SELECT r.status FROM com.restaurant.manager.model.Restaurants r WHERE r.id = :id")
-					.setParameter("id", id).uniqueResult();
+			listFood = session.createQuery(
+					"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = :branchId")
+					.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -183,6 +189,6 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 					session.close();
 			}
 		}
-		return status;
+		return listFood;
 	}
 }

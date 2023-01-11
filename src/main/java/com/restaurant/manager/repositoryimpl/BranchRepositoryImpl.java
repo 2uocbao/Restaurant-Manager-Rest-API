@@ -1,4 +1,4 @@
-package com.restaurant.manager.repositoryImpl;
+package com.restaurant.manager.repositoryimpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,25 +8,27 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.restaurant.manager.model.Food;
-import com.restaurant.manager.repository.FoodRepository;
+import com.restaurant.manager.model.Branch;
+import com.restaurant.manager.repository.BranchRepository;
 
 @Repository
-public class FoodRepositoryImpl implements FoodRepository {
-	Session session = null;
+@Transactional
+
+public class BranchRepositoryImpl implements BranchRepository {
 	Transaction transaction = null;
-
+	Session session = null;
 	@Autowired
-	SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
 	@Override
-	public boolean createFood(Food food) {
+	public boolean createBranch(Branch branch) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.save(food);
+			session.save(branch);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -44,12 +46,13 @@ public class FoodRepositoryImpl implements FoodRepository {
 	}
 
 	@Override
-	public Food detailFood(int id) {
-		Food food = new Food();
+	public Branch detailBranch(String id) {
+		Branch branch = new Branch();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			food = session.get(Food.class, id);
+			branch = (Branch) session.createQuery("FROM com.restaurant.manager.model.Branch b WHERE b.id = :id")
+					.setParameter("id", id).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -62,40 +65,16 @@ public class FoodRepositoryImpl implements FoodRepository {
 					session.close();
 			}
 		}
-		return food;
+		return branch;
 	}
 
 	@Override
-	public boolean updateFood(Food food) {
+	public boolean updateBranch(Branch branch) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.update(food);
-			transaction.commit();
-			successful = true;
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return successful;
-	}
-
-	@Override
-	public boolean deleteFood(int id) {
-		boolean successful = false;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			session.createQuery("DELETE com.restaurant.manager.model.Food f WHERE f.id = :id").setParameter("id", id)
-					.executeUpdate();
+			session.update(branch);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -113,13 +92,86 @@ public class FoodRepositoryImpl implements FoodRepository {
 	}
 
 	@Override
-	public boolean changeStatusFood(int id, int status) {
+	public boolean changeStatusBranch(String id, int status) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.createQuery("UPDATE com.restaurant.manager.model.Food f SET f.status = :status WHERE f.id = :id")
-					.setParameter("id", id).setParameter("status", status).executeUpdate();
+			session.createQuery("UPDATE com.restaurant.manager.model.Branch b SET b.status = :status WHERE b.id = :id")
+					.setParameter("status", status).setParameter("id", id).executeUpdate();
+			transaction.commit();
+			successful = true;
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return successful;
+	}
+
+	@Override
+	public Branch getDetailByPhone(String phone) {
+		Branch branch = new Branch();
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			branch = (Branch) session.createQuery("FROM com.restaurant.manager.model.Branch b WHERE b.phone = :phone")
+					.setParameter("phone", phone).uniqueResult();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return branch;
+
+	}
+
+	@Override
+	public Integer getStatusbyId(String id) {
+		int status = 0;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			status = (int) session
+					.createQuery("SELECT b.status FROM com.restaurant.manager.model.Branch b WHERE b.id = :id")
+					.setParameter("id", id).uniqueResult();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return status;
+	}
+
+	@Override
+	public boolean changeStatusbyRestaurantId(String restaurantId, int status) {
+		boolean successful = false;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.createQuery(
+					"UPDATE com.restaurant.manager.model.Branch b SET b.status = :status WHERE b.restaurant.id = :restaurantId")
+					.setParameter("restaurantId", restaurantId).setParameter("status", status).executeUpdate();
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -138,20 +190,13 @@ public class FoodRepositoryImpl implements FoodRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Food> getFoodIdByRestaurantIdAndBranchId(String restaurantId, String branchId) {
-		List<Food> listFoodId = new ArrayList<>();
+	public List<Branch> listBranchByRestaurantId(String restaurantId) {
+		List<Branch> listBranch = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId.equals("")) {
-				listFoodId = session.createQuery(
-						"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = null")
-						.setParameter("restaurantId", restaurantId).list();
-			} else {
-				listFoodId = session.createQuery(
-						"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = :branchId")
-						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
-			}
+			listBranch = session.createQuery("FROM com.restaurant.manager.model.Branch b WHERE b.restaurant.id = :id")
+					.setParameter("id", restaurantId).list();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -164,31 +209,6 @@ public class FoodRepositoryImpl implements FoodRepository {
 					session.close();
 			}
 		}
-		return listFoodId;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Food> listFood(String restaurantId, String branchId, int status) {
-		List<Food> listFood = new ArrayList<>();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			listFood = session.createQuery(
-					"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = :branchId")
-					.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return listFood;
+		return listBranch;
 	}
 }

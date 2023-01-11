@@ -1,4 +1,4 @@
-package com.restaurant.manager.serviceImpl;
+package com.restaurant.manager.serviceimpl;
 
 import java.util.ArrayList;
 import java.util.Collection;

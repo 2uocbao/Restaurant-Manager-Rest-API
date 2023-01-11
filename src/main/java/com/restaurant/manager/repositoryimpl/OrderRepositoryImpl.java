@@ -1,4 +1,4 @@
-package com.restaurant.manager.repositoryImpl;
+package com.restaurant.manager.repositoryimpl;
 
 import java.util.ArrayList;
 import java.util.List;

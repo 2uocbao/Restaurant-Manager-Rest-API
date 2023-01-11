@@ -1,4 +1,4 @@
-package com.restaurant.manager.repositoryImpl;
+package com.restaurant.manager.repositoryimpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +9,11 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.restaurant.manager.model.foodDetail;
-import com.restaurant.manager.repository.FoodDetailRepository;
+import com.restaurant.manager.model.orderDetail;
+import com.restaurant.manager.repository.orderDetailRepository;
 
 @Repository
-public class FoodDetailRepositoryImpl implements FoodDetailRepository {
+public class orderDetailRepositoryImpl implements orderDetailRepository {
 	Session session = null;
 	Transaction transaction = null;
 
@@ -21,12 +21,12 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 	SessionFactory sessionFactory;
 
 	@Override
-	public boolean createFoodDetail(foodDetail foodDetail) {
+	public boolean createOrderDetail(orderDetail orderDetail) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.save(foodDetail);
+			session.save(orderDetail);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -44,13 +44,36 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 	}
 
 	@Override
-	public boolean deleteFoodDetail(int id) {
+	public orderDetail detailOrder(int orderId) {
+		orderDetail orderDetail = new orderDetail();
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			orderDetail = (orderDetail) session.createQuery(
+					"FROM com.restaurant.manager.model.orderDetail o WHERE o.order.id = :orderId")
+					.setParameter("orderId", orderId).uniqueResult();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return orderDetail;
+	}
+
+	@Override
+	public boolean updateOrderDetail(orderDetail orderDetail) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.createQuery("DELETE com.restaurant.manager.model.foodDetail f WHERE f.food.id = :id")
-					.setParameter("id", id).executeUpdate();
+			session.update(orderDetail);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -69,14 +92,14 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<foodDetail> listFoodDetail(int foodId) {
-		List<foodDetail> listFoodDetail = new ArrayList<>();
+	public List<orderDetail> listOrderbyIdorder(int orderId) {
+		List<orderDetail> listorder = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			listFoodDetail = session
-					.createQuery("FROM com.restaurant.manager.model.foodDetail f WHERE f.food.id = :foodId")
-					.setParameter("foodId", foodId).list();
+			listorder = session
+					.createQuery("FROM com.restaurant.manager.model.orderDetail o WHERE o.order.id = :orderId")
+					.setParameter("orderId", orderId).list();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -89,16 +112,18 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 					session.close();
 			}
 		}
-		return listFoodDetail;
+		return listorder;
 	}
 
 	@Override
-	public boolean updateFoodDetail(foodDetail foodDetail) {
+	public boolean deleteOrderDetail(int orderId, int foodId) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.update(foodDetail);
+			session.createQuery(
+					"DELETE com.restaurant.manager.model.orderDetail o WHERE o.order.id = :orderId AND o.food.id = :foodId")
+					.setParameter("orderId", orderId).setParameter("foodId", foodId).executeUpdate();
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -113,54 +138,5 @@ public class FoodDetailRepositoryImpl implements FoodDetailRepository {
 			}
 		}
 		return successful;
-	}
-
-	@Override
-	public boolean deleteFoodDetailByMateCode(int foodId, String materialCode) {
-		boolean success = false;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			session.createQuery(
-					"DELETE com.restaurant.manager.model.foodDetail f WHERE f.food.id = :foodId AND f.materialCode = :materialCode")
-					.setParameter("foodId", foodId).setParameter("materialCode", materialCode).executeUpdate();
-			transaction.commit();
-			success = true;
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return success;
-	}
-
-	@Override
-	public foodDetail detailFood(int foodId, String materialCode) {
-		foodDetail foodDetail = null;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			foodDetail = (foodDetail) session.createQuery(
-					"FROM com.restaurant.manager.model.foodDetail f WHERE f.food.id = :foodId AND f.materialCode = :materialCode")
-					.setParameter("foodId", foodId).setParameter("materialCode", materialCode).uniqueResult();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return foodDetail;
 	}
 }

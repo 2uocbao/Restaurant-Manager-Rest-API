@@ -1,30 +1,31 @@
-package com.restaurant.manager.repositoryImpl;
+package com.restaurant.manager.repositoryimpl;
+
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.restaurant.manager.model.Image;
-import com.restaurant.manager.repository.ImageRepository;
+import com.restaurant.manager.model.Material;
+import com.restaurant.manager.repository.MaterialRepository;
 
 @Repository
-@Transactional
-public class ImageRepositoryImpl implements ImageRepository {
+public class MaterialRepositoryImpl implements MaterialRepository {
 	Session session = null;
 	Transaction transaction = null;
-	boolean successful = false;
+
 	@Autowired
 	SessionFactory sessionFactory;
 
 	@Override
-	public boolean uploadImage(Image image) {
+	public boolean createMaterial(Material material) {
+		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.save(image);
+			session.save(material);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -42,34 +43,12 @@ public class ImageRepositoryImpl implements ImageRepository {
 	}
 
 	@Override
-	public Image displayImagebyUserId(String userId) {
-		Image image = null;
+	public boolean updateMaterial(Material material) {
+		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			image = (Image) session.createQuery("FROM com.restaurant.manager.model.Image i WHERE i.userId = :userId")
-					.setParameter("userId", userId).uniqueResult();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return image;
-	}
-
-	@Override
-	public boolean updateImage(Image image) {
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			session.update(image);
+			session.update(material);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -87,14 +66,17 @@ public class ImageRepositoryImpl implements ImageRepository {
 	}
 
 	@Override
-	public boolean deleteImage(String userId) {
+	public Material detailMaterial(int materialId) {
+		Material material = new Material();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.createQuery("DELETE i FROM com.restaurant.manager.model.Image i WHERE i.userId = :userId")
-					.setParameter("userId", userId).executeUpdate();
+
+			material = (Material) session.createQuery(
+					"FROM com.restaurant.manager.model.Material i WHERE i.id = :id")
+					.setParameter("id", materialId).uniqueResult();
+
 			transaction.commit();
-			successful = true;
 		} catch (Exception e) {
 			if (transaction != null) {
 				transaction.rollback();
@@ -106,6 +88,37 @@ public class ImageRepositoryImpl implements ImageRepository {
 					session.close();
 			}
 		}
-		return successful;
+		return material;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Material> listMaterial(String restaurantId, String branchId) {
+		List<Material> listMaterial = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			if (branchId.equals("")) {
+				listMaterial = session.createQuery(
+						"FROM com.restaurant.manager.model.Material m WHERE m.restaurant.id = :restaurantId AND m.branch.id = null")
+						.setParameter("restaurantId", restaurantId).list();
+			} else {
+				listMaterial = session.createQuery(
+						"FROM com.restaurant.manager.model.Material m WHERE m.restaurant.id = :restaurantId AND m.branch.id = :branchId")
+						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
+			}
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return listMaterial;
 	}
 }

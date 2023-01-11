@@ -1,5 +1,9 @@
 package com.restaurant.manager.service;
 
+import java.util.List;
+
+import com.restaurant.manager.request.MaterialRequest;
+
 public interface ReportService {
 
 	// báo cáo doanh thu theo ngày, tháng, năm
@@ -10,11 +14,9 @@ public interface ReportService {
 
 	public Float incomebyDay(String day, String restaurantId, String branchId);
 
-	public Float incomebyMonth(String day, String employeeId);
+	public Float incomebyMonth(String day, String restaurantId, String branchId);
 
-	public Float incomebyYear(int year, String employeeId);
-
-	public String reportOutofStock(String employeeId);
+	public List<MaterialRequest> reportOutofStockMaterial(String restaurantId, String branchId);
 
 	public Float spendbyDay(String employee);
 }

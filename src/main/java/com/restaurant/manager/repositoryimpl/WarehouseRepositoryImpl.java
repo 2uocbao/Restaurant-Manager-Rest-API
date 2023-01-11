@@ -1,4 +1,4 @@
-package com.restaurant.manager.repositoryImpl;
+package com.restaurant.manager.repositoryimpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,26 +8,25 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.restaurant.manager.model.WarehouseDetail;
-import com.restaurant.manager.repository.WarehouseDetailRepository;
+import com.restaurant.manager.model.Warehouse;
+import com.restaurant.manager.repository.WarehouseRepository;
 
 @Repository
-@Transactional
-public class WarehouseDetailRepositoryImpl implements WarehouseDetailRepository {
+public class WarehouseRepositoryImpl implements WarehouseRepository {
 	Session session = null;
 	Transaction transaction = null;
+
 	@Autowired
 	SessionFactory sessionFactory;
 
 	@Override
-	public boolean createWarehouseDetail(WarehouseDetail warehouseDetail) {
+	public boolean createWarehouse(Warehouse warehouse) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			session.save(warehouseDetail);
+			session.save(warehouse);
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -45,40 +44,14 @@ public class WarehouseDetailRepositoryImpl implements WarehouseDetailRepository 
 	}
 
 	@Override
-	public float getTotalAmountByMaterialCode(String materialCode) {
-		float totalAmount = 0;
+	public Warehouse detailWarehouse(String employeeId, String materialCode) {
+		Warehouse wareHouse = new Warehouse();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			totalAmount = (float) session.createQuery(
-					"SELECT w.totalAmount FROM com.restaurant.manager.model.WarehouseDetail w WHERE w.materialCode = :materialCode")
-					.setParameter("materialCode", materialCode).uniqueResult();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.commit();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return totalAmount;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<WarehouseDetail> listWarehouseDetail(int warehouseId) {
-		List<WarehouseDetail> listWarehouse = new ArrayList<>();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			listWarehouse = session
-					.createQuery(
-							"FROM com.restaurant.manager.model.WarehouseDetail w WHERE w.warehouse.id = :warehouseId")
-					.setParameter("warehouseId", warehouseId).list();
+			wareHouse = (Warehouse) session.createQuery(
+					"FROM com.restaurant.manager.model.Warehouse w WHERE w.employee.id = :employeeId AND materialCode = :materialCode")
+					.setParameter("materialCode", materialCode).setParameter("employeeId", employeeId).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -91,6 +64,32 @@ public class WarehouseDetailRepositoryImpl implements WarehouseDetailRepository 
 					session.close();
 			}
 		}
-		return listWarehouse;
+		return wareHouse;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Warehouse> listWarehouse(String employeeId) {
+		List<Warehouse> warehouses = new ArrayList<>();
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			warehouses = session
+					.createQuery("FROM com.restaurant.manager.model.Warehouse w WHERE w.employee.id = :employeeId")
+					.setParameter("employeeId", employeeId).list();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return warehouses;
+	}
+
 }
