@@ -72,7 +72,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			restaurant = (Restaurant) session
-					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.id = :id")
+					.createQuery("FROM com.restaurant.manager.model.Restaurant r WHERE r.id = :id")
 					.setParameter("id", id).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
@@ -96,7 +96,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			session.createQuery(
-					"UPDATE com.restaurant.manager.model.Restaurants r SET r.status = :status WHERE r.id = :id")
+					"UPDATE com.restaurant.manager.model.Restaurant r SET r.status = :status WHERE r.id = :id")
 					.setParameter("status", status).setParameter("id", id).executeUpdate();
 			transaction.commit();
 			successful = true;
@@ -121,7 +121,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			restaurants = (Restaurant) session
-					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.phone = :phone")
+					.createQuery("FROM com.restaurant.manager.model.Restaurant r WHERE r.phone = :phone")
 					.setParameter("phone", phone).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
@@ -145,7 +145,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			restaurant = (Restaurant) session
-					.createQuery("FROM com.restaurant.manager.model.Restaurants r WHERE r.email = :email")
+					.createQuery("FROM com.restaurant.manager.model.Restaurant r WHERE r.email = :email")
 					.setParameter("email", email).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
@@ -169,7 +169,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			status = (Integer) session
-					.createQuery("SELECT r.status FROM com.restaurant.manager.model.Restaurants r WHERE r.id = :id")
+					.createQuery("SELECT r.status FROM com.restaurant.manager.model.Restaurant r WHERE r.id = :id")
 					.setParameter("id", id).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
