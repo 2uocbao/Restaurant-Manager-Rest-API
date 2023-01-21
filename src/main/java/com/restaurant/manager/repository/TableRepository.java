@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.restaurant.manager.model.Tables;
 
-// find table doing on
 public interface TableRepository {
 
 	public boolean createTable(Tables table);
@@ -21,9 +20,9 @@ public interface TableRepository {
 
 	public Tables getTablebyName(String restaurantId, String branchId, String name);
 
-	public List<Tables> listTableByStatus(String restaurantId, String branchId, int status);
-
 	public boolean changeStatusTableByRestaurantId(String restaurantId, int status);
 	
 	public boolean changeStatusTableByBranchId(String restaurantId, int status);
+	
+	public List<Tables> findTables(String restaurantId, String branchId, String keySearch);
 }

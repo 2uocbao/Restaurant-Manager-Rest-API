@@ -15,4 +15,5 @@ public interface TableService {
 
 	public List<TableRequest> listTableByStatus(String restaurantId, String branchId, int status);
 
+	public List<TableRequest> findTable(String restaurantId, String branchId, String keySearch);
 }

@@ -9,7 +9,7 @@ import com.restaurant.manager.repository.EmployeeRepository;
 import com.restaurant.manager.repository.RestaurantRepository;
 import com.restaurant.manager.repository.TableRepository;
 import com.restaurant.manager.request.RestaurantRequest;
-import com.restaurant.manager.service.CheckService;
+import com.restaurant.manager.sercurity.CheckService;
 import com.restaurant.manager.service.RestaurantService;
 
 @Service
@@ -27,19 +27,24 @@ public class RestaurantServiceImpl implements RestaurantService {
 	@Autowired
 	TableRepository tableRepository;
 
-	private CheckService checkService;
+	private CheckService checkService = new CheckService();
 	private String success = "success";
 
 	@Override
 	public String createRestaurant(RestaurantRequest restaurantRequest) {
 		String message = checkInfor(restaurantRequest);
-		if (message.equals(success)) {
+		if (restaurantRepository.getRestaurantbyEmail(restaurantRequest.getEmail()) != null) {
+			return "Email already in use";
+		} else if (restaurantRepository.getRestaurantbyPhone(restaurantRequest.getPhone()) != null) {
+			return "Phone number already in use";
+		} else if (message.equals(success)) {
 			Restaurant restaurant = new Restaurant();
 			restaurant.setId(restaurantRequest.getPhone().trim());
 			restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
 			restaurant.setEmail(restaurantRequest.getEmail().trim());
 			restaurant.setPhone(restaurantRequest.getPhone().trim());
 			restaurant.setInfo(restaurantRequest.getInfo().replaceAll("\\s+", " ").trim());
+			restaurant.setImage(restaurantRequest.getImage());
 			restaurant.setAddress(restaurantRequest.getAddress().replaceAll("\\s+", " ").trim());
 			restaurant.setStatus(1);
 			boolean successful = restaurantRepository.createRestaurant(restaurant);
@@ -56,15 +61,16 @@ public class RestaurantServiceImpl implements RestaurantService {
 			return message;
 		} else if (restaurantRepository.getRestaurantbyEmail(restaurantRequest.getEmail()) != null
 				&& !restaurant.getEmail().equals(restaurantRequest.getEmail())) {
-			return "Email đã được sử dụng";
+			return "Email already in use";
 		} else if (restaurantRepository.getRestaurantbyPhone(restaurantRequest.getPhone()) != null
 				&& !restaurant.getPhone().equalsIgnoreCase(restaurantRequest.getPhone())) {
-			return "Số điện thoại đã được sử dụng";
+			return "Phone number already in use";
 		} else {
 			restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
 			restaurant.setEmail(restaurantRequest.getEmail().trim());
 			restaurant.setPhone(restaurantRequest.getPhone().trim());
 			restaurant.setInfo(restaurantRequest.getInfo().replaceAll("\\s\\s+", " ").trim());
+			restaurant.setImage(restaurantRequest.getImage());
 			restaurant.setAddress(restaurantRequest.getAddress().replaceAll("\\s\\s+", " ").trim());
 			boolean successful = restaurantRepository.updateRestaurant(restaurant);
 			return successful ? success : "No success";
@@ -81,8 +87,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 			restaurantRequest.setEmail(restaurant.getEmail());
 			restaurantRequest.setPhone(restaurant.getPhone());
 			restaurantRequest.setInfo(restaurant.getInfo());
+			restaurantRequest.setImage(restaurant.getImage());
 			restaurantRequest.setAddress(restaurant.getAddress());
 			restaurantRequest.setStatus(restaurant.getStatus());
+		} else {
+			return null;
 		}
 		return restaurantRequest;
 	}
@@ -103,11 +112,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	public String checkInfor(RestaurantRequest restaurantRequest) {
 		if (!checkService.isValidEmail(restaurantRequest.getEmail())) {
-			return "Email không hợp lệ";
+			return "Invalid email";
 		} else if (!checkService.checkPhone(restaurantRequest.getPhone())) {
-			return "Số điện thoại không hơp lệ";
+			return "Invalid phone number";
 		} else if (!checkService.checkName(restaurantRequest.getName())) {
-			return "Tên không hợp lệ";
+			return "Invalid name";
 		}
 		return success;
 	}

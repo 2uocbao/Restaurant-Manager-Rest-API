@@ -13,8 +13,8 @@ import com.restaurant.manager.repository.EmployeeRepository;
 import com.restaurant.manager.repository.RestaurantRepository;
 import com.restaurant.manager.repository.TableRepository;
 import com.restaurant.manager.request.BranchRequest;
+import com.restaurant.manager.sercurity.CheckService;
 import com.restaurant.manager.service.BranchService;
-import com.restaurant.manager.service.CheckService;
 
 @Service
 public class BranchServiceImpl implements BranchService {
@@ -30,7 +30,7 @@ public class BranchServiceImpl implements BranchService {
 	@Autowired
 	TableRepository tableRepository;
 
-	private CheckService checkService;
+	private CheckService checkService = new CheckService();
 	private String success = "success";
 
 	@Override
@@ -43,7 +43,7 @@ public class BranchServiceImpl implements BranchService {
 			return "Restaurant Inactive";
 		} else if (restaurantRepository.getRestaurantbyPhone(branchRequest.getPhone()) != null
 				|| branchRepository.getDetailByPhone(branchRequest.getPhone()) != null) {
-			return "Số điện thoại này đã được sử dụng";
+			return "Phone number already in use";
 		} else {
 			Branch branch = new Branch();
 			branch.setId(branchRequest.getPhone().trim());
@@ -66,10 +66,13 @@ public class BranchServiceImpl implements BranchService {
 			branchRequest.setBranchId(branch.getId());
 			branchRequest.setRestaurantId(branch.getRestaurant().getId());
 			branchRequest.setName(branch.getName());
+			branchRequest.setImage(branch.getRestaurant().getImage());
 			branchRequest.setPhone(branch.getPhone());
 			branchRequest.setAddress(branch.getAddress());
 			branchRequest.setStreet(branch.getStreet());
 			branchRequest.setStatus(branch.getStatus());
+		} else {
+			return null;
 		}
 		return branchRequest;
 
@@ -84,7 +87,7 @@ public class BranchServiceImpl implements BranchService {
 		} else if (restaurantRepository.getRestaurantbyPhone(branchRequest.getPhone()) != null
 				|| branchRepository.getDetailByPhone(branchRequest.getPhone()) != null
 						&& !branch.getPhone().equalsIgnoreCase(branchRequest.getPhone())) {
-			return "Số điện thoại này đã được sử dụng";
+			return "Phone number already in use";
 		} else {
 			branch.setName(branchRequest.getName().replace("//s+", " ").trim());
 			branch.setPhone(branchRequest.getPhone().trim());
@@ -98,6 +101,9 @@ public class BranchServiceImpl implements BranchService {
 	@Override
 	public String changeStatusBranch(String branchId) {
 		Branch branch = branchRepository.detailBranch(branchId);
+		if (branch.getRestaurant().getStatus() == 0) {
+			return "The restaurant is not working";
+		}
 		if (branch.getStatus() == 1) {
 			employeeRepository.changeStatusEmployeeByBranchId(branch.getId(), 0);
 			tableRepository.changeStatusTableByBranchId(branch.getId(), 0);
@@ -117,6 +123,7 @@ public class BranchServiceImpl implements BranchService {
 			branchRequest.setRestaurantId(branch.getRestaurant().getId());
 			branchRequest.setBranchId(branch.getId());
 			branchRequest.setName(branch.getName());
+			branchRequest.setImage(branch.getRestaurant().getImage());
 			branchRequest.setPhone(branch.getPhone());
 			branchRequest.setStreet(branch.getStreet());
 			branchRequest.setAddress(branch.getAddress());
@@ -128,9 +135,9 @@ public class BranchServiceImpl implements BranchService {
 
 	public String checkInfor(BranchRequest branchRequest) {
 		if (!checkService.checkName(branchRequest.getName())) {
-			return "Tên không hợp lệ";
+			return "Invalid name";
 		} else if (!checkService.checkPhone(branchRequest.getPhone())) {
-			return "Số điện thoại không hợp lệ";
+			return "Invalid phone number";
 		}
 		return success;
 	}

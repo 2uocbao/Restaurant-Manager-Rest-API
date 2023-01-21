@@ -11,7 +11,7 @@ import com.restaurant.manager.repository.BranchRepository;
 import com.restaurant.manager.repository.MaterialRepository;
 import com.restaurant.manager.repository.RestaurantRepository;
 import com.restaurant.manager.request.MaterialRequest;
-import com.restaurant.manager.service.CheckService;
+import com.restaurant.manager.sercurity.CheckService;
 import com.restaurant.manager.service.MaterialService;
 
 @Service
@@ -22,7 +22,7 @@ public class MaterialServiceImpl implements MaterialService {
 	BranchRepository branchRepository;
 	@Autowired
 	MaterialRepository materialRepository;
-	private CheckService checkService;
+	private CheckService checkService = new CheckService();
 	private String success = "success";
 
 	@Override
@@ -31,7 +31,7 @@ public class MaterialServiceImpl implements MaterialService {
 		List<Material> materials = materialRepository.listMaterial(materialRequest.getRestaurantId(),
 				materialRequest.getBranchId() == null ? "" : materialRequest.getBranchId());
 		for (Material material : materials) {
-			if (material.getName().equals(materialRequest.getName())) {
+			if (material.getCode().equals(materialRequest.getCode())) {
 				return "Nguyên liệu có mã code này đã tồn tại";
 			}
 		}
@@ -115,5 +115,25 @@ public class MaterialServiceImpl implements MaterialService {
 			return "Tên nguyên liệu không hợp lệ";
 		}
 		return success;
+	}
+
+	@Override
+	public List<MaterialRequest> findMaterialByCode(String restaurantId, String branchId, String keySearch) {
+		List<MaterialRequest> materialRequests = new ArrayList<>();
+		List<Material> materials = materialRepository.findMaterialByCode(restaurantId, branchId, keySearch);
+		for (Material material : materials) {
+			MaterialRequest materialRequest = new MaterialRequest();
+			materialRequest.setRestaurantId(material.getRestaurant().getId());
+			materialRequest.setBranchId(material.getBranch() != null ? material.getBranch().getId() : null);
+			materialRequest.setCode(material.getCode());
+			materialRequest.setName(material.getName());
+			materialRequest.setCost(material.getCost());
+			materialRequest.setType(material.getType());
+			materialRequest.setQuantity(material.getQuantity());
+			materialRequest.setStockEnd(material.getStockEnd());
+			materialRequest.setWhereProduction(material.getWhereProduction());
+			materialRequests.add(materialRequest);
+		}
+		return materialRequests;
 	}
 }

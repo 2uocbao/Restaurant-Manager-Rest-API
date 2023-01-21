@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -26,6 +27,7 @@ public class Restaurant {
 	private String name;
 
 	@Column(name = "email")
+	@NotEmpty(message = "Email cannot be empty")
 	private String email;
 
 	@Column(name = "phone")
@@ -33,6 +35,9 @@ public class Restaurant {
 
 	@Column(name = "info")
 	private String info;
+
+	@Column(name = "image")
+	private String image;
 
 	@Column(name = "address")
 	private String address;
@@ -98,6 +103,14 @@ public class Restaurant {
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+	
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 	public String getAddress() {

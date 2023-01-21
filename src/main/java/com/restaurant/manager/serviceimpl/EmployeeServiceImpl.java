@@ -21,7 +21,7 @@ import com.restaurant.manager.repository.BranchRepository;
 import com.restaurant.manager.repository.EmployeeRepository;
 import com.restaurant.manager.repository.RestaurantRepository;
 import com.restaurant.manager.request.EmployeeRequest;
-import com.restaurant.manager.service.CheckService;
+import com.restaurant.manager.sercurity.CheckService;
 import com.restaurant.manager.service.EmployeeService;
 
 @Service
@@ -33,9 +33,10 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 	@Autowired
 	BranchRepository branchRepository;
 
-	private CheckService checkService;
+	private CheckService checkService = new CheckService();
 	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	private String success = "success";
+	private String nosuccess = "no success";
 
 	@Override
 	public String createEmployee(EmployeeRequest employeeRequest) {
@@ -43,9 +44,9 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 		if (!message.equals(success)) {
 			return message;
 		} else if (employeeRepository.getEmployeeByEmail(employeeRequest.getEmail()) != null) {
-			return "Email này đã được sử dụng";
+			return "Email already in use";
 		} else if (employeeRepository.detailEmployee(employeeRequest.getPhone()) != null) {
-			return "Số điện thoại đã được sử dụng";
+			return "Phone number already in use";
 		} else {
 			Restaurant restaurant = restaurantRepository.detailRestaurant(employeeRequest.getRestaurantId());
 			Branch branch = employeeRequest.getBranchId() == null ? null
@@ -59,6 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 			employee.setFullName(employeeRequest.getFullName().replaceAll("\\s+", " ").trim());
 			employee.setGender(employeeRequest.getGender().trim());
 			employee.setDateOfBirth(employeeRequest.getDateOfbirth());
+			employee.setImage(employeeRequest.getImage());
 			employee.setEmail(employeeRequest.getEmail().trim());
 			employee.setPhone(employeeRequest.getPhone().trim());
 			employee.setRole(employeeRequest.getRole());
@@ -68,7 +70,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 			employee.setPassword(passwordEncoder.encode(employeeRequest.getPassword()));
 			employee.setStatus(1);
 			boolean successful = employeeRepository.createEmployee(employee);
-			return successful ? success : "No success";
+			return successful ? success : nosuccess;
 		}
 	}
 
@@ -85,6 +87,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 			employeeRequest.setFullName(employee.getFullName());
 			employeeRequest.setGender(employee.getGender());
 			employeeRequest.setDateOfbirth(employee.getDateOfBirth());
+			employeeRequest.setImage(employee.getImage());
 			employeeRequest.setEmail(employee.getEmail());
 			employeeRequest.setPhone(employee.getPhone());
 			employeeRequest.setRole(employee.getRole());
@@ -92,6 +95,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 			employeeRequest.setDistrict(employee.getDistrict());
 			employeeRequest.setAddress(employee.getAddress());
 			employeeRequest.setStatus(employee.getStatus());
+		} else {
+			return null;
 		}
 		return employeeRequest;
 	}
@@ -102,18 +107,19 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 		Employee employee = employeeRepository.detailEmployee(employeeId);
 		if (!message.equals(success)) {
 			return message;
-		} else if (employeeRepository.getEmployeeByEmail(employeeRequest.getEmail()) != null
-				&& !employee.getEmail().equalsIgnoreCase(employeeRequest.getEmail())) {
-			return "Email này đã được sử dụng";
+		} else if (!employee.getEmail().equals(employeeRequest.getEmail())
+				&& employeeRepository.getEmployeeByEmail(employeeRequest.getEmail()) != null) {
+			return "Email already in use";
 		} else if (employeeRepository.getEmployeeByPhone(employeeRequest.getPhone()) != null
 				&& !employee.getPhone().equals(employeeRequest.getPhone())) {
-			return "Số điện thoại đã được sử dụng";
+			return "Phone number already in use";
 		} else {
 			employee.setFirstName(employeeRequest.getFirstName().replaceAll("\\s+", " ").trim());
 			employee.setLastName(employeeRequest.getLastName().replaceAll("\\s+", " ").trim());
 			employee.setFullName(employeeRequest.getFullName().replaceAll("\\s+", " ").trim());
 			employee.setGender(employeeRequest.getGender().trim());
 			employee.setDateOfBirth(employeeRequest.getDateOfbirth());
+			employee.setImage(employeeRequest.getImage());
 			employee.setEmail(employeeRequest.getEmail().trim());
 			employee.setPhone(employeeRequest.getPhone().trim());
 			employee.setRole(employeeRequest.getRole());
@@ -121,7 +127,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 			employee.setDistrict(employeeRequest.getDistrict().replaceAll("\\s+", " ").trim());
 			employee.setAddress(employeeRequest.getAddress().replaceAll("\\s+", " ").trim());
 			boolean successful = employeeRepository.updateEmployee(employee);
-			return successful ? success : "No success";
+			return successful ? success : nosuccess;
 		}
 	}
 
@@ -145,6 +151,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 			employeeRequest.setFullName(employee.getFullName());
 			employeeRequest.setGender(employee.getGender());
 			employeeRequest.setDateOfbirth(employee.getDateOfBirth());
+			employeeRequest.setImage(employee.getImage());
 			employeeRequest.setEmail(employee.getEmail());
 			employeeRequest.setPhone(employee.getPhone());
 			employeeRequest.setRole(employee.getRole());
@@ -166,7 +173,11 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 	@Override
 	public String changeStatusEmployee(String employeeId) {
 		Employee employee = employeeRepository.detailEmployee(employeeId);
-		if (employee.getStatus() == 0) {
+		if (employee.getRestaurant().getStatus() == 0) {
+			return "The restaurant is not working";
+		} else if (employee.getBranch().getStatus() == 0) {
+			return "The branch is not working";
+		} else if (employee.getStatus() == 0) {
 			employeeRepository.changeStatusEmployee(employeeId, 1);
 			return "Active";
 		}
@@ -181,10 +192,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 		if (employee == null) {
 			throw new UsernameNotFoundException("Could not find user");
 		}
-		UserDetails user = User.withUsername(employee.getEmail()).password(employee.getPassword())
-				.authorities(employee.getRole()).build();
-
-		return user;
+		return User.withUsername(employee.getEmail()).password(employee.getPassword()).authorities(employee.getRole())
+				.build();
 	}
 
 	@SuppressWarnings("unused")
@@ -198,11 +207,11 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 		if (!checkService.checkName(employeeRequest.getFirstName())
 				|| !checkService.checkName(employeeRequest.getLastName())
 				|| !checkService.checkName(employeeRequest.getFullName())) {
-			return "Tên đã nhập không hợp lệ, vui lòng nhập đúng tên của bạn";
+			return "Invalid name";
 		} else if (!checkService.checkPhone(employeeRequest.getPhone())) {
-			return "Số điện thoại không đúng, số điện thoại gồm 10 số";
+			return "Invalid phone number";
 		} else if (!checkService.isValidEmail(employeeRequest.getEmail())) {
-			return "Email không đúng, vui lòng nhập lại";
+			return "Invalid mail";
 		}
 		return success;
 	}

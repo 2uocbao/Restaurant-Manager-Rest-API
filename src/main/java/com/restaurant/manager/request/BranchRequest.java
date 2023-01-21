@@ -12,6 +12,9 @@ public class BranchRequest {
 
 	@JsonProperty("name")
 	private String name;
+	
+	@JsonProperty("image")
+	private String image;
 
 	@JsonProperty("street")
 	private String street;
@@ -75,5 +78,13 @@ public class BranchRequest {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 }

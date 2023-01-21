@@ -26,19 +26,19 @@ public class Material {
 	@Column(name = "code")
 	private String code;
 
-	@Column(name = "namemate")
+	@Column(name = "name")
 	private String name;
 
-	@Column(name = "price")
+	@Column(name = "cost")
 	private int cost;
 	
-	@Column(name = "typemate")
+	@Column(name = "type")
 	private String type;
 
 	@Column(name = "quantity")
 	private float quantity;
 	
-	@Column(name = "stockEnd")
+	@Column(name = "stock_end")
 	private float stockEnd;
 
 	@Column(name = "where_production")

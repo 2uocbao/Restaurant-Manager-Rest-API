@@ -42,8 +42,8 @@ public class WarehouseController {
 	}
 
 	@GetMapping("/list-warehouse")
-	ResponseEntity<BaseResponse> listWarehouse(@RequestParam("employeeId") String employeeId,
-			@RequestParam("material code") String materialCode) {
+	ResponseEntity<BaseResponse> listWarehouse(@Valid @RequestParam("employeeId") String employeeId,
+			@Valid @RequestParam("materialCode") String materialCode) {
 		List<WarehouseRequest> warehouseRequests = warehouseService.detailWarehouse(employeeId, materialCode);
 		if (warehouseRequests == null) {
 			baseResponse.setStatus(404);

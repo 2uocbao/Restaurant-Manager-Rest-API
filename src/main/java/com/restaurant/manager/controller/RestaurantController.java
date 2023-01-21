@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,11 +23,11 @@ import com.restaurant.manager.service.RestaurantService;
 public class RestaurantController {
 	@Autowired
 	RestaurantService restaurantService;
-	private BaseResponse baseResponse = new BaseResponse();
 	private String success = "success";
 
-	@PostMapping("/create")
+	@PostMapping(value = "/create",produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<BaseResponse> createRestaurant(@Valid @RequestBody RestaurantRequest restaurantRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = restaurantService.createRestaurant(restaurantRequest);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -42,6 +43,7 @@ public class RestaurantController {
 	@PutMapping("/update")
 	ResponseEntity<BaseResponse> updateRestaurant(@Valid @RequestParam(name = "id") String id,
 			@Valid @RequestBody RestaurantRequest restaurantRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = restaurantService.updateRestaurant(id, restaurantRequest);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -57,6 +59,7 @@ public class RestaurantController {
 	@GetMapping("/detail")
 	ResponseEntity<BaseResponse> detailRestaurant(@Valid @RequestParam(name = "id") String id) {
 		RestaurantRequest restaurantRequest = restaurantService.detailRestaurant(id);
+		BaseResponse baseResponse = new BaseResponse();
 		if (restaurantRequest == null) {
 			baseResponse.setStatus(404);
 			baseResponse.setMessage("Not Found");
@@ -70,6 +73,7 @@ public class RestaurantController {
 
 	@PutMapping("/change-status")
 	ResponseEntity<BaseResponse> changeStatusRestaurant(@Valid @RequestParam(name = "id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = restaurantService.changeStatusRestaurant(id);
 		baseResponse.setStatus(200);
 		baseResponse.setMessage(message);

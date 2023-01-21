@@ -24,11 +24,11 @@ import com.restaurant.manager.service.MaterialService;
 public class MaterialController {
 	@Autowired
 	MaterialService materialService;
-	private BaseResponse baseResponse;
 	private String success = "success";
 
 	@PostMapping("/create")
 	ResponseEntity<BaseResponse> creatematerial(@RequestBody MaterialRequest materialRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = materialService.createMaterial(materialRequest);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -44,6 +44,7 @@ public class MaterialController {
 	@PutMapping("/update")
 	ResponseEntity<BaseResponse> updateMaterial(@Valid @RequestParam("id") int id,
 			@RequestBody MaterialRequest materialRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = materialService.updateMaterial(id, materialRequest);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -58,6 +59,7 @@ public class MaterialController {
 
 	@GetMapping("/detail")
 	ResponseEntity<BaseResponse> detailMaterial(@RequestParam("id") int id) {
+		BaseResponse baseResponse = new BaseResponse();
 		MaterialRequest materialRequest = materialService.detailMaterial(id);
 		if (materialRequest == null) {
 			baseResponse.setStatus(404);
@@ -71,10 +73,11 @@ public class MaterialController {
 	}
 
 	@GetMapping("/list-material")
-	ResponseEntity<Object> listMaterial(@RequestParam("branchId") String branchId,
+	ResponseEntity<BaseResponse> listMaterial(@RequestParam("branchId") String branchId,
 			@RequestParam("restaurantId") String restaurantId) {
+		BaseResponse baseResponse = new BaseResponse();
 		List<MaterialRequest> materialRequests = materialService.listMaterial(restaurantId, branchId);
-		if (materialRequests == null) {
+		if (materialRequests.isEmpty()) {
 			baseResponse.setStatus(404);
 			baseResponse.setMessage("Not Found");
 		} else {
@@ -83,6 +86,22 @@ public class MaterialController {
 			baseResponse.setData(materialRequests);
 		}
 
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
+	}
+
+	@GetMapping("/find-material")
+	ResponseEntity<BaseResponse> findMaterialbyCode(@RequestParam("branchId") String branchId,
+			@RequestParam("restaurantId") String restaurantId, @RequestParam("keySearch") String keySearch) {
+		BaseResponse baseResponse = new BaseResponse();
+		List<MaterialRequest> materialRequests = materialService.findMaterialByCode(restaurantId, branchId, keySearch);
+		if (materialRequests.isEmpty()) {
+			baseResponse.setStatus(404);
+			baseResponse.setMessage("Not Found");
+		} else {
+			baseResponse.setStatus(200);
+			baseResponse.setMessage(success);
+			baseResponse.setData(materialRequests);
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

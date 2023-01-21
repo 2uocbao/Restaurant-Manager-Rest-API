@@ -71,9 +71,7 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-
-			material = (Material) session.createQuery(
-					"FROM com.restaurant.manager.model.Material i WHERE i.id = :id")
+			material = (Material) session.createQuery("FROM com.restaurant.manager.model.Material i WHERE i.id = :id")
 					.setParameter("id", materialId).uniqueResult();
 
 			transaction.commit();
@@ -106,6 +104,39 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 				listMaterial = session.createQuery(
 						"FROM com.restaurant.manager.model.Material m WHERE m.restaurant.id = :restaurantId AND m.branch.id = :branchId")
 						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
+			}
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null) {
+				if (session.isOpen())
+					session.close();
+			}
+		}
+		return listMaterial;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Material> findMaterialByCode(String restaurantId, String branchId, String keySearch) {
+		List<Material> listMaterial = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			if (branchId.equals("")) {
+				listMaterial = session.createQuery(
+						"FROM com.restaurant.manager.model.Material m WHERE (m.restaurant.id = :restaurantId AND m.branch.id = null) AND (m.code LIKE :keySearch)")
+						.setParameter("restaurantId", restaurantId).setParameter("keySearch", "%" + keySearch + "%")
+						.list();
+			} else {
+				listMaterial = session.createQuery(
+						"FROM com.restaurant.manager.model.Material m WHERE (m.restaurant.id = :restaurantId AND m.branch.id = :branchId) AND (m.code LIKE :keySearch)")
+						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId)
+						.setParameter("keySearch", "%" + keySearch + "%").list();
 			}
 			transaction.commit();
 		} catch (Exception e) {

@@ -1,16 +1,14 @@
-package com.restaurant.manager.serviceimpl;
+package com.restaurant.manager.sercurity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.stereotype.Service;
+public class CheckService {
 
-import com.restaurant.manager.service.CheckService;
+	public CheckService() {
+		super();
+	}
 
-@Service
-public class CheckServiceImpl implements CheckService {
-
-	@Override
 	public boolean isValidEmail(String email) {
 //		String emailPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
 		Pattern pattern = Pattern.compile(
@@ -19,7 +17,6 @@ public class CheckServiceImpl implements CheckService {
 		return matcher.matches();
 	}
 
-	@Override
 	public boolean checkPhone(String phone) {
 		String regex = "^\\d{10}$";
 		Pattern pattern = Pattern.compile(regex);
@@ -27,15 +24,13 @@ public class CheckServiceImpl implements CheckService {
 		return matcher.matches();
 	}
 
-	@Override
 	public boolean checkName(String name) {
 		Pattern p = Pattern.compile(
-				"^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\\ ]+$");
+				"^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêếìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹý\\ ]+$");
 		Matcher m = p.matcher(name);
 		return m.matches();
 	}
 
-	@Override
 	public boolean checkCode(String code) {
 		Pattern p = Pattern.compile("\\w");
 		Matcher m = p.matcher(code);

@@ -32,7 +32,7 @@ public class TableServiceImpl implements TableService {
 				tableRequest.getBranchId() == null ? "" : tableRequest.getBranchId());
 		for (Tables table : tables) {
 			if (table.getName().equals(tableRequest.getName())) {
-				return "Bàn đã tồn tại";
+				return "Table name already in use";
 			}
 		}
 		Restaurant restaurant = restaurantRepository.detailRestaurant(tableRequest.getRestaurantId());
@@ -66,12 +66,11 @@ public class TableServiceImpl implements TableService {
 	@Override
 	public String updateTable(int tableId, TableRequest tableRequest) {
 		Tables tableUp = tableRepository.detailTable(tableId);
-		List<Tables> tables = tableRepository.listTableByBranchIdandRestaurantId(tableRequest.getRestaurantId(),
-				tableRequest.getBranchId() == null ? "" : tableRequest.getBranchId());
-		for (Tables table : tables) {
-			if (table.getName().equals(tableRequest.getName()) && !table.getName().equals(tableRequest.getName())) {
-				return "Bàn đã tồn tại";
-			}
+		if (!tableUp.getName().equals(tableRequest.getName())
+				&& tableRepository.getTablebyName(tableUp.getRestaurant().getId(),
+						tableUp.getBranch() == null ? "" : tableUp.getBranch().getId(),
+						tableRequest.getName()) != null) {
+			return "Table name already in use";
 		}
 		tableUp.setName(tableRequest.getName().toUpperCase());
 		tableUp.setTotalSlot(tableRequest.getTotalSlot());
@@ -116,6 +115,24 @@ public class TableServiceImpl implements TableService {
 				tableRequest.setStatus(table.getStatus());
 				tableRequests.add(tableRequest);
 			}
+		}
+		return tableRequests;
+	}
+
+	@Override
+	public List<TableRequest> findTable(String restaurantId, String branchId, String keySearch) {
+		List<TableRequest> tableRequests = new ArrayList<>();
+		List<Tables> tables = tableRepository.findTables(restaurantId, branchId == null ? "" : branchId, keySearch);
+		for (Tables table : tables) {
+			TableRequest tableRequest = new TableRequest();
+			tableRequest.setTableId(table.getId());
+			tableRequest.setRestaurantId(table.getRestaurant().getId());
+			tableRequest.setBranchId(branchId);
+			tableRequest.setName(table.getName());
+			tableRequest.setTotalSlot(table.getTotalSlot());
+			tableRequest.setDescription(table.getDescription());
+			tableRequest.setStatus(table.getStatus());
+			tableRequests.add(tableRequest);
 		}
 		return tableRequests;
 	}

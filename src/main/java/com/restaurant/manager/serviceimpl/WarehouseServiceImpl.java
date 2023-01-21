@@ -40,7 +40,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 		if (warehouse == null) {
 			warehouse1.setEmployee(employee);
 			warehouse1.setMaterialCode(material.getCode());
-			successful = warehouseRepository.createWarehouse(warehouse);
+			warehouseRepository.createWarehouse(warehouse1);
 		}
 		WarehouseDetail warehouseDetail = new WarehouseDetail();
 		warehouseDetail.setWarehouse(warehouse == null ? warehouse1 : warehouse);
@@ -50,6 +50,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 		warehouseDetail.setTotalAmount(warehouseRequest.getQuantity() + material.getQuantity());
 		warehouseDetail.setDescription(warehouseRequest.getDescription());
 		warehouseDetail.setStatus(1);
+		material.setCost(warehouseDetail.getCost());
+		material.setQuantity(warehouseDetail.getTotalAmount());
+		materialRepository.updateMaterial(material);
 		successful = warehouseDetailRepository.createWarehouseDetail(warehouseDetail);
 		return successful ? success : "No success";
 	}

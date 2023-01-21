@@ -38,9 +38,8 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return successful;
@@ -61,10 +60,8 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return table;
@@ -85,9 +82,8 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return successful;
@@ -109,9 +105,8 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return successful;
@@ -125,8 +120,8 @@ public class TableRepositoryImpl implements TableRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			if (branchId.equals("")) {
-				listTables = session
-						.createQuery("FROM com.restaurant.manager.model.Tables t WHERE t.restaurant.id = :restaurantId AND t.branch.id = null")
+				listTables = session.createQuery(
+						"FROM com.restaurant.manager.model.Tables t WHERE t.restaurant.id = :restaurantId AND t.branch.id = null")
 						.setParameter("restaurantId", restaurantId).list();
 			} else {
 				listTables = session.createQuery(
@@ -140,9 +135,8 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return listTables;
@@ -164,9 +158,8 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return status;
@@ -178,7 +171,7 @@ public class TableRepositoryImpl implements TableRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId == "") {
+			if (branchId.equals("")) {
 				table = (Tables) session.createQuery(
 						"FROM com.restaurant.manager.model.Tables t WHERE t.restaurant.id = :restaurantId AND t.name = :name")
 						.setParameter("restaurantId", restaurantId).setParameter("name", name).uniqueResult();
@@ -195,38 +188,11 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return table;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Tables> listTableByStatus(String restaurantId, String branchId, int status) {
-		List<Tables> listTable = new ArrayList<>();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			listTable = session.createQuery(
-					"FROM com.restaurant.manager.model.Tables t WHERE t.restaurant.id = :restaurantId AND t.branch.id = :branchId AND t.status = :status")
-					.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId)
-					.setParameter("status", status).list();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return listTable;
 	}
 
 	@Override
@@ -247,9 +213,8 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return successful;
@@ -272,11 +237,44 @@ public class TableRepositoryImpl implements TableRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
+			if (session != null && session.isOpen()) {
+				session.close();
 			}
 		}
 		return successful;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Tables> findTables(String restaurantId, String branchId, String keySearch) {
+		List<Tables> tables = new ArrayList<>();
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			if (branchId.equals("")) {
+				tables = session.createQuery(
+						"FROM com.restaurant.manager.model.Tables t WHERE (t.restaurant.id = :restaurantId) AND (t.totalSlot LIKE :keySearch OR t.name LIKE :keySearch2)")
+						.setParameter("restaurantId", restaurantId)
+						.setParameter("keySearch", Integer.parseInt(keySearch.substring(1)))
+						.setParameter("keySearch2", "%" + keySearch).list();
+			} else {
+				tables = session.createQuery(
+						"FROM com.restaurant.manager.model.Tables t WHERE (t.restaurant.id = :restaurantId AND t.branch.id = :branchId) AND (t.totalSlot LIKE :keySearch OR t.name LIKE :keySearch2)")
+						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId)
+						.setParameter("keySearch", Integer.parseInt(keySearch.substring(1)))
+						.setParameter("keySearch2", "%" + keySearch).list();
+			}
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+		return tables;
 	}
 }

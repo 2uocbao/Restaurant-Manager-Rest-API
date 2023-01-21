@@ -29,6 +29,9 @@ public class EmployeeRequest {
 
 	@JsonProperty("dateOfbirth")
 	private Date dateOfbirth;
+	
+	@JsonProperty("image")
+	private String image;
 
 	@JsonProperty("email")
 	private String email;
@@ -176,5 +179,13 @@ public class EmployeeRequest {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 }

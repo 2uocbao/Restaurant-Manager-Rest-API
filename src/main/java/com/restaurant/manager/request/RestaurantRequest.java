@@ -16,8 +16,7 @@ public class RestaurantRequest {
 	@JsonProperty("name")
 	private String name;
 
-	@NotNull(message = "Email không được để trống")
-	@JsonProperty("email")
+	@NotEmpty(message = "Email cannot be empty")
 	private String email;
 
 	@NotEmpty(message = "Số điện thoại không được để trống")
@@ -28,6 +27,9 @@ public class RestaurantRequest {
 	@NotNull(message = "Thông tin không được để trống")
 	@JsonProperty("info")
 	private String info;
+
+	@JsonProperty("image")
+	private String image;
 
 	@NotEmpty(message = "Địa chỉ không được để trống")
 	@JsonProperty("address")
@@ -74,6 +76,14 @@ public class RestaurantRequest {
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 	public String getAddress() {

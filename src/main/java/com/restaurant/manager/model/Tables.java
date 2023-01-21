@@ -23,7 +23,7 @@ public class Tables {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "nametab")
+	@Column(name = "name")
 	private String name;
 
 	@Column(name = "description")

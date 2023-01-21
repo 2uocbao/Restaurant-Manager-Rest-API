@@ -28,7 +28,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "employee")
 @DynamicUpdate
-public class Employee implements UserDetails, Serializable{
+public class Employee implements UserDetails, Serializable {
 
 	/**
 	 * 
@@ -54,13 +54,16 @@ public class Employee implements UserDetails, Serializable{
 	@Column(name = "date_of_birth")
 	private Date dateOfBirth;
 
+	@Column(name = "image")
+	private String image;
+
 	@Column(name = "email")
 	private String email;
 
 	@Column(name = "phone")
 	private String phone;
 
-	@Column(name = "role_emp")
+	@Column(name = "role")
 	private String role;
 
 	@Column(name = "city")
@@ -72,7 +75,7 @@ public class Employee implements UserDetails, Serializable{
 	@Column(name = "address")
 	private String address;
 
-	@Column(name = "pass")
+	@Column(name = "password")
 	private String password;
 
 	@Column(name = "status")
@@ -97,9 +100,6 @@ public class Employee implements UserDetails, Serializable{
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	private Collection<Orders> order;
-	
-	
-	
 
 	public String getId() {
 		return id;
@@ -163,6 +163,14 @@ public class Employee implements UserDetails, Serializable{
 
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+	
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 	public String getEmail() {
@@ -238,7 +246,7 @@ public class Employee implements UserDetails, Serializable{
 
 	@Override
 	public String getUsername() {
-		return phone;
+		return getPhone();
 	}
 
 	@Override
@@ -260,15 +268,12 @@ public class Employee implements UserDetails, Serializable{
 	public boolean isEnabled() {
 		return true;
 	}
-	
-	
-	private void writeObject(java.io.ObjectOutputStream stream)
-	        throws IOException {
-	    stream.defaultWriteObject();
+
+	private void writeObject(java.io.ObjectOutputStream stream) throws IOException {
+		stream.defaultWriteObject();
 	}
 
-	private void readObject(java.io.ObjectInputStream stream)
-	        throws IOException, ClassNotFoundException {
-	    stream.defaultReadObject();
+	private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
+		stream.defaultReadObject();
 	}
 }

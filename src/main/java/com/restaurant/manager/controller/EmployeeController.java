@@ -26,10 +26,10 @@ public class EmployeeController {
 	@Autowired
 	EmployeeService employeeService;
 	private String success = "success";
-	private BaseResponse baseResponse = new BaseResponse();
 
 	@PostMapping("/create")
 	ResponseEntity<BaseResponse> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.createEmployee(employeeRequest);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -44,6 +44,7 @@ public class EmployeeController {
 
 	@GetMapping("/detail")
 	ResponseEntity<BaseResponse> detailEmployee(@RequestParam("id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		EmployeeRequest employeeRequest = employeeService.detailEmployee(id);
 		if (employeeRequest != null) {
 			baseResponse.setStatus(200);
@@ -59,6 +60,7 @@ public class EmployeeController {
 	@PutMapping("/update")
 	ResponseEntity<BaseResponse> updateEmployee(@RequestBody EmployeeRequest employeeRequest,
 			@RequestParam("id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.updateEmployee(id, employeeRequest);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -73,6 +75,7 @@ public class EmployeeController {
 
 	@DeleteMapping("/delete")
 	ResponseEntity<BaseResponse> deleteEmployee(@RequestParam("id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.deleteEmployee(id);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -85,10 +88,11 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/list")
-	ResponseEntity<BaseResponse> listEmployeeFromBranch(@RequestParam("branchId") String branchId,
-			@RequestParam("restaurantId") String restaurantId) {
+	ResponseEntity<BaseResponse> listEmployeeFromBranch(@RequestParam("restaurantId") String restaurantId,
+			@RequestParam("branchId") String branchId) {
+		BaseResponse baseResponse = new BaseResponse();
 		List<EmployeeRequest> employeeRequests = employeeService.listEmpoyeeByResIdOrBranId(restaurantId, branchId);
-		if (employeeRequests == null) {
+		if (employeeRequests.isEmpty()) {
 			baseResponse.setStatus(404);
 			baseResponse.setMessage("Not Found");
 		} else {
@@ -102,6 +106,7 @@ public class EmployeeController {
 	@PostMapping("/change-password")
 	ResponseEntity<BaseResponse> changepasswordEmployee(@RequestParam("id") String id,
 			@RequestParam("newPassword") String newPassword) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.changePasswordEmployee(id, newPassword);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -115,6 +120,7 @@ public class EmployeeController {
 
 	@PutMapping("/change-status")
 	ResponseEntity<BaseResponse> changestatusEmployee(@RequestParam("id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.changeStatusEmployee(id);
 		baseResponse.setStatus(200);
 		baseResponse.setMessage(message);

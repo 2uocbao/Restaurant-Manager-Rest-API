@@ -20,17 +20,17 @@ import com.restaurant.manager.response.BaseResponse;
 import com.restaurant.manager.service.BranchService;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/branch")
 public class BranchController {
 
 	@Autowired
 	BranchService branchService;
 
-	private BaseResponse baseResponse = new BaseResponse();
 	private String success = "success";
 
 	@PostMapping("/create")
 	ResponseEntity<BaseResponse> createBranch(@Valid @RequestBody BranchRequest branchRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = branchService.createBranch(branchRequest);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -45,10 +45,11 @@ public class BranchController {
 
 	@GetMapping("/detail")
 	ResponseEntity<BaseResponse> detailBranch(@Valid @RequestParam(name = "id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		BranchRequest branchRequest = branchService.detailBranch(id);
 		if (branchRequest == null) {
 			baseResponse.setStatus(404);
-			baseResponse.setMessage("No success");
+			baseResponse.setMessage("Not Found");
 		} else {
 			baseResponse.setStatus(200);
 			baseResponse.setMessage(success);
@@ -60,6 +61,7 @@ public class BranchController {
 	@PutMapping("/update")
 	ResponseEntity<BaseResponse> updateBranch(@Valid @RequestParam(name = "id") String id,
 			@Valid @RequestBody BranchRequest branchRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = branchService.updateBranch(id, branchRequest);
 		if (message.equals(success)) {
 			baseResponse.setStatus(200);
@@ -74,6 +76,7 @@ public class BranchController {
 
 	@PutMapping("/change-status")
 	ResponseEntity<BaseResponse> changeStatusBranch(@Valid @RequestParam(name = "id") String id) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = branchService.changeStatusBranch(id);
 		baseResponse.setStatus(200);
 		baseResponse.setMessage(message);
@@ -81,9 +84,10 @@ public class BranchController {
 	}
 
 	@GetMapping("/list-branch")
-	ResponseEntity<Object> listBranchByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
+	ResponseEntity<BaseResponse> listBranchByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
+		BaseResponse baseResponse = new BaseResponse();
 		List<BranchRequest> branchRequests = branchService.listBranchByRestaurantId(restaurantId);
-		if (branchRequests == null) {
+		if (branchRequests.isEmpty()) {
 			baseResponse.setStatus(404);
 			baseResponse.setMessage("Not Found");
 		} else {

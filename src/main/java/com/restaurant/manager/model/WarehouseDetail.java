@@ -25,7 +25,7 @@ public class WarehouseDetail {
 	@JoinColumn(name = "warehouse_id")
 	private Warehouse warehouse;
 
-	@Column(name = "price")
+	@Column(name = "cost")
 	private int cost;
 
 	@Column(name = "vat_amount")
