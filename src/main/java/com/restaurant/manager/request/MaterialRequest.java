@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MaterialRequest {
 	@JsonProperty("restaurantId")
-	private String restaurantId;
-	
+	private int restaurantId;
+
 	@JsonProperty("branchId")
-	private String branchId;
-	
+	private int branchId;
+
 	@JsonProperty("code")
 	private String code;
 
@@ -17,34 +17,32 @@ public class MaterialRequest {
 
 	@JsonProperty("cost")
 	private int cost;
-	
+
 	@JsonProperty("type")
 	private String type;
-	
+
 	@JsonProperty("quantity")
 	private float quantity;
-	
-	@JsonProperty("stockEnd")
+
+	@JsonProperty("stock_end")
 	private float stockEnd;
 
-	@JsonProperty("whereProduction")
+	@JsonProperty("where_production")
 	private String whereProduction;
-	
-	
 
-	public String getRestaurantId() {
+	public int getRestaurantId() {
 		return restaurantId;
 	}
 
-	public void setRestaurantId(String restaurantId) {
+	public void setRestaurantId(int restaurantId) {
 		this.restaurantId = restaurantId;
 	}
 
-	public String getBranchId() {
+	public int getBranchId() {
 		return branchId;
 	}
 
-	public void setBranchId(String branchId) {
+	public void setBranchId(int branchId) {
 		this.branchId = branchId;
 	}
 

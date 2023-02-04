@@ -36,10 +36,8 @@ public class WarehouseDetailRepositoryImpl implements WarehouseDetailRepository 
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -84,10 +82,8 @@ public class WarehouseDetailRepositoryImpl implements WarehouseDetailRepository 
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return listWarehouse;
 	}

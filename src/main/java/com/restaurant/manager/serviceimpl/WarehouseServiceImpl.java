@@ -36,10 +36,11 @@ public class WarehouseServiceImpl implements WarehouseService {
 		Warehouse warehouse1 = new Warehouse();
 		Employee employee = employeeRepository.detailEmployee(warehouseRequest.getEmployeeId());
 		Material material = materialRepository.detailMaterial(materialId);
-		Warehouse warehouse = warehouseRepository.detailWarehouse(employee.getId(), material.getCode());
+		Warehouse warehouse = warehouseRepository.detailWarehouse(employee.getRestaurant().getId(),
+				employee.getBranch() == null ? 0 : employee.getBranch().getId(), material.getId());
 		if (warehouse == null) {
 			warehouse1.setEmployee(employee);
-			warehouse1.setMaterialCode(material.getCode());
+			warehouse1.setMaterial(material);
 			warehouseRepository.createWarehouse(warehouse1);
 		}
 		WarehouseDetail warehouseDetail = new WarehouseDetail();
@@ -58,14 +59,16 @@ public class WarehouseServiceImpl implements WarehouseService {
 	}
 
 	@Override
-	public List<WarehouseRequest> detailWarehouse(String employeeId, String materialCode) {
-		Warehouse warehouse = warehouseRepository.detailWarehouse(employeeId, materialCode);
+	public List<WarehouseRequest> listWarehouse(int employeeId, int materialId) {
+		Employee employee = employeeRepository.detailEmployee(employeeId);
+		Warehouse warehouse = warehouseRepository.detailWarehouse(employee.getRestaurant().getId(),
+				employee.getBranch() == null ? 0 : employee.getBranch().getId(), materialId);
 		List<WarehouseDetail> warehouseDetails = warehouseDetailRepository.listWarehouseDetail(warehouse.getId());
 		List<WarehouseRequest> warehouseRequests = new ArrayList<>();
 		for (WarehouseDetail warehouseD : warehouseDetails) {
 			WarehouseRequest warehouseRequest = new WarehouseRequest();
 			warehouseRequest.setEmployeeId(warehouse.getEmployee().getId());
-			warehouseRequest.setMaterialCode(warehouse.getMaterialCode());
+			warehouseRequest.setMaterialId(warehouse.getMaterial().getId());
 			warehouseRequest.setQuantity(warehouseD.getQuantity());
 			warehouseRequest.setCost(warehouseD.getCost());
 			warehouseRequest.setVatAmount(warehouseD.getVatAmount());

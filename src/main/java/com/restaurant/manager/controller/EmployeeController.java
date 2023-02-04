@@ -31,97 +31,87 @@ public class EmployeeController {
 	ResponseEntity<BaseResponse> createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.createEmployee(employeeRequest);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(employeeRequest);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		baseResponse.setData(employeeRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<BaseResponse> detailEmployee(@RequestParam("id") String id) {
+	ResponseEntity<BaseResponse> detailEmployee(@RequestParam("id") int id) {
 		BaseResponse baseResponse = new BaseResponse();
 		EmployeeRequest employeeRequest = employeeService.detailEmployee(id);
-		if (employeeRequest != null) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(employeeRequest);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage("Not Found");
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(employeeRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/update")
 	ResponseEntity<BaseResponse> updateEmployee(@RequestBody EmployeeRequest employeeRequest,
-			@RequestParam("id") String id) {
+			@RequestParam("id") int id) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.updateEmployee(id, employeeRequest);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(employeeRequest);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		baseResponse.setData(employeeRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@DeleteMapping("/delete")
-	ResponseEntity<BaseResponse> deleteEmployee(@RequestParam("id") String id) {
+	ResponseEntity<BaseResponse> deleteEmployee(@RequestParam("id") int id) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.deleteEmployee(id);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(message);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/list")
-	ResponseEntity<BaseResponse> listEmployeeFromBranch(@RequestParam("restaurantId") String restaurantId,
-			@RequestParam("branchId") String branchId) {
+	ResponseEntity<BaseResponse> listEmployeeFromBranch(@RequestParam("restaurantId") int restaurantId,
+			@RequestParam("branchId") int branchId) {
 		BaseResponse baseResponse = new BaseResponse();
 		List<EmployeeRequest> employeeRequests = employeeService.listEmpoyeeByResIdOrBranId(restaurantId, branchId);
-		if (employeeRequests.isEmpty()) {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage("Not Found");
-		} else {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(employeeRequests);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(employeeRequests);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PostMapping("/change-password")
-	ResponseEntity<BaseResponse> changepasswordEmployee(@RequestParam("id") String id,
+	ResponseEntity<BaseResponse> changepasswordEmployee(@RequestParam("id") int id,
 			@RequestParam("newPassword") String newPassword) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.changePasswordEmployee(id, newPassword);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(message);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/change-status")
-	ResponseEntity<BaseResponse> changestatusEmployee(@RequestParam("id") String id) {
+	ResponseEntity<BaseResponse> changestatusEmployee(@RequestParam("id") int id) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = employeeService.changeStatusEmployee(id);
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
+	}
+
+	@PutMapping("/giveRole")
+	ResponseEntity<BaseResponse> giveRole(@RequestParam("employeeId") int employeeId,
+			@RequestParam("roleId") int roleId) {
+		BaseResponse baseResponse = new BaseResponse();
+		String message = employeeService.giveRole(employeeId, roleId);
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
+	}
+
+	@PutMapping("/removeRole")
+	ResponseEntity<BaseResponse> removeRole(@RequestParam("employeeId") int employeeId,
+			@RequestParam("roleId") int roleId) {
+		BaseResponse baseResponse = new BaseResponse();
+		String message = employeeService.removeRole(employeeId, roleId);
 		baseResponse.setStatus(200);
 		baseResponse.setMessage(message);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);

@@ -32,50 +32,35 @@ public class BranchController {
 	ResponseEntity<BaseResponse> createBranch(@Valid @RequestBody BranchRequest branchRequest) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = branchService.createBranch(branchRequest);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(branchRequest);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		baseResponse.setData(branchRequest);
+		return ResponseEntity.status(HttpStatus.CREATED).body(baseResponse);
 	}
 
 	@GetMapping("/detail")
-	ResponseEntity<BaseResponse> detailBranch(@Valid @RequestParam(name = "id") String id) {
+	ResponseEntity<BaseResponse> detailBranch(@Valid @RequestParam(name = "id") int id) {
 		BaseResponse baseResponse = new BaseResponse();
 		BranchRequest branchRequest = branchService.detailBranch(id);
-		if (branchRequest == null) {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage("Not Found");
-		} else {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(branchRequest);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(branchRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/update")
-	ResponseEntity<BaseResponse> updateBranch(@Valid @RequestParam(name = "id") String id,
+	ResponseEntity<BaseResponse> updateBranch(@Valid @RequestParam(name = "id") int id,
 			@Valid @RequestBody BranchRequest branchRequest) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = branchService.updateBranch(id, branchRequest);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(branchRequest);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		baseResponse.setData(branchRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@PutMapping("/change-status")
-	ResponseEntity<BaseResponse> changeStatusBranch(@Valid @RequestParam(name = "id") String id) {
+	ResponseEntity<BaseResponse> changeStatusBranch(@Valid @RequestParam(name = "id") int id) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = branchService.changeStatusBranch(id);
 		baseResponse.setStatus(200);
@@ -84,17 +69,12 @@ public class BranchController {
 	}
 
 	@GetMapping("/list-branch")
-	ResponseEntity<BaseResponse> listBranchByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
+	ResponseEntity<BaseResponse> listBranchByRestaurantId(@RequestParam("restaurantId") int restaurantId) {
 		BaseResponse baseResponse = new BaseResponse();
 		List<BranchRequest> branchRequests = branchService.listBranchByRestaurantId(restaurantId);
-		if (branchRequests.isEmpty()) {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage("Not Found");
-		} else {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(branchRequests);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(branchRequests);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

@@ -21,38 +21,30 @@ import com.restaurant.manager.service.WarehouseService;
 @RestController
 @RequestMapping("/warehouse")
 public class WarehouseController {
+
 	@Autowired
 	WarehouseService warehouseService;
 	private String success = "success";
-	private BaseResponse baseResponse = new BaseResponse();
 
 	@PostMapping("/create")
 	ResponseEntity<BaseResponse> createWarehouse(@Valid @RequestParam("materialId") int id,
 			@RequestBody WarehouseRequest warehouseRequest) {
+		BaseResponse baseResponse = new BaseResponse();
 		String message = warehouseService.createWarehouse(id, warehouseRequest);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(warehouseRequest);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		baseResponse.setData(warehouseRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/list-warehouse")
-	ResponseEntity<BaseResponse> listWarehouse(@Valid @RequestParam("employeeId") String employeeId,
-			@Valid @RequestParam("materialCode") String materialCode) {
-		List<WarehouseRequest> warehouseRequests = warehouseService.detailWarehouse(employeeId, materialCode);
-		if (warehouseRequests == null) {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage("Not Found");
-		} else {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(warehouseRequests);
-		}
+	ResponseEntity<BaseResponse> listWarehouse(@Valid @RequestParam("employeeId") int employeeId,
+			@Valid @RequestParam("materialId") int materialId) {
+		BaseResponse baseResponse = new BaseResponse();
+		List<WarehouseRequest> warehouseRequests = warehouseService.listWarehouse(employeeId, materialId);
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(warehouseRequests);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

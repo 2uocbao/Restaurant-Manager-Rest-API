@@ -11,7 +11,7 @@ public interface MaterialService {
 
 	public MaterialRequest detailMaterial(int materialId);
 
-	public List<MaterialRequest> listMaterial(String restaurantId, String branchId);
+	public List<MaterialRequest> listMaterial(int restaurantId, int branchId);
 
-	public List<MaterialRequest> findMaterialByCode(String restaurantId, String branchId, String keySearch);
+	public List<MaterialRequest> findMaterialByCode(int restaurantId, int branchId, String keySearch);
 }

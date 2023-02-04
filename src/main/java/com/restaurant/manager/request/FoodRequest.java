@@ -1,15 +1,13 @@
 package com.restaurant.manager.request;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FoodRequest {
 	@JsonProperty("restaurantId")
-	private String restaurantId;
+	private int restaurantId;
 	
 	@JsonProperty("branchId")
-	private String branchId;
+	private int branchId;
 
 	@JsonProperty("foodId")
 	private int foodId;
@@ -25,27 +23,24 @@ public class FoodRequest {
 	
 	@JsonProperty("image")
 	private String image;
-
-	@JsonProperty("material")
-	private List<materialFood> materialCode;
 	
 	@JsonProperty("status")
 	private int status;
 
 	
-	public String getRestaurantId() {
+	public int getRestaurantId() {
 		return restaurantId;
 	}
 
-	public void setRestaurantId(String restaurantId) {
+	public void setRestaurantId(int restaurantId) {
 		this.restaurantId = restaurantId;
 	}
 
-	public String getBranchId() {
+	public int getBranchId() {
 		return branchId;
 	}
 
-	public void setBranchId(String branchId) {
+	public void setBranchId(int branchId) {
 		this.branchId = branchId;
 	}
 
@@ -87,14 +82,6 @@ public class FoodRequest {
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public List<materialFood> getMaterialCode() {
-		return materialCode;
-	}
-
-	public void setMaterialCode(List<materialFood> materialCode) {
-		this.materialCode = materialCode;
 	}
 
 	public String getImage() {

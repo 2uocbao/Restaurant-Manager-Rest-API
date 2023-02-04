@@ -1,48 +1,38 @@
 package com.restaurant.manager.request;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RestaurantRequest {
 
 	@JsonProperty("restaurantId")
-	private String restaurantId;
+	private int restaurantId;
 
-	@NotEmpty(message = "Tên không được để trống")
-	@Size(min = 2, max = 32, message = "Tên phải dài từ 2 đến 32 ký tự")
 	@JsonProperty("name")
 	private String name;
 
-	@NotEmpty(message = "Email cannot be empty")
+	@JsonProperty("email")
 	private String email;
 
-	@NotEmpty(message = "Số điện thoại không được để trống")
-	@Size(min = 10, max = 10, message = "Số điện thoại không hợp lệ")
 	@JsonProperty("phone")
 	private String phone;
 
-	@NotNull(message = "Thông tin không được để trống")
 	@JsonProperty("info")
 	private String info;
 
-	@JsonProperty("image")
-	private String image;
+	@JsonProperty("logo")
+	private String logo;
 
-	@NotEmpty(message = "Địa chỉ không được để trống")
 	@JsonProperty("address")
 	private String address;
 
 	@JsonProperty("status")
 	private int status;
 
-	public void setRestaurantId(String restaurantId) {
+	public void setRestaurantId(int restaurantId) {
 		this.restaurantId = restaurantId;
 	}
 
-	public String getRestaurantId() {
+	public int getRestaurantId() {
 		return restaurantId;
 	}
 
@@ -78,12 +68,12 @@ public class RestaurantRequest {
 		this.info = info;
 	}
 
-	public String getImage() {
-		return image;
+	public String getLogo() {
+		return logo;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 
 	public String getAddress() {

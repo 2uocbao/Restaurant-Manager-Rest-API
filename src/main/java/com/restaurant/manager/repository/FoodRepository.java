@@ -15,7 +15,5 @@ public interface FoodRepository {
 
 	public boolean changeStatusFood(int id, int status);
 
-	public List<Food> getFoodIdByRestaurantIdAndBranchId(String restaurantId, String branchId);
-
-	public List<Food> listFood(String restaurantId, String branchId, int status);
+	public List<Food> listFood(int restaurantId, int branchId);
 }

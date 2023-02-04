@@ -13,8 +13,8 @@ import com.restaurant.manager.repository.EmployeeRepository;
 import com.restaurant.manager.repository.RestaurantRepository;
 import com.restaurant.manager.repository.TableRepository;
 import com.restaurant.manager.request.BranchRequest;
-import com.restaurant.manager.sercurity.CheckService;
 import com.restaurant.manager.service.BranchService;
+import com.restaurant.manager.service.CheckService;
 
 @Service
 public class BranchServiceImpl implements BranchService {
@@ -46,7 +46,6 @@ public class BranchServiceImpl implements BranchService {
 			return "Phone number already in use";
 		} else {
 			Branch branch = new Branch();
-			branch.setId(branchRequest.getPhone().trim());
 			branch.setRestaurant(restaurant);
 			branch.setName(branchRequest.getName().replaceAll("//s+", " ").trim());
 			branch.setStreet(branchRequest.getStreet().replace("//s+", " ").trim());
@@ -59,15 +58,16 @@ public class BranchServiceImpl implements BranchService {
 	}
 
 	@Override
-	public BranchRequest detailBranch(String branchId) {
+	public BranchRequest detailBranch(int branchId) {
 		BranchRequest branchRequest = new BranchRequest();
 		Branch branch = branchRepository.detailBranch(branchId);
 		if (branch != null) {
 			branchRequest.setBranchId(branch.getId());
 			branchRequest.setRestaurantId(branch.getRestaurant().getId());
 			branchRequest.setName(branch.getName());
-			branchRequest.setImage(branch.getRestaurant().getImage());
+			branchRequest.setLogo(branch.getRestaurant().getLogo());
 			branchRequest.setPhone(branch.getPhone());
+			branchRequest.setInfo(branch.getRestaurant().getInfo());
 			branchRequest.setAddress(branch.getAddress());
 			branchRequest.setStreet(branch.getStreet());
 			branchRequest.setStatus(branch.getStatus());
@@ -79,7 +79,7 @@ public class BranchServiceImpl implements BranchService {
 	}
 
 	@Override
-	public String updateBranch(String branchId, BranchRequest branchRequest) {
+	public String updateBranch(int branchId, BranchRequest branchRequest) {
 		String message = checkInfor(branchRequest);
 		Branch branch = branchRepository.detailBranch(branchId);
 		if (!message.equals(success)) {
@@ -99,7 +99,7 @@ public class BranchServiceImpl implements BranchService {
 	}
 
 	@Override
-	public String changeStatusBranch(String branchId) {
+	public String changeStatusBranch(int branchId) {
 		Branch branch = branchRepository.detailBranch(branchId);
 		if (branch.getRestaurant().getStatus() == 0) {
 			return "The restaurant is not working";
@@ -115,7 +115,7 @@ public class BranchServiceImpl implements BranchService {
 	}
 
 	@Override
-	public List<BranchRequest> listBranchByRestaurantId(String restaurantId) {
+	public List<BranchRequest> listBranchByRestaurantId(int restaurantId) {
 		List<BranchRequest> branchRequests = new ArrayList<>();
 		List<Branch> branchs = branchRepository.listBranchByRestaurantId(restaurantId);
 		for (Branch branch : branchs) {
@@ -123,8 +123,9 @@ public class BranchServiceImpl implements BranchService {
 			branchRequest.setRestaurantId(branch.getRestaurant().getId());
 			branchRequest.setBranchId(branch.getId());
 			branchRequest.setName(branch.getName());
-			branchRequest.setImage(branch.getRestaurant().getImage());
+			branchRequest.setLogo(branch.getRestaurant().getLogo());
 			branchRequest.setPhone(branch.getPhone());
+			branchRequest.setInfo(branch.getRestaurant().getInfo());
 			branchRequest.setStreet(branch.getStreet());
 			branchRequest.setAddress(branch.getAddress());
 			branchRequest.setStatus(branch.getStatus());

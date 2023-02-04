@@ -1,9 +1,7 @@
 package com.restaurant.manager.model;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,14 +11,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -28,7 +25,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "employee")
 @DynamicUpdate
-public class Employee implements UserDetails, Serializable {
+public class Employee implements Serializable{
 
 	/**
 	 * 
@@ -37,7 +34,7 @@ public class Employee implements UserDetails, Serializable {
 
 	@Id
 	@Column(name = "id")
-	private String id;
+	private int id;
 
 	@Column(name = "first_name")
 	private String firstName;
@@ -63,9 +60,6 @@ public class Employee implements UserDetails, Serializable {
 	@Column(name = "phone")
 	private String phone;
 
-	@Column(name = "role")
-	private String role;
-
 	@Column(name = "city")
 	private String city;
 
@@ -81,13 +75,6 @@ public class Employee implements UserDetails, Serializable {
 	@Column(name = "status")
 	private int status;
 
-	// nhiều nhân viên của 1 chi nhánh
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "branch_id")
-	@EqualsAndHashCode.Exclude
-	@ToString.Exclude
-	private Branch branch;
-
 	// nhiều nhân viên của 1 nhà hàng
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "restaurant_id")
@@ -95,17 +82,35 @@ public class Employee implements UserDetails, Serializable {
 	@ToString.Exclude
 	private Restaurant restaurant;
 
+	// nhiều nhân viên của 1 chi nhánh
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "branch_id")
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	private Branch branch;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "emp_role", joinColumns = @JoinColumn(name = "employee_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+	private List<Roles> roles;
+
+	// một nhân viên có thể thực hiện nhập kho nhiều lần với các nguyên liệu khác
+	// nhau
+	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	private Collection<Warehouse> warehouse;
+
 	// một nhân viên quản lý nhiều gọi gọi món
 	@OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	private Collection<Orders> order;
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -164,7 +169,7 @@ public class Employee implements UserDetails, Serializable {
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
-	
+
 	public String getImage() {
 		return image;
 	}
@@ -187,14 +192,6 @@ public class Employee implements UserDetails, Serializable {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
 	}
 
 	public String getCity() {
@@ -237,43 +234,27 @@ public class Employee implements UserDetails, Serializable {
 		this.status = status;
 	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		List<GrantedAuthority> list = new ArrayList<>();
-		list.add(new SimpleGrantedAuthority(role));
-		return list;
+	public Collection<Warehouse> getWarehouse() {
+		return warehouse;
 	}
 
-	@Override
-	public String getUsername() {
-		return getPhone();
+	public void setWarehouse(Collection<Warehouse> warehouse) {
+		this.warehouse = warehouse;
 	}
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
+	public Collection<Orders> getOrder() {
+		return order;
 	}
 
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
+	public void setOrder(Collection<Orders> order) {
+		this.order = order;
 	}
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
+	public List<Roles> getRoles() {
+		return roles;
 	}
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	private void writeObject(java.io.ObjectOutputStream stream) throws IOException {
-		stream.defaultWriteObject();
-	}
-
-	private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		stream.defaultReadObject();
+	public void setRoles(List<Roles> roles) {
+		this.roles = roles;
 	}
 }

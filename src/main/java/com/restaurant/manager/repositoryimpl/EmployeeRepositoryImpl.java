@@ -37,16 +37,14 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@Override
-	public Employee detailEmployee(String id) {
+	public Employee detailEmployee(int id) {
 		Employee employee = new Employee();
 		try {
 			session = sessionFactory.openSession();
@@ -60,10 +58,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return employee;
 	}
@@ -83,16 +79,15 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
+
 	}
 
 	@Override
-	public boolean deleteEmployee(String id) {
+	public boolean deleteEmployee(int id) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -107,12 +102,11 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
+
 	}
 
 	@Override
@@ -122,8 +116,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			session.createQuery(
-					"FROM com.restaurant.manager.model.Employee e WHERE e.phone = :phone AND e.password = :password")
-					.setParameter("phone", phone).setParameter("password", password).uniqueResult();
+					"FROM com.restaurant.manager.model.Employee e WHERE e.phone = :Phone AND e.password = :password")
+					.setParameter("Phone", phone).setParameter("password", password).uniqueResult();
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -132,25 +126,23 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Employee> listEmpoyeeByResIdOrBranId(String restaurantId, String branchId) {
+	public List<Employee> listEmpoyeeByResIdOrBranId(int restaurantId, int branchId) {
 		List<Employee> listEmployee = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId.equals("")) {
+			if (branchId == 0) {
 				listEmployee = session.createQuery(
-						"FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantId AND e.branch.id = null")
-						.setParameter("restaurantId", restaurantId).list();
+						"FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantid AND e.branch.id = null")
+						.setParameter("restaurantid", restaurantId).list();
 			} else {
 				listEmployee = session.createQuery(
 						"FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantId AND e.branch.id = :branchId")
@@ -163,12 +155,11 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return listEmployee;
+
 	}
 
 	@Override
@@ -178,8 +169,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			employee = (Employee) session
-					.createQuery("FROM com.restaurant.manager.model.Employee e WHERE e.phone = :phone")
-					.setParameter("phone", phone).uniqueResult();
+					.createQuery("FROM com.restaurant.manager.model.Employee e WHERE e.phone = :Phone")
+					.setParameter("Phone", phone).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -187,12 +178,11 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return employee;
+
 	}
 
 	@Override
@@ -211,10 +201,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen()) {
-					session.close();
-				}
+			if (session.isOpen()) {
+				session.close();
 			}
 		}
 		return employee;
@@ -237,17 +225,15 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen()) {
-					session.close();
-				}
+			if (session.isOpen()) {
+				session.close();
 			}
 		}
 		return password;
 	}
 
 	@Override
-	public boolean changePasswordEmployee(String id, String password) {
+	public boolean changePasswordEmployee(int id, String password) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -263,23 +249,21 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@Override
-	public boolean changeStatusEmployee(String id, int status) {
+	public boolean changeStatusEmployee(int id, int status) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			session.createQuery(
-					"UPDATE com.restaurant.manager.model.Employee e SET e.status = :status WHERE e.id = :id")
-					.setParameter("status", status).setParameter("id", id).executeUpdate();
+					"UPDATE com.restaurant.manager.model.Employee e SET e.status = :Status WHERE e.id = :id")
+					.setParameter("Status", status).setParameter("id", id).executeUpdate();
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -288,16 +272,14 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@Override
-	public boolean getStatusById(String id) {
+	public boolean getStatusById(int id) {
 		boolean status = false;
 		try {
 			session = sessionFactory.openSession();
@@ -312,16 +294,14 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return status;
 	}
 
 	@Override
-	public boolean changeStatusEmployeeByRestaurantId(String restaurantId, int status) {
+	public boolean changeStatusEmployeeByRestaurantId(int restaurantId, int status) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -337,16 +317,14 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@Override
-	public boolean changeStatusEmployeeByBranchId(String branchId, int status) {
+	public boolean changeStatusEmployeeByBranchId(int branchId, int status) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -361,12 +339,11 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
+
 	}
 
 	@Override
@@ -385,11 +362,31 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return Optional.ofNullable(employee);
+	}
+
+	@Override
+	public boolean removeRole(int id, int roleId) {
+		boolean successful = false;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.beginTransaction();
+			session.createQuery("DELETE com.restaurant.manager.model.Employee.empole e WHERE e.employee.id = :id AND e.roles.id = :roleId")
+					.setParameter("id", id).setParameter("roleId", roleId).executeUpdate();
+			successful = true;
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen())
+				session.close();
+		}
+		return successful;
 	}
 }

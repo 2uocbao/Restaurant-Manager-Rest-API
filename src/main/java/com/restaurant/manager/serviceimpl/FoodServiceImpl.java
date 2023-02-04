@@ -1,23 +1,22 @@
 package com.restaurant.manager.serviceimpl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.restaurant.manager.model.Food;
+import com.restaurant.manager.model.FoodDetail;
 import com.restaurant.manager.model.Material;
-import com.restaurant.manager.model.foodDetail;
 import com.restaurant.manager.repository.BranchRepository;
 import com.restaurant.manager.repository.FoodDetailRepository;
 import com.restaurant.manager.repository.FoodRepository;
 import com.restaurant.manager.repository.MaterialRepository;
 import com.restaurant.manager.repository.RestaurantRepository;
 import com.restaurant.manager.request.FoodRequest;
-import com.restaurant.manager.request.materialFood;
+import com.restaurant.manager.request.MaterialFood;
+import com.restaurant.manager.request.MaterialFoodRequest;
 import com.restaurant.manager.service.FoodService;
 
 @Service
@@ -39,8 +38,7 @@ public class FoodServiceImpl implements FoodService {
 	@Override
 	public String createFood(FoodRequest foodRequest) {
 		boolean successful = false;
-		List<Food> foods = foodRepository.getFoodIdByRestaurantIdAndBranchId(foodRequest.getRestaurantId(),
-				foodRequest.getBranchId() == null ? "" : foodRequest.getBranchId());
+		List<Food> foods = foodRepository.listFood(foodRequest.getRestaurantId(), foodRequest.getBranchId());
 		for (Food food : foods) {
 			if (food.getName().equalsIgnoreCase(foodRequest.getName())) {
 				return "Món ăn có tên này đã có";
@@ -49,22 +47,30 @@ public class FoodServiceImpl implements FoodService {
 		Food food = new Food();
 		food.setRestaurant(restaurantRepository.detailRestaurant(foodRequest.getRestaurantId()));
 		food.setBranch(
-				foodRequest.getBranchId() == null ? null : branchRepository.detailBranch(foodRequest.getBranchId()));
+				foodRequest.getBranchId() == 0 ? null : branchRepository.detailBranch(foodRequest.getBranchId()));
 		food.setName(foodRequest.getName());
 		food.setPrice(foodRequest.getPrice());
 		food.setType(foodRequest.getType());
 		food.setImage(foodRequest.getImage());
 		food.setStatus(1);
 		successful = foodRepository.createFood(food);
-		if (successful) {
-			foodDetail fooddetail = new foodDetail();
-			for (materialFood materialCode : foodRequest.getMaterialCode()) {
-				Material material = materialRepository.detailMaterial(Integer.parseInt(materialCode.getMaterial()));
-				fooddetail.setFood(food);
-				fooddetail.setMaterial(material);
-				fooddetail.setQuantity(materialCode.getQuantity());
-				successful = foodDetailRepository.createFoodDetail(fooddetail);
-			}
+		return successful ? success : nosuccess;
+	}
+
+	@Override
+	public String addMaterial(int foodId, MaterialFood materialFood) {
+		boolean successful = false;
+		Food food = foodRepository.detailFood(foodId);
+		if (food == null) {
+			return "Can't find food";
+		}
+		for (MaterialFoodRequest materialFoods : materialFood.getMaterialFoodRequests()) {
+			FoodDetail foodDetail = new FoodDetail();
+			Material material = materialRepository.detailMaterial(materialFoods.getMaterial());
+			foodDetail.setFood(food);
+			foodDetail.setMaterial(material);
+			foodDetail.setQuantity(materialFoods.getQuantity());
+			successful = foodDetailRepository.createFoodDetail(foodDetail);
 		}
 		return successful ? success : nosuccess;
 	}
@@ -72,53 +78,33 @@ public class FoodServiceImpl implements FoodService {
 	@Override
 	public FoodRequest detailFood(int foodId) {
 		Food food = foodRepository.detailFood(foodId);
-		FoodRequest foodRequest = new FoodRequest();
 		if (food != null) {
-			foodRequest = foodRequest(food);
+			return foodRequest(food);
 		}
-		return foodRequest;
+		return null;
 	}
 
 	@Override
 	public String updateFood(int foodId, FoodRequest foodRequest) {
 		boolean successful = false;
 		Food food = foodRepository.detailFood(foodId);
-//		List<Food> foods = foodRepository.getFoodIdByRestaurantIdAndBranchId(food.getRestaurant().getId(),
-//				food.getBranch() == null ? "" : food.getBranch().getId());
-//		for (Food food1 : foods) {
-//			if (food1.getName().equalsIgnoreCase(foodRequest.getName())
-//					&& !food.getName().equalsIgnoreCase(food1.getName())) {
-//				return "Món ăn có tên này đã có";
-//			}
-//		}
 		food.setName(foodRequest.getName());
 		food.setPrice(foodRequest.getPrice());
 		food.setType(foodRequest.getType());
 		food.setImage(foodRequest.getImage());
 		successful = foodRepository.updateFood(food);
-		List<Integer> materialCode = new ArrayList<>();
-		Set<Integer> materialCF = new HashSet<>();
-		List<foodDetail> foodDetails = foodDetailRepository.listFoodDetail(foodId);
-		for (materialFood materialFood : foodRequest.getMaterialCode()) {
-			materialCode.add(Integer.parseInt(materialFood.getMaterial()));
-			for (foodDetail foodDetail : foodDetails) {
-				materialCF.add(foodDetail.getMaterial().getId());
-				if (Integer.parseInt(materialFood.getMaterial()) == foodDetail.getMaterial().getId()) {
-					foodDetail.setQuantity(materialFood.getQuantity());
+		return successful ? success : nosuccess;
+	}
+
+	@Override
+	public String upMaterial(int foodId, MaterialFood materialFood) {
+		boolean successful = false;
+		List<FoodDetail> foodDetails = foodDetailRepository.listFoodDetail(foodId);
+		for (MaterialFoodRequest materialFoods : materialFood.getMaterialFoodRequests()) {
+			for (FoodDetail foodDetail : foodDetails) {
+				if (materialFoods.getMaterial() == foodDetail.getMaterial().getId()) {
+					foodDetail.setQuantity(materialFoods.getQuantity());
 					successful = foodDetailRepository.updateFoodDetail(foodDetail);
-				}
-			}
-		}
-		materialCode.removeAll(materialCF);
-		for (Integer integer : materialCode) {
-			for (materialFood materialFood : foodRequest.getMaterialCode()) {
-				if (integer == Integer.parseInt(materialFood.getMaterial())) {
-					foodDetail fooddetail = new foodDetail();
-					Material material = materialRepository.detailMaterial(integer);
-					fooddetail.setFood(food);
-					fooddetail.setMaterial(material);
-					fooddetail.setQuantity(materialFood.getQuantity());
-					successful = foodDetailRepository.createFoodDetail(fooddetail);
 				}
 			}
 		}
@@ -126,8 +112,8 @@ public class FoodServiceImpl implements FoodService {
 	}
 
 	@Override
-	public String deleteFood(int id, String materialCode) {
-		return foodDetailRepository.deleteFoodDetailByMateCode(id, materialCode) ? success : "No success";
+	public String delMaterial(int foodId, int materialId) {
+		return foodDetailRepository.deleteMaterialInFood(foodId, materialId) ? success : "No success";
 	}
 
 	@Override
@@ -143,50 +129,57 @@ public class FoodServiceImpl implements FoodService {
 	}
 
 	@Override
-	public List<FoodRequest> getFoodAll(String restaurantId, String branchId) {
+	public List<FoodRequest> listFood(int restaurantId, int branchId) {
 		List<FoodRequest> foodRequests = new ArrayList<>();
-		List<Food> foods = foodRepository.getFoodIdByRestaurantIdAndBranchId(restaurantId,
-				branchId == null ? "" : branchId);
+		List<Food> foods = foodRepository.listFood(restaurantId, branchId);
 		for (Food food : foods) {
-			FoodRequest foodRequest = foodRequest(food);
+			FoodRequest foodRequest = new FoodRequest();
+			foodRequest.setRestaurantId(food.getRestaurant().getId());
+			foodRequest.setBranchId(food.getBranch() != null ? food.getBranch().getId() : 0);
+			foodRequest.setFoodId(food.getId());
+			foodRequest.setName(food.getName());
+			foodRequest.setPrice(food.getPrice());
+			foodRequest.setType(food.getType());
+			foodRequest.setImage(food.getImage());
+			foodRequest.setStatus(food.getStatus());
 			foodRequests.add(foodRequest);
 		}
 		return foodRequests;
 	}
 
 	@Override
-	public List<FoodRequest> listFoodByStatus(String restaurantId, String branchId, int status) {
+	public List<FoodRequest> listFoodByStatus(int restaurantId, int branchId, int status) {
 		List<FoodRequest> foodRequests = new ArrayList<>();
-		List<Food> foods = foodRepository.getFoodIdByRestaurantIdAndBranchId(restaurantId,
-				branchId == null ? "" : branchId);
+		List<Food> foods = foodRepository.listFood(restaurantId, branchId);
 		for (Food food : foods) {
-			if (food.getStatus() == 1) {
-				FoodRequest foodRequest = foodRequest(food);
-				foodRequests.add(foodRequest);
+			if (food.getStatus() == status) {
+				foodRequests.add(foodRequest(food));
 			}
 		}
 		return foodRequests;
 	}
 
-	public FoodRequest foodRequest(Food food) {
-		List<foodDetail> listFoodDetail = foodDetailRepository.listFoodDetail(food.getId());
-		List<materialFood> nameMaterial = new ArrayList<>();
-		String branchId = food.getBranch() != null ? food.getBranch().getId() : "";
-		for (foodDetail listFooddetail : listFoodDetail) {
-			materialFood materiaL = new materialFood();
-			Material material = materialRepository.detailMaterial(Integer.parseInt(materiaL.getMaterial()));
-			materiaL.setMaterial(material.getName());
-			materiaL.setQuantity(listFooddetail.getQuantity());
-			nameMaterial.add(materiaL);
+	@Override
+	public List<MaterialFoodRequest> materialFoods(int foodId) {
+		List<FoodDetail> foodDetails = foodDetailRepository.listFoodDetail(foodId);
+		List<MaterialFoodRequest> materialFoods = new ArrayList<>();
+		for (FoodDetail foodDetail : foodDetails) {
+			MaterialFoodRequest materialFood = new MaterialFoodRequest();
+			materialFood.setMaterial(foodDetail.getMaterial().getId());
+			materialFood.setQuantity(foodDetail.getQuantity());
+			materialFoods.add(materialFood);
 		}
+		return materialFoods;
+	}
+
+	public FoodRequest foodRequest(Food food) {
 		FoodRequest foodRequest = new FoodRequest();
 		foodRequest.setRestaurantId(food.getRestaurant().getId());
-		foodRequest.setBranchId(branchId);
+		foodRequest.setBranchId(food.getBranch() != null ? food.getBranch().getId() : 0);
 		foodRequest.setFoodId(food.getId());
 		foodRequest.setName(food.getName());
 		foodRequest.setPrice(food.getPrice());
 		foodRequest.setType(food.getType());
-		foodRequest.setMaterialCode(nameMaterial);
 		foodRequest.setImage(food.getImage());
 		foodRequest.setStatus(food.getStatus());
 		return foodRequest;

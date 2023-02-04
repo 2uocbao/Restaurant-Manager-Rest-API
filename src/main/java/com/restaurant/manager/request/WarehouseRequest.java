@@ -7,10 +7,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WarehouseRequest {
 	@JsonProperty("employeeId")
-	private String employeeId;
-	
-	@JsonProperty("materialCode")
-	private String materialCode;
+	private int employeeId;
+
+	@JsonProperty("restaurantId")
+	private int restaurantId;
+
+	@JsonProperty("branchId")
+	private int branchId;
+
+	@JsonProperty("materialId")
+	private int materialId;
 
 	@JsonProperty("vatAmount")
 	private BigDecimal vatAmount;
@@ -20,30 +26,46 @@ public class WarehouseRequest {
 
 	@JsonProperty("quantity")
 	private float quantity;
-	
+
 	@JsonProperty("description")
 	private String description;
-	
+
 	@JsonProperty("status")
 	private int status;
-	
+
 	@JsonProperty("date")
 	private Timestamp date;
 
-	public String getEmployeeId() {
+	public int getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(String employeeId) {
+	public void setEmployeeId(int employeeId) {
 		this.employeeId = employeeId;
 	}
-
-	public String getMaterialCode() {
-		return materialCode;
+	
+	public int getRestaurantId() {
+		return restaurantId;
 	}
 
-	public void setMaterialCode(String materialCode) {
-		this.materialCode = materialCode;
+	public void setRestaurantId(int restaurantId) {
+		this.restaurantId = restaurantId;
+	}
+
+	public int getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(int branchId) {
+		this.branchId = branchId;
+	}
+
+	public int getMaterialId() {
+		return materialId;
+	}
+
+	public void setMaterialId(int materialId) {
+		this.materialId = materialId;
 	}
 
 	public BigDecimal getVatAmount() {

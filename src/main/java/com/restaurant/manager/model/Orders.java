@@ -1,5 +1,6 @@
 package com.restaurant.manager.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
 
@@ -13,17 +14,22 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Entity
 @Table(name = "orders")
-public class Orders {
+public class Orders implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -40,20 +46,10 @@ public class Orders {
 	@Column(name = "created_at")
 	@CreationTimestamp
 	private Timestamp createdAt;
-
-	// nhiều order của 1 chi nhánh
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "branch_id")
-	@EqualsAndHashCode.Exclude
-	@ToString.Exclude
-	private Branch branch;
-
-	// nhiều order của 1 nhà hàng
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "restaurant_id")
-	@EqualsAndHashCode.Exclude
-	@ToString.Exclude
-	private Restaurant restaurant;
+	
+	@Column(name = "updated_at")
+	@UpdateTimestamp
+	private Timestamp updatedAt;
 
 	// Nhiều gọi món của một nhân viên
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -62,33 +58,18 @@ public class Orders {
 	@ToString.Exclude
 	private Employee employee;
 
-	// một gọi món với chỉ một bàn
-	@OneToOne(fetch = FetchType.LAZY)
+	// nhiều gọi món với chỉ một bàn
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "table_id")
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
-	private Tables table;
+	private Tables tables;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	// một gọi món có nhiều gọi món chi tiết
+	@OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
-	private Collection<orderDetail> orderDetail;
-
-	public Branch getBranch() {
-		return branch;
-	}
-
-	public void setBranch(Branch branch) {
-		this.branch = branch;
-	}
-
-	public Restaurant getRestaurant() {
-		return restaurant;
-	}
-
-	public void setRestaurant(Restaurant restaurant) {
-		this.restaurant = restaurant;
-	}
+	private Collection<OrderDetail> orderDetail;
 
 	public Employee getEmployee() {
 		return employee;
@@ -99,11 +80,11 @@ public class Orders {
 	}
 
 	public Tables getTable() {
-		return table;
+		return tables;
 	}
 
-	public void setTable(Tables table) {
-		this.table = table;
+	public void setTable(Tables tables) {
+		this.tables = tables;
 	}
 
 	public int getStatus() {

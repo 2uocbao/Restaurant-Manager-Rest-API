@@ -9,15 +9,15 @@ public interface EmployeeRepository{
 
 	public boolean createEmployee(Employee employee);
 
-	public Employee detailEmployee(String id);
+	public Employee detailEmployee(int id);
 
 	public boolean updateEmployee(Employee employee);
 
-	public boolean deleteEmployee(String id);
+	public boolean deleteEmployee(int id);
 
 	public boolean loginEmployee(String phone, String password);
 
-	public List<Employee> listEmpoyeeByResIdOrBranId(String restaurantId, String branchId);
+	public List<Employee> listEmpoyeeByResIdOrBranId(int restaurantId, int branchId);
 
 	public Employee getEmployeeByPhone(String phone);
 
@@ -25,15 +25,17 @@ public interface EmployeeRepository{
 
 	public String getPasswordByPhone(String phone);
 
-	public boolean changePasswordEmployee(String id, String password);
+	public boolean changePasswordEmployee(int id, String password);
 
-	public boolean changeStatusEmployee(String id, int status);
+	public boolean changeStatusEmployee(int id, int status);
 
-	public boolean getStatusById(String id);
+	public boolean getStatusById(int id);
 
-	public boolean changeStatusEmployeeByRestaurantId(String restaurantId, int status);
+	public boolean changeStatusEmployeeByRestaurantId(int restaurantId, int status);
 
-	public boolean changeStatusEmployeeByBranchId(String branchId, int status);
+	public boolean changeStatusEmployeeByBranchId(int branchId, int status);
 
 	public Optional<Employee> findByPhone(String phone);
+	
+	public boolean removeRole(int id, int roleId);
 }

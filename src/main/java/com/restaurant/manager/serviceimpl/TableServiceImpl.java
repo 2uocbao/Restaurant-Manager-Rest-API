@@ -29,14 +29,14 @@ public class TableServiceImpl implements TableService {
 	@Override
 	public String createTable(TableRequest tableRequest) {
 		List<Tables> tables = tableRepository.listTableByBranchIdandRestaurantId(tableRequest.getRestaurantId(),
-				tableRequest.getBranchId() == null ? "" : tableRequest.getBranchId());
+				tableRequest.getBranchId());
 		for (Tables table : tables) {
 			if (table.getName().equals(tableRequest.getName())) {
 				return "Table name already in use";
 			}
 		}
 		Restaurant restaurant = restaurantRepository.detailRestaurant(tableRequest.getRestaurantId());
-		Branch branch = tableRequest.getBranchId() == null ? null
+		Branch branch = tableRequest.getBranchId() == 0 ? null
 				: branchRepository.detailBranch(tableRequest.getBranchId());
 		Tables table = new Tables();
 		table.setRestaurant(restaurant);
@@ -55,7 +55,7 @@ public class TableServiceImpl implements TableService {
 		TableRequest tableRequest = new TableRequest();
 		tableRequest.setTableId(table.getId());
 		tableRequest.setRestaurantId(table.getRestaurant().getId());
-		tableRequest.setBranchId(table.getBranch() != null ? table.getBranch().getId() : null);
+		tableRequest.setBranchId(table.getBranch() != null ? table.getBranch().getId() : 0);
 		tableRequest.setName(table.getName());
 		tableRequest.setTotalSlot(table.getTotalSlot());
 		tableRequest.setDescription(table.getDescription());
@@ -66,13 +66,6 @@ public class TableServiceImpl implements TableService {
 	@Override
 	public String updateTable(int tableId, TableRequest tableRequest) {
 		Tables tableUp = tableRepository.detailTable(tableId);
-		if (!tableUp.getName().equals(tableRequest.getName())
-				&& tableRepository.getTablebyName(tableUp.getRestaurant().getId(),
-						tableUp.getBranch() == null ? "" : tableUp.getBranch().getId(),
-						tableRequest.getName()) != null) {
-			return "Table name already in use";
-		}
-		tableUp.setName(tableRequest.getName().toUpperCase());
 		tableUp.setTotalSlot(tableRequest.getTotalSlot());
 		tableUp.setDescription(tableRequest.getDescription().replaceAll("\\s+", " ").trim());
 		boolean successful = tableRepository.updateTable(tableUp);
@@ -80,10 +73,9 @@ public class TableServiceImpl implements TableService {
 	}
 
 	@Override
-	public List<TableRequest> listTableByBranchIdandRestaurantId(String restaurantId, String branchId) {
+	public List<TableRequest> listTableByBranchIdandRestaurantId(int restaurantId, int branchId) {
 		List<TableRequest> tableRequests = new ArrayList<>();
-		List<Tables> tables = tableRepository.listTableByBranchIdandRestaurantId(restaurantId,
-				branchId == null ? "" : branchId);
+		List<Tables> tables = tableRepository.listTableByBranchIdandRestaurantId(restaurantId, branchId);
 		for (Tables table : tables) {
 			TableRequest tableRequest = new TableRequest();
 			tableRequest.setTableId(table.getId());
@@ -99,10 +91,10 @@ public class TableServiceImpl implements TableService {
 	}
 
 	@Override
-	public List<TableRequest> listTableByStatus(String restaurantId, String branchId, int status) {
+	public List<TableRequest> listTableByStatus(int restaurantId, int branchId, int status) {
 		List<TableRequest> tableRequests = new ArrayList<>();
 		List<Tables> tables = tableRepository.listTableByBranchIdandRestaurantId(restaurantId,
-				branchId == null ? "" : branchId);
+				branchId);
 		for (Tables table : tables) {
 			if (table.getStatus() == status) {
 				TableRequest tableRequest = new TableRequest();
@@ -120,9 +112,9 @@ public class TableServiceImpl implements TableService {
 	}
 
 	@Override
-	public List<TableRequest> findTable(String restaurantId, String branchId, String keySearch) {
+	public List<TableRequest> findTable(int restaurantId, int branchId, String keySearch) {
 		List<TableRequest> tableRequests = new ArrayList<>();
-		List<Tables> tables = tableRepository.findTables(restaurantId, branchId == null ? "" : branchId, keySearch);
+		List<Tables> tables = tableRepository.findTables(restaurantId, branchId, keySearch);
 		for (Tables table : tables) {
 			TableRequest tableRequest = new TableRequest();
 			tableRequest.setTableId(table.getId());

@@ -35,23 +35,29 @@ public class WarehouseRepositoryImpl implements WarehouseRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@Override
-	public Warehouse detailWarehouse(String employeeId, String materialCode) {
+	public Warehouse detailWarehouse(int restaurantId, int branchId, int materialId) {
 		Warehouse wareHouse = new Warehouse();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			wareHouse = (Warehouse) session.createQuery(
-					"FROM com.restaurant.manager.model.Warehouse w WHERE w.employee.id = :employeeId AND materialCode = :materialCode")
-					.setParameter("materialCode", materialCode).setParameter("employeeId", employeeId).uniqueResult();
+			if (branchId == 0) {
+				wareHouse = (Warehouse) session.createQuery(
+						"FROM com.restaurant.manager.model.Warehouse w WHERE w.employee.restaurant.id = :restaurantid AND w.employee.branch = null AND w.material.id = :materialId")
+						.setParameter("materialId", materialId).setParameter("restaurantid", restaurantId)
+						.uniqueResult();
+			} else {
+				wareHouse = (Warehouse) session.createQuery(
+						"FROM com.restaurant.manager.model.Warehouse w WHERE w.employee.restaurant.id = :restaurantid AND w.employee.branch.id = :branchId AND w.material.id = :materialId")
+						.setParameter("materialId", materialId).setParameter("restaurantid", restaurantId)
+						.setParameter("branchId", branchId).uniqueResult();
+			}
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -59,24 +65,28 @@ public class WarehouseRepositoryImpl implements WarehouseRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return wareHouse;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Warehouse> listWarehouse(String employeeId) {
+	public List<Warehouse> listWarehouse(int restaurantId, int branchId) {
 		List<Warehouse> warehouses = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			warehouses = session
-					.createQuery("FROM com.restaurant.manager.model.Warehouse w WHERE w.employee.id = :employeeId")
-					.setParameter("employeeId", employeeId).list();
+			if (branchId == 0) {
+				warehouses = session.createQuery(
+						"FROM com.restaurant.manager.model.Warehouse w WHERE w.employee.restaurant.id = :restaurantId AND w.employee.branch = null")
+						.setParameter("restaurantId", restaurantId).list();
+			} else {
+				warehouses = session.createQuery(
+						"FROM com.restaurant.manager.model.Warehouse w WHERE w.employee.restaurant.id = :restaurantId AND w.employee.branch.id = :branchId")
+						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
+			}
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -84,10 +94,8 @@ public class WarehouseRepositoryImpl implements WarehouseRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return warehouses;
 	}

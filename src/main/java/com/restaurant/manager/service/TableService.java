@@ -11,9 +11,9 @@ public interface TableService {
 
 	public String updateTable(int tableId, TableRequest tableRequest);
 
-	public List<TableRequest> listTableByBranchIdandRestaurantId(String restaurantId, String branchId);
+	public List<TableRequest> listTableByBranchIdandRestaurantId(int restaurantId, int branchId);
 
-	public List<TableRequest> listTableByStatus(String restaurantId, String branchId, int status);
+	public List<TableRequest> listTableByStatus(int restaurantId, int branchId, int status);
 
-	public List<TableRequest> findTable(String restaurantId, String branchId, String keySearch);
+	public List<TableRequest> findTable(int restaurantId, int branchId, String keySearch);
 }

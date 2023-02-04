@@ -37,10 +37,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -61,10 +59,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return status;
 	}
@@ -84,17 +80,15 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Orders> listOrderByEmployeeId(String employeeId) {
+	public List<Orders> listOrderByEmployeeId(int employeeId) {
 		List<Orders> listOrder = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
@@ -109,10 +103,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return listOrder;
 	}
@@ -124,8 +116,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			session.createQuery(
-					"UPDATE com.restaurant.manager.model.Orders o SET o.status = :status WHERE o.id = :orderId")
-					.setParameter("orderId", orderId).setParameter("status", status).executeUpdate();
+					"UPDATE com.restaurant.manager.model.Orders o SET o.status = :Status WHERE o.id = :orderId")
+					.setParameter("orderId", orderId).setParameter("Status", status).executeUpdate();
 			transaction.commit();
 			successful = true;
 		} catch (Exception e) {
@@ -134,10 +126,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -149,8 +139,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
 			order = (Orders) session.createQuery(
-					"FROM com.restaurant.manager.model.Orders o WHERE o.table.id = :tableId AND o.status = :status")
-					.setParameter("tableId", tableId).setParameter("status", status).uniqueResult();
+					"FROM com.restaurant.manager.model.Orders o WHERE o.tables.id = :tableId AND o.status = :Status")
+					.setParameter("tableId", tableId).setParameter("Status", status).uniqueResult();
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
@@ -158,28 +148,26 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return order;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Orders> listOrder(String restaurantId, String branchId, int status) {
+	public List<Orders> listOrder(int restaurantId, int branchId, int status) {
 		List<Orders> listOrder = null;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId.equals("")) {
-				listOrder = session.createQuery(
-						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.status = :status AND o.branch.id = null")
-						.setParameter("restaurantId", restaurantId).setParameter("status", status).list();
+			if (branchId == 0) {
+			listOrder = session.createQuery(
+					"FROM com.restaurant.manager.model.Orders o WHERE o.employee.restaurant.id = :restaurantId AND o.status = :status AND o.employee.branch.id = null")
+					.setParameter("restaurantId", restaurantId).setParameter("status", status).list();
 			} else {
 				listOrder = session.createQuery(
-						"FROM com.restaurant.manager.model.Orders o WHERE o.restaurant.id = :restaurantId AND o.status = :status AND o.branch.id = :branchId")
+						"FROM com.restaurant.manager.model.Orders o WHERE o.employee.restaurant.id = :restaurantId AND o.status = :status AND o.employee.branch.id = :branchId")
 						.setParameter("restaurantId", restaurantId).setParameter("status", status)
 						.setParameter("branchId", branchId).list();
 			}
@@ -190,10 +178,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return listOrder;
 	}

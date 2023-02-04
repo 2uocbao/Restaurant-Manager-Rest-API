@@ -9,7 +9,7 @@ import com.restaurant.manager.repository.EmployeeRepository;
 import com.restaurant.manager.repository.RestaurantRepository;
 import com.restaurant.manager.repository.TableRepository;
 import com.restaurant.manager.request.RestaurantRequest;
-import com.restaurant.manager.sercurity.CheckService;
+import com.restaurant.manager.service.CheckService;
 import com.restaurant.manager.service.RestaurantService;
 
 @Service
@@ -39,12 +39,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 			return "Phone number already in use";
 		} else if (message.equals(success)) {
 			Restaurant restaurant = new Restaurant();
-			restaurant.setId(restaurantRequest.getPhone().trim());
 			restaurant.setName(restaurantRequest.getName().replaceAll("\\s+", " ").trim());
 			restaurant.setEmail(restaurantRequest.getEmail().trim());
 			restaurant.setPhone(restaurantRequest.getPhone().trim());
 			restaurant.setInfo(restaurantRequest.getInfo().replaceAll("\\s+", " ").trim());
-			restaurant.setImage(restaurantRequest.getImage());
+			restaurant.setLogo(restaurantRequest.getLogo());
 			restaurant.setAddress(restaurantRequest.getAddress().replaceAll("\\s+", " ").trim());
 			restaurant.setStatus(1);
 			boolean successful = restaurantRepository.createRestaurant(restaurant);
@@ -54,7 +53,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	@Override
-	public String updateRestaurant(String restaurantId, RestaurantRequest restaurantRequest) {
+	public String updateRestaurant(int restaurantId, RestaurantRequest restaurantRequest) {
 		String message = checkInfor(restaurantRequest);
 		Restaurant restaurant = restaurantRepository.detailRestaurant(restaurantId);
 		if (!message.equals(success)) {
@@ -70,7 +69,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 			restaurant.setEmail(restaurantRequest.getEmail().trim());
 			restaurant.setPhone(restaurantRequest.getPhone().trim());
 			restaurant.setInfo(restaurantRequest.getInfo().replaceAll("\\s\\s+", " ").trim());
-			restaurant.setImage(restaurantRequest.getImage());
+			restaurant.setLogo(restaurantRequest.getLogo());
 			restaurant.setAddress(restaurantRequest.getAddress().replaceAll("\\s\\s+", " ").trim());
 			boolean successful = restaurantRepository.updateRestaurant(restaurant);
 			return successful ? success : "No success";
@@ -78,7 +77,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	@Override
-	public RestaurantRequest detailRestaurant(String restaurantId) {
+	public RestaurantRequest detailRestaurant(int restaurantId) {
 		RestaurantRequest restaurantRequest = new RestaurantRequest();
 		Restaurant restaurant = restaurantRepository.detailRestaurant(restaurantId);
 		if (restaurant != null) {
@@ -87,7 +86,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 			restaurantRequest.setEmail(restaurant.getEmail());
 			restaurantRequest.setPhone(restaurant.getPhone());
 			restaurantRequest.setInfo(restaurant.getInfo());
-			restaurantRequest.setImage(restaurant.getImage());
+			restaurantRequest.setLogo(restaurant.getLogo());
 			restaurantRequest.setAddress(restaurant.getAddress());
 			restaurantRequest.setStatus(restaurant.getStatus());
 		} else {
@@ -97,7 +96,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	@Override
-	public String changeStatusRestaurant(String restaurantId) {
+	public String changeStatusRestaurant(int restaurantId) {
 		Restaurant restaurant = restaurantRepository.detailRestaurant(restaurantId);
 		if (restaurant.getStatus() == 1) {
 			branchRepository.changeStatusbyRestaurantId(restaurant.getId(), 0);

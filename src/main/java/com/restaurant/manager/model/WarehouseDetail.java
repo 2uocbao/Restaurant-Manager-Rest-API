@@ -1,28 +1,42 @@
 package com.restaurant.manager.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
-@Table(name = "ware_house_detail")
-public class WarehouseDetail {
+@Table(name = "warehouse_detail")
+public class WarehouseDetail implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@OneToOne
+	// nhiều nhà kho chi tiết với một nhà kho
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "warehouse_id")
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
 	private Warehouse warehouse;
 
 	@Column(name = "cost")
@@ -43,10 +57,22 @@ public class WarehouseDetail {
 	@Column(name = "status")
 	private int status;
 
-	@Column(name = "create_at")
+	@Column(name = "created_at")
 	@CreationTimestamp
 	private Timestamp createAt;
+
+	@Column(name = "updated_at")
+	@UpdateTimestamp
+	private Timestamp updatedAt;
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}

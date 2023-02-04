@@ -35,10 +35,8 @@ public class FoodRepositoryImpl implements FoodRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -57,10 +55,8 @@ public class FoodRepositoryImpl implements FoodRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return food;
 	}
@@ -80,10 +76,8 @@ public class FoodRepositoryImpl implements FoodRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -104,10 +98,8 @@ public class FoodRepositoryImpl implements FoodRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -128,27 +120,25 @@ public class FoodRepositoryImpl implements FoodRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Food> getFoodIdByRestaurantIdAndBranchId(String restaurantId, String branchId) {
-		List<Food> listFoodId = new ArrayList<>();
+	public List<Food> listFood(int restaurantId, int branchId) {
+		List<Food> listFood = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId.equals("")) {
-				listFoodId = session.createQuery(
+			if (branchId == 0) {
+				listFood = session.createQuery(
 						"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = null")
 						.setParameter("restaurantId", restaurantId).list();
 			} else {
-				listFoodId = session.createQuery(
+				listFood = session.createQuery(
 						"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = :branchId")
 						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
 			}
@@ -159,35 +149,8 @@ public class FoodRepositoryImpl implements FoodRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
-		}
-		return listFoodId;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Food> listFood(String restaurantId, String branchId, int status) {
-		List<Food> listFood = new ArrayList<>();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			listFood = session.createQuery(
-					"FROM com.restaurant.manager.model.Food f WHERE f.restaurant.id = :restaurantId AND f.branch.id = :branchId")
-					.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return listFood;
 	}

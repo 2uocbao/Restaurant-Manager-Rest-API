@@ -7,13 +7,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class EmployeeRequest {
 	
 	@JsonProperty("employeeId")
-	private String employeeId;
+	private int employeeId;
 	
 	@JsonProperty("restaurantId")
-	private String restaurantId;
+	private int restaurantId;
 	
 	@JsonProperty("branchId")
-	private String branchId;
+	private int branchId;
 	
 	@JsonProperty("firstName")
 	private String firstName;
@@ -39,9 +39,6 @@ public class EmployeeRequest {
 	@JsonProperty("phone")
 	private String phone;
 
-	@JsonProperty("role")
-	private String role;
-
 	@JsonProperty("city")
 	private String city;
 
@@ -57,23 +54,23 @@ public class EmployeeRequest {
 	@JsonProperty("password")
 	private String password;
 
-	public void setEmployeeId(String employeeId) {
+	public void setEmployeeId(int employeeId) {
 		this.employeeId = employeeId;
 	}
 
-	public String getRestaurantId() {
+	public int getRestaurantId() {
 		return restaurantId;
 	}
 
-	public void setRestaurantId(String restaurantId) {
+	public void setRestaurantId(int restaurantId) {
 		this.restaurantId = restaurantId;
 	}
 
-	public String getBranchId() {
+	public int getBranchId() {
 		return branchId;
 	}
 
-	public void setBranchId(String branchId) {
+	public void setBranchId(int branchId) {
 		this.branchId = branchId;
 	}
 
@@ -131,14 +128,6 @@ public class EmployeeRequest {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
 	}
 
 	public String getCity() {

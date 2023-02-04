@@ -5,16 +5,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class BranchRequest {
 
 	@JsonProperty("branchId")
-	private String branchId;
+	private int branchId;
 
 	@JsonProperty("restaurantId")
-	private String restaurantId;
+	private int restaurantId;
 
 	@JsonProperty("name")
 	private String name;
 	
-	@JsonProperty("image")
-	private String image;
+	@JsonProperty("info")
+	private String info;
+	
+	@JsonProperty("logo")
+	private String logo;
 
 	@JsonProperty("street")
 	private String street;
@@ -28,15 +31,15 @@ public class BranchRequest {
 	@JsonProperty("status")
 	private int status;
 
-	public void setBranchId(String branchId) {
+	public void setBranchId(int branchId) {
 		this.branchId = branchId;
 	}
 
-	public String getRestaurantId() {
+	public int getRestaurantId() {
 		return restaurantId;
 	}
 
-	public void setRestaurantId(String restaurantId) {
+	public void setRestaurantId(int restaurantId) {
 		this.restaurantId = restaurantId;
 	}
 
@@ -80,11 +83,19 @@ public class BranchRequest {
 		this.status = status;
 	}
 
-	public String getImage() {
-		return image;
+	public String getLogo() {
+		return logo;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
 	}
 }

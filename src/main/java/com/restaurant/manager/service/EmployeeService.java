@@ -8,17 +8,21 @@ import com.restaurant.manager.request.EmployeeRequest;
 public interface EmployeeService {
 	public String createEmployee(EmployeeRequest employeeRequest);
 
-	public EmployeeRequest detailEmployee(String employeeId);
+	public EmployeeRequest detailEmployee(int employeeId);
 
-	public String updateEmployee(String employeeId, EmployeeRequest employeeRequest);
+	public String updateEmployee(int employeeId, EmployeeRequest employeeRequest);
 
-	public String deleteEmployee(String employeeId);
+	public String deleteEmployee(int employeeId);
 
-	public List<EmployeeRequest> listEmpoyeeByResIdOrBranId(String restaurantId, String branchId);
+	public List<EmployeeRequest> listEmpoyeeByResIdOrBranId(int restaurantId, int branchId);
 
-	public String changePasswordEmployee(String employeeId, String password);
+	public String changePasswordEmployee(int employeeId, String password);
 
-	public String changeStatusEmployee(String employeeId);
-	
+	public String changeStatusEmployee(int employeeId);
+
 	public Employee getEmployeeByPhone(String phone);
+
+	public String giveRole(int employeeId, int roleId);
+
+	public String removeRole(int employeeId, int roleId);
 }

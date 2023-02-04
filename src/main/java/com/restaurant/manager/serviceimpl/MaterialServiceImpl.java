@@ -11,7 +11,7 @@ import com.restaurant.manager.repository.BranchRepository;
 import com.restaurant.manager.repository.MaterialRepository;
 import com.restaurant.manager.repository.RestaurantRepository;
 import com.restaurant.manager.request.MaterialRequest;
-import com.restaurant.manager.sercurity.CheckService;
+import com.restaurant.manager.service.CheckService;
 import com.restaurant.manager.service.MaterialService;
 
 @Service
@@ -29,7 +29,7 @@ public class MaterialServiceImpl implements MaterialService {
 	public String createMaterial(MaterialRequest materialRequest) {
 		String message = checkInfor(materialRequest);
 		List<Material> materials = materialRepository.listMaterial(materialRequest.getRestaurantId(),
-				materialRequest.getBranchId() == null ? "" : materialRequest.getBranchId());
+				materialRequest.getBranchId());
 		for (Material material : materials) {
 			if (material.getCode().equals(materialRequest.getCode())) {
 				return "Nguyên liệu có mã code này đã tồn tại";
@@ -38,7 +38,7 @@ public class MaterialServiceImpl implements MaterialService {
 		if (message.equals(success)) {
 			Material material = new Material();
 			material.setRestaurant(restaurantRepository.detailRestaurant(materialRequest.getRestaurantId()));
-			material.setBranch(materialRequest.getBranchId() == null ? null
+			material.setBranch(materialRequest.getBranchId() == 0 ? null
 					: branchRepository.detailBranch(materialRequest.getBranchId()));
 			material.setCode(materialRequest.getCode().toUpperCase());
 			material.setName(materialRequest.getName());
@@ -75,7 +75,7 @@ public class MaterialServiceImpl implements MaterialService {
 		if (material != null) {
 			MaterialRequest materialRequest = new MaterialRequest();
 			materialRequest.setRestaurantId(material.getRestaurant().getId());
-			materialRequest.setBranchId(material.getBranch() != null ? material.getBranch().getId() : null);
+			materialRequest.setBranchId(material.getBranch() != null ? material.getBranch().getId() : 0);
 			materialRequest.setName(material.getName());
 			materialRequest.setCode(material.getCode());
 			materialRequest.setCost(material.getCost());
@@ -89,13 +89,13 @@ public class MaterialServiceImpl implements MaterialService {
 	}
 
 	@Override
-	public List<MaterialRequest> listMaterial(String restaurantId, String branchId) {
-		List<Material> materials = materialRepository.listMaterial(restaurantId, branchId == null ? "" : branchId);
+	public List<MaterialRequest> listMaterial(int restaurantId, int branchId) {
+		List<Material> materials = materialRepository.listMaterial(restaurantId, branchId);
 		List<MaterialRequest> materialRequests = new ArrayList<>();
 		for (Material material : materials) {
 			MaterialRequest materialRequest = new MaterialRequest();
 			materialRequest.setRestaurantId(material.getRestaurant().getId());
-			materialRequest.setBranchId(material.getBranch() != null ? material.getBranch().getId() : null);
+			materialRequest.setBranchId(material.getBranch() != null ? material.getBranch().getId() : 0);
 			materialRequest.setCode(material.getCode());
 			materialRequest.setName(material.getName());
 			materialRequest.setCost(material.getCost());
@@ -118,13 +118,13 @@ public class MaterialServiceImpl implements MaterialService {
 	}
 
 	@Override
-	public List<MaterialRequest> findMaterialByCode(String restaurantId, String branchId, String keySearch) {
+	public List<MaterialRequest> findMaterialByCode(int restaurantId, int branchId, String keySearch) {
 		List<MaterialRequest> materialRequests = new ArrayList<>();
 		List<Material> materials = materialRepository.findMaterialByCode(restaurantId, branchId, keySearch);
 		for (Material material : materials) {
 			MaterialRequest materialRequest = new MaterialRequest();
 			materialRequest.setRestaurantId(material.getRestaurant().getId());
-			materialRequest.setBranchId(material.getBranch() != null ? material.getBranch().getId() : null);
+			materialRequest.setBranchId(branchId);
 			materialRequest.setCode(material.getCode());
 			materialRequest.setName(material.getName());
 			materialRequest.setCost(material.getCost());

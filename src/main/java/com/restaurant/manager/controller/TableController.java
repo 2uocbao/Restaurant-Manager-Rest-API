@@ -26,20 +26,14 @@ public class TableController {
 	@Autowired
 	TableService tableService;
 	private String success = "success";
-	private String notfound = "Not Found";
 
 	@PostMapping("/create")
 	ResponseEntity<BaseResponse> createTable(@Valid @RequestBody TableRequest tableRequest) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = tableService.createTable(tableRequest);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(tableRequest);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		baseResponse.setData(tableRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
@@ -47,30 +41,20 @@ public class TableController {
 	ResponseEntity<BaseResponse> detailTable(@Valid @RequestParam(name = "id") int id) {
 		BaseResponse baseResponse = new BaseResponse();
 		TableRequest tableRequest = tableService.detailTable(id);
-		if (tableRequest == null) {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(notfound);
-		} else {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(tableRequest);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(tableRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/list")
-	ResponseEntity<BaseResponse> listTable(@Valid @RequestParam(name = "restaurantId") String restaurantId,
-			@Valid @RequestParam(name = "branchId") String branchId) {
+	ResponseEntity<BaseResponse> listTable(@Valid @RequestParam(name = "restaurantId") int restaurantId,
+			@Valid @RequestParam(name = "branchId") int branchId) {
 		BaseResponse baseResponse = new BaseResponse();
 		List<TableRequest> tableRequests = tableService.listTableByBranchIdandRestaurantId(restaurantId, branchId);
-		if (tableRequests.isEmpty()) {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(notfound);
-		} else {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(tableRequests);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(tableRequests);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
@@ -79,47 +63,32 @@ public class TableController {
 			@Valid @RequestBody TableRequest tableRequest) {
 		BaseResponse baseResponse = new BaseResponse();
 		String message = tableService.updateTable(id, tableRequest);
-		if (message.equals(success)) {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(tableRequest);
-		} else {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(message);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(message);
+		baseResponse.setData(tableRequest);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("/list-by-status")
-	ResponseEntity<BaseResponse> listTablebyStatus(@Valid @RequestParam(name = "restaurantId") String restaurantId,
-			@Valid @RequestParam(name = "branchId") String branchId, @RequestParam("status") int status) {
+	ResponseEntity<BaseResponse> listTablebyStatus(@Valid @RequestParam(name = "restaurantId") int restaurantId,
+			@Valid @RequestParam(name = "branchId") int branchId, @RequestParam("status") int status) {
 		BaseResponse baseResponse = new BaseResponse();
 		List<TableRequest> tableRequests = tableService.listTableByStatus(restaurantId, branchId, status);
-		if (tableRequests.isEmpty()) {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(notfound);
-		} else {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-			baseResponse.setData(tableRequests);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(tableRequests);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 
 	@GetMapping("find-table")
-	ResponseEntity<BaseResponse> findTablebyKeySearch(@Valid @RequestParam(name = "restaurantId") String restaurantId,
-			@Valid @RequestParam(name = "branchId") String branchId,@Valid @RequestParam(name = "keySearch") String keySearch) {
+	ResponseEntity<BaseResponse> findTablebyKeySearch(@Valid @RequestParam(name = "restaurantId") int restaurantId,
+			@Valid @RequestParam(name = "branchId") int branchId,
+			@Valid @RequestParam(name = "keySearch") String keySearch) {
 		BaseResponse baseResponse = new BaseResponse();
 		List<TableRequest> tableRequests = tableService.findTable(restaurantId, branchId, keySearch);
-		if (tableRequests.isEmpty()) {
-			baseResponse.setStatus(404);
-			baseResponse.setMessage(notfound);
-		} else {
-			baseResponse.setStatus(200);
-			baseResponse.setMessage(success);
-
-			baseResponse.setData(tableRequests);
-		}
+		baseResponse.setStatus(200);
+		baseResponse.setMessage(success);
+		baseResponse.setData(tableRequests);
 		return ResponseEntity.status(HttpStatus.OK).body(baseResponse);
 	}
 }

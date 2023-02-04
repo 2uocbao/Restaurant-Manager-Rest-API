@@ -34,10 +34,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -57,16 +55,15 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
+
 	}
 
 	@Override
-	public Restaurant detailRestaurant(String id) {
+	public Restaurant detailRestaurant(int id) {
 		Restaurant restaurant = null;
 		try {
 			session = sessionFactory.openSession();
@@ -78,19 +75,17 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 		} catch (Exception e) {
 			if (transaction != null) {
 				transaction.rollback();
-			} 
+			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return restaurant;
 	}
 
 	@Override
-	public boolean changeStatusRestaurant(String id, int status) {
+	public boolean changeStatusRestaurant(int id, int status) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -106,10 +101,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -130,10 +123,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return restaurants;
 	}
@@ -154,16 +145,14 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return restaurant;
 	}
 
 	@Override
-	public int getStatusById(String id) {
+	public int getStatusById(int id) {
 		int status = 0;
 		try {
 			session = sessionFactory.openSession();
@@ -178,10 +167,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return status;
 	}

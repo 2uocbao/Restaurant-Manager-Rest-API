@@ -34,10 +34,8 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -57,10 +55,8 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -81,29 +77,27 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return material;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Material> listMaterial(String restaurantId, String branchId) {
+	public List<Material> listMaterial(int restaurantId, int branchId) {
 		List<Material> listMaterial = null;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId.equals("")) {
+			if (branchId == 0) {
 				listMaterial = session.createQuery(
-						"FROM com.restaurant.manager.model.Material m WHERE m.restaurant.id = :restaurantId AND m.branch.id = null")
-						.setParameter("restaurantId", restaurantId).list();
+						"FROM com.restaurant.manager.model.Material m WHERE m.restaurant.id = :RestaurantId AND m.branch.id = null")
+						.setParameter("RestaurantId", restaurantId).list();
 			} else {
 				listMaterial = session.createQuery(
-						"FROM com.restaurant.manager.model.Material m WHERE m.restaurant.id = :restaurantId AND m.branch.id = :branchId")
-						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
+						"FROM com.restaurant.manager.model.Material m WHERE m.restaurant.id = :RestaurantId AND m.branch.id = :branchId")
+						.setParameter("RestaurantId", restaurantId).setParameter("branchId", branchId).list();
 			}
 			transaction.commit();
 		} catch (Exception e) {
@@ -112,22 +106,20 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return listMaterial;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Material> findMaterialByCode(String restaurantId, String branchId, String keySearch) {
+	public List<Material> findMaterialByCode(int restaurantId, int branchId, String keySearch) {
 		List<Material> listMaterial = null;
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			if (branchId.equals("")) {
+			if (branchId == 0) {
 				listMaterial = session.createQuery(
 						"FROM com.restaurant.manager.model.Material m WHERE (m.restaurant.id = :restaurantId AND m.branch.id = null) AND (m.code LIKE :keySearch)")
 						.setParameter("restaurantId", restaurantId).setParameter("keySearch", "%" + keySearch + "%")
@@ -145,10 +137,8 @@ public class MaterialRepositoryImpl implements MaterialRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return listMaterial;
 	}

@@ -7,6 +7,6 @@ import com.restaurant.manager.request.WarehouseRequest;
 public interface WarehouseService {
 	public String createWarehouse(int materailId, WarehouseRequest warehouseRequest);
 
-	public List<WarehouseRequest> detailWarehouse(String employeeId, String materialCode);
+	public List<WarehouseRequest> listWarehouse(int employeeId, int materialId);
 
 }

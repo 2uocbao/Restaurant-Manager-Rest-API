@@ -37,16 +37,14 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@Override
-	public Branch detailBranch(String id) {
+	public Branch detailBranch(int id) {
 		Branch branch = new Branch();
 		try {
 			session = sessionFactory.openSession();
@@ -60,10 +58,8 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return branch;
 	}
@@ -83,16 +79,14 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@Override
-	public boolean changeStatusBranch(String id, int status) {
+	public boolean changeStatusBranch(int id, int status) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -107,10 +101,8 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
@@ -130,17 +122,15 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return branch;
 
 	}
 
 	@Override
-	public Integer getStatusbyId(String id) {
+	public Integer getStatusbyId(int id) {
 		int status = 0;
 		try {
 			session = sessionFactory.openSession();
@@ -155,16 +145,14 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return status;
 	}
 
 	@Override
-	public boolean changeStatusbyRestaurantId(String restaurantId, int status) {
+	public boolean changeStatusbyRestaurantId(int restaurantId, int status) {
 		boolean successful = false;
 		try {
 			session = sessionFactory.openSession();
@@ -180,17 +168,15 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return successful;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Branch> listBranchByRestaurantId(String restaurantId) {
+	public List<Branch> listBranchByRestaurantId(int restaurantId) {
 		List<Branch> listBranch = new ArrayList<>();
 		try {
 			session = sessionFactory.openSession();
@@ -204,10 +190,8 @@ public class BranchRepositoryImpl implements BranchRepository {
 			}
 			e.printStackTrace();
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			if (session.isOpen())
+				session.close();
 		}
 		return listBranch;
 	}

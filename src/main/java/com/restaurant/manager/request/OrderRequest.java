@@ -1,56 +1,34 @@
 package com.restaurant.manager.request;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OrderRequest {
-	@JsonProperty("restaurantId")
-	private String restaurantId;
-	
-	@JsonProperty("branchId")
-	private String branchId;
-	
+
 	@JsonProperty("employeeId")
-	private String employeeId;
-	
-	@JsonProperty("table")
-	private String tableId;
-	
+	private int employeeId;
+
+	@JsonProperty("tableId")
+	private int tableId;
+
 	@JsonProperty("orderId")
 	private int orderId;
 
-	@JsonProperty("food")
-	private List<foodOrderRequest> foodQuantity;
-
 	@JsonProperty("totalAmount")
 	private float totalAmount;
-	
+
 	@JsonProperty("description")
 	private String description;
-	
+
 	@JsonProperty("status")
 	private int status;
-	
+
 	@JsonProperty("createAt")
 	private Timestamp createAt;
-	
-	public String getRestaurantId() {
-		return restaurantId;
-	}
 
-	public void setRestaurantId(String restaurantId) {
-		this.restaurantId = restaurantId;
-	}
-
-	public String getBranchId() {
-		return branchId;
-	}
-
-	public void setBranchId(String branchId) {
-		this.branchId = branchId;
-	}
+	@JsonProperty("updatedAt")
+	private Timestamp updatedAt;
 
 	public int getOrderId() {
 		return orderId;
@@ -60,19 +38,19 @@ public class OrderRequest {
 		this.orderId = orderId;
 	}
 
-	public String getEmployeeId() {
+	public int getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(String employeeId) {
+	public void setEmployeeId(int employeeId) {
 		this.employeeId = employeeId;
 	}
 
-	public String getTableId() {
+	public int getTableId() {
 		return tableId;
 	}
 
-	public void setTableId(String tableId) {
+	public void setTableId(int tableId) {
 		this.tableId = tableId;
 	}
 
@@ -86,14 +64,6 @@ public class OrderRequest {
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public List<foodOrderRequest> getFoodQuantity() {
-		return foodQuantity;
-	}
-
-	public void setFoodQuantity(List<foodOrderRequest> foodQuantity) {
-		this.foodQuantity = foodQuantity;
 	}
 
 	public int getStatus() {
@@ -114,5 +84,13 @@ public class OrderRequest {
 
 	public void setCreateAt(Timestamp createAt) {
 		this.createAt = createAt;
+	}
+
+	public Timestamp getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Timestamp updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 }

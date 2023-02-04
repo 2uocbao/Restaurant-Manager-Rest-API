@@ -1,5 +1,7 @@
 package com.restaurant.manager.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -18,11 +21,16 @@ import lombok.ToString;
 @Entity
 @Table(name = "material")
 @DynamicUpdate
-public class Material {
+public class Material implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	@Column(name = "code")
 	private String code;
 
@@ -31,13 +39,13 @@ public class Material {
 
 	@Column(name = "cost")
 	private int cost;
-	
+
 	@Column(name = "type")
 	private String type;
 
 	@Column(name = "quantity")
 	private float quantity;
-	
+
 	@Column(name = "stock_end")
 	private float stockEnd;
 
@@ -55,6 +63,9 @@ public class Material {
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	private Branch branch;
+	
+	@OneToOne(mappedBy = "material")
+	private Warehouse warehouse;
 
 	public int getId() {
 		return id;
@@ -134,5 +145,13 @@ public class Material {
 
 	public void setStockEnd(float stockEnd) {
 		this.stockEnd = stockEnd;
+	}
+
+	public Warehouse getWarehouse() {
+		return warehouse;
+	}
+
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
 	}
 }

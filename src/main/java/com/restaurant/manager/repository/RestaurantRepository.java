@@ -7,13 +7,13 @@ public interface RestaurantRepository {
 
 	public boolean updateRestaurant(Restaurant restaurant);
 
-	public Restaurant detailRestaurant(String id);
+	public Restaurant detailRestaurant(int id);
 
-	public boolean changeStatusRestaurant(String id, int status);
+	public boolean changeStatusRestaurant(int id, int status);
 
 	public Restaurant getRestaurantbyPhone(String phone);
 
 	public Restaurant getRestaurantbyEmail(String email);
 
-	public int getStatusById(String id);
+	public int getStatusById(int id);
 }

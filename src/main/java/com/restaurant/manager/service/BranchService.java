@@ -7,11 +7,11 @@ import com.restaurant.manager.request.BranchRequest;
 public interface BranchService {
 	public String createBranch(BranchRequest branchRequest);
 
-	public BranchRequest detailBranch(String branchId);
+	public BranchRequest detailBranch(int branchId);
 
-	public String updateBranch(String branchId, BranchRequest branchRequest);
+	public String updateBranch(int branchId, BranchRequest branchRequest);
 
-	public String changeStatusBranch(String branchId);
+	public String changeStatusBranch(int branchId);
 	
-	public List<BranchRequest> listBranchByRestaurantId(String restaurantId);
+	public List<BranchRequest> listBranchByRestaurantId(int restaurantId);
 }

@@ -14,15 +14,13 @@ public interface TableRepository {
 
 	public boolean changeStatusById(int id, int status);
 
-	public List<Tables> listTableByBranchIdandRestaurantId(String restaurantId, String branchId);
+	public List<Tables> listTableByBranchIdandRestaurantId(int restaurantId, int branchId);
 
 	public Integer getStatusById(int id);
 
-	public Tables getTablebyName(String restaurantId, String branchId, String name);
-
-	public boolean changeStatusTableByRestaurantId(String restaurantId, int status);
+	public boolean changeStatusTableByRestaurantId(int restaurantId, int status);
 	
-	public boolean changeStatusTableByBranchId(String restaurantId, int status);
+	public boolean changeStatusTableByBranchId(int restaurantId, int status);
 	
-	public List<Tables> findTables(String restaurantId, String branchId, String keySearch);
+	public List<Tables> findTables(int restaurantId, int branchId, String keySearch);
 }

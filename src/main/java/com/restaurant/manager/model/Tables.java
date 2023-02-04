@@ -1,5 +1,9 @@
 package com.restaurant.manager.model;
 
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -18,7 +23,12 @@ import lombok.ToString;
 @Entity
 @Table(name = "tables")
 @DynamicUpdate
-public class Tables {
+public class Tables implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -48,6 +58,12 @@ public class Tables {
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
 	private Branch branch;
+
+	// một bàn có nhiều lần gọi món
+	@OneToMany(mappedBy = "tables", cascade = CascadeType.ALL)
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	private List<Orders> orders;
 
 	public int getId() {
 		return id;
@@ -103,5 +119,13 @@ public class Tables {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public List<Orders> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Orders> orders) {
+		this.orders = orders;
 	}
 }

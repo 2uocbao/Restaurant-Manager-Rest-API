@@ -1,22 +1,14 @@
 package com.restaurant.manager.service;
 
-import java.util.List;
-
-import com.restaurant.manager.request.MaterialRequest;
+import com.restaurant.manager.request.ReportRequest;
 
 public interface ReportService {
 
-	// báo cáo doanh thu theo ngày, tháng, năm
-
-	// báo cáo những nguyên liệu đã hết
-
-	// báo cáo chi theo ngày tháng năm
-
-	public Float incomebyDay(String day, String restaurantId, String branchId);
-
-	public Float incomebyMonth(String day, String restaurantId, String branchId);
-
-	public List<MaterialRequest> reportOutofStockMaterial(String restaurantId, String branchId);
-
-	public Float spendbyDay(String employee);
+	public ReportRequest revenue(int employeeId, String fromDate, String toDate);
+	
+	public ReportRequest food(int employeeId, int foodId, String fromDate, String toDate);
+	
+	public ReportRequest warehouse(int employeeId, String fromDate, String toDate);
+	
+	public ReportRequest material(int employeeId, int materialId);
 }

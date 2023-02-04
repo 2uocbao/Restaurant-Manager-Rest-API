@@ -11,12 +11,12 @@ public interface OrderRepository {
 	
 	public boolean updateOrder(Orders order);
 
-	public List<Orders> listOrderByEmployeeId(String employeeId);
+	public List<Orders> listOrderByEmployeeId(int employeeId);
 
-	public boolean changeStatus(int tableId, int status);
+	public boolean changeStatus(int orderId, int status);
 	
 	public Orders detailOrders(int tableId, int status);
 	
-	public List<Orders> listOrder(String restaurantId, String branchId, int status);
+	public List<Orders> listOrder(int restaurantId, int branchId, int status);
 
 }
