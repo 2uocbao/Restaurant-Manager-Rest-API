@@ -1,17 +1,15 @@
 package com.restaurant.manager.serviceimpl;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.restaurant.manager.model.Employee;
-import com.restaurant.manager.model.Food;
 import com.restaurant.manager.model.FoodDetail;
 import com.restaurant.manager.model.Material;
 import com.restaurant.manager.model.OrderDetail;
@@ -49,17 +47,11 @@ public class ReportServiceImpl implements ReportService {
 	@Autowired
 	FoodRepository foodRepository;
 
-	public Date date(String date) {
+	public String date(Timestamp date) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		try {
-			return df.parse(date);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return df.format(date);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public ReportRequest revenue(int employeeId, String fromDate, String toDate) {
 		ReportRequest reportRequest = new ReportRequest();
@@ -67,7 +59,7 @@ public class ReportServiceImpl implements ReportService {
 		List<Orders> orders = orderRepository.listOrder(employee.getRestaurant().getId(),
 				employee.getBranch() == null ? 0 : employee.getBranch().getId(), 1);
 		orders.stream().forEach(t -> {
-			if (t.getCreatedAt().getYear() == date(fromDate).getYear()) {
+			if (date(t.getCreatedAt()).equals(fromDate)) {
 				reportRequest.setProtfit(reportRequest.getProtfit() + t.getTotalAmount());
 			}
 		});
@@ -76,7 +68,7 @@ public class ReportServiceImpl implements ReportService {
 		for (Warehouse warehouse : warehouses) {
 			List<WarehouseDetail> warehouseDetails = warehouseDetailRepository.listWarehouseDetail(warehouse.getId());
 			warehouseDetails.stream().forEach(t -> {
-				if (t.getCreateAt().getYear() == date(fromDate).getYear()) {
+				if (date(t.getCreateAt()).equals(fromDate)) {
 					reportRequest.setCost(reportRequest.getCost() + (t.getCost() * t.getQuantity()));
 				}
 			});
@@ -93,18 +85,19 @@ public class ReportServiceImpl implements ReportService {
 				employee.getBranch() == null ? 0 : employee.getBranch().getId(), 1);
 		List<OrderDetail> orderDetails = null;
 		for (Orders order : orders) {
-
-			orderDetails = orderDetailRepository.listOrderDetails(order.getId());
-			orderDetails.stream().forEach(t -> {
-				if (t.getFood().getId() == foodId) {
-					reportRequest.setTurnover(reportRequest.getTurnover() + t.getQuatity());
-					reportRequest.setCost(t.getFood().getPrice());
-					reportRequest.setProtfit((float) t.getQuatity() * t.getFood().getPrice());
-					List<FoodDetail> foodDetails = foodDetailRepository.listFoodDetail(foodId);
-					foodDetails.stream().forEach(l -> reportRequest.setProtfit(reportRequest.getProtfit()
-							- (l.getQuantity() * l.getMaterial().getCost() * t.getQuatity())));
-				}
-			});
+			if (date(order.getCreatedAt()).equals(fromDate)) {
+				orderDetails = orderDetailRepository.listOrderDetails(order.getId());
+				orderDetails.stream().forEach(t -> {
+					if (t.getFood().getId() == foodId) {
+						reportRequest.setTurnover(reportRequest.getTurnover() + t.getQuatity());
+						reportRequest.setCost(t.getFood().getPrice());
+						reportRequest.setProtfit((float) t.getQuatity() * t.getFood().getPrice());
+						List<FoodDetail> foodDetails = foodDetailRepository.listFoodDetail(foodId);
+						foodDetails.stream().forEach(l -> reportRequest.setProtfit(reportRequest.getProtfit()
+								- (l.getQuantity() * l.getMaterial().getCost() * t.getQuatity())));
+					}
+				});
+			}
 		}
 		return reportRequest;
 	}
@@ -141,12 +134,12 @@ public class ReportServiceImpl implements ReportService {
 			orderDetails.stream().forEach(d -> {
 				FoodDetail foodDetail = foodDetailRepository.detailFood(d.getFood().getId(), materialId);
 				if (foodDetail != null) {
-					
+					reportRequest.setTurnover(reportRequest.getTurnover() + d.getQuatity());
 				} else {
 					reportRequest.setTurnover(reportRequest.getTurnover());
 				}
 			});
 		});
-		return null;
+		return reportRequest;
 	}
 }

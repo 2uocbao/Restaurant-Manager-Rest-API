@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.7</version>
+		<version>2.7.8</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.restaurant</groupId>
@@ -31,9 +31,10 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<!--~~(No version provided)~~>-->
-		<dependency>
+		<!--~~(No version provided)~~>--><dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.32</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
