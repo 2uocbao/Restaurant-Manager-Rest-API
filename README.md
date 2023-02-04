@@ -11,6 +11,10 @@ Mysql (PostgreSQL)
 
 Hibernate
 
+Spring Security
+
+JWT
+
 - API's
 
 Quản lý Nhà hàng và các chi nhánh của Nhà hàng.
