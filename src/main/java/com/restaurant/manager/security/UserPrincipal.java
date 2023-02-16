@@ -13,9 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restaurant.manager.model.Employee;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class UserPrincipal implements UserDetails {
 
 	/**
