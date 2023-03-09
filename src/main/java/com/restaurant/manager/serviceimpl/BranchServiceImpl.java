@@ -52,8 +52,8 @@ public class BranchServiceImpl implements BranchService {
 			branch.setAddress(branchRequest.getAddress().replace("//s+", " ").trim());
 			branch.setPhone(branchRequest.getPhone().trim());
 			branch.setStatus(1);
-			boolean successful = branchRepository.createBranch(branch);
-			return successful ? success : "No success";
+			branch = branchRepository.createBranch(branch);
+			return branch != null ? success : "No success";
 		}
 	}
 
@@ -93,8 +93,8 @@ public class BranchServiceImpl implements BranchService {
 			branch.setPhone(branchRequest.getPhone().trim());
 			branch.setAddress(branchRequest.getAddress().replace("//s+", " ").trim());
 			branch.setStreet(branchRequest.getStreet().replace("//s+", " ").trim());
-			boolean successful = branchRepository.updateBranch(branch);
-			return successful ? success : "No success";
+			branch = branchRepository.updateBranch(branch);
+			return branch != null ? success : "No success";
 		}
 	}
 
