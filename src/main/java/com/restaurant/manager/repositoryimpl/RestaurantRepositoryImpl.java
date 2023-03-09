@@ -68,9 +68,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 		try {
 			session = sessionFactory.openSession();
 			transaction = session.beginTransaction();
-			restaurant = (Restaurant) session
-					.createQuery("FROM com.restaurant.manager.model.Restaurant r WHERE r.id = :id")
-					.setParameter("id", id).uniqueResult();
+			restaurant = session.get(Restaurant.class, id);
 			transaction.commit();
 		} catch (Exception e) {
 			if (transaction != null) {
