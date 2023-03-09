@@ -1,8 +1,13 @@
 package com.restaurant.manager.repositoryimpl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,6 +26,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 	Transaction transaction = null;
 	@Autowired
 	SessionFactory sessionFactory;
+	@Autowired
+	EntityManager entityManager;
 
 	@Override
 	public boolean createEmployee(Employee employee) {
@@ -62,6 +69,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 				session.close();
 		}
 		return employee;
+		
 	}
 
 	@Override
@@ -132,33 +140,21 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 		return successful;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Employee> listEmpoyeeByResIdOrBranId(int restaurantId, int branchId) {
-		List<Employee> listEmployee = new ArrayList<>();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			if (branchId == 0) {
-				listEmployee = session.createQuery(
-						"FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantid AND e.branch.id = null")
-						.setParameter("restaurantid", restaurantId).list();
-			} else {
-				listEmployee = session.createQuery(
-						"FROM com.restaurant.manager.model.Employee e WHERE e.restaurant.id = :restaurantId AND e.branch.id = :branchId")
-						.setParameter("restaurantId", restaurantId).setParameter("branchId", branchId).list();
-			}
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
-		return listEmployee;
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		
+		CriteriaQuery<Employee> criteria = builder.createQuery(Employee.class);
+		
+		Root<Employee> translation = criteria.from(Employee.class);
+		
+		criteria.select(translation);
+		
+		criteria.where(builder.equal(translation.get("restaurant"), restaurantId),
+				builder.equal(translation.get("branch"), branchId));
+		TypedQuery<Employee> query = entityManager.createQuery(criteria);
+		
+		return query.getResultList();
 
 	}
 
