@@ -3,10 +3,6 @@ package com.restaurant.manager.repositoryimpl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,184 +11,59 @@ import com.restaurant.manager.repository.BranchRepository;
 
 @Repository
 @Transactional
-
-public class BranchRepositoryImpl implements BranchRepository {
-	Transaction transaction = null;
-	Session session = null;
-	@Autowired
-	private SessionFactory sessionFactory;
+public class BranchRepositoryImpl extends AbtractRepositoryImpl<Branch> implements BranchRepository {
 
 	@Override
-	public boolean createBranch(Branch branch) {
-		boolean successful = false;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			session.save(branch);
-			transaction.commit();
-			successful = true;
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
-		return successful;
+	public Branch createBranch(Branch branch) {
+		return this.create(branch);
 	}
 
 	@Override
 	public Branch detailBranch(int id) {
-		Branch branch = new Branch();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			branch = (Branch) session.createQuery("FROM com.restaurant.manager.model.Branch b WHERE b.id = :id")
-					.setParameter("id", id).uniqueResult();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
+		return this.getDetail(id);
+	}
+
+	@Override
+	public Branch updateBranch(Branch branch) {
+		return this.update(branch);
+	}
+
+	@Override
+	public Branch changeStatusBranch(int id, int status) {
+		Branch branch = this.getDetail(id);
+		branch.setStatus(status);
+		this.update(branch);
 		return branch;
-	}
-
-	@Override
-	public boolean updateBranch(Branch branch) {
-		boolean successful = false;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			session.update(branch);
-			transaction.commit();
-			successful = true;
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
-		return successful;
-	}
-
-	@Override
-	public boolean changeStatusBranch(int id, int status) {
-		boolean successful = false;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			session.createQuery("UPDATE com.restaurant.manager.model.Branch b SET b.status = :status WHERE b.id = :id")
-					.setParameter("status", status).setParameter("id", id).executeUpdate();
-			transaction.commit();
-			successful = true;
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
-		return successful;
 	}
 
 	@Override
 	public Branch getDetailByPhone(String phone) {
-		Branch branch = new Branch();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			branch = (Branch) session.createQuery("FROM com.restaurant.manager.model.Branch b WHERE b.phone = :phone")
-					.setParameter("phone", phone).uniqueResult();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
-		return branch;
+		return this.callQueryForEntity("FROM com.restaurant.manager.model.Branch b WHERE b.phone = :" + phone);
 
 	}
 
 	@Override
 	public Integer getStatusbyId(int id) {
-		int status = 0;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			status = (int) session
-					.createQuery("SELECT b.status FROM com.restaurant.manager.model.Branch b WHERE b.id = :id")
-					.setParameter("id", id).uniqueResult();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
-		return status;
+		Branch branch = this.getDetail(id);
+		return branch.getStatus();
 	}
 
 	@Override
-	public boolean changeStatusbyRestaurantId(int restaurantId, int status) {
-		boolean successful = false;
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			session.createQuery(
-					"UPDATE com.restaurant.manager.model.Branch b SET b.status = :status WHERE b.restaurant.id = :restaurantId")
-					.setParameter("restaurantId", restaurantId).setParameter("status", status).executeUpdate();
-			transaction.commit();
-			successful = true;
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
-		return successful;
+	public Branch changeStatusbyRestaurantId(int restaurantId, int status) {
+		
+		return this.callQueryForEntity("UPDATE com.restaurant.manager.model.Branch b SET b.status = :" + status + "WHERE b.restaurant.id = :" + restaurantId);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Branch> listBranchByRestaurantId(int restaurantId) {
-		List<Branch> listBranch = new ArrayList<>();
-		try {
-			session = sessionFactory.openSession();
-			transaction = session.beginTransaction();
-			listBranch = session.createQuery("FROM com.restaurant.manager.model.Branch b WHERE b.restaurant.id = :id")
-					.setParameter("id", restaurantId).list();
-			transaction.commit();
-		} catch (Exception e) {
-			if (transaction != null) {
-				transaction.rollback();
-			}
-			e.printStackTrace();
-		} finally {
-			if (session.isOpen())
-				session.close();
-		}
-		return listBranch;
+		List<Branch> branchs = new ArrayList<>();
+		this.getList().stream().forEach(
+
+				i -> {
+					if (i.getRestaurant().getId() == restaurantId) {
+						branchs.add(i);
+					}
+				});
+		return branchs;
 	}
 }
