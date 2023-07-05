@@ -1,7 +1,7 @@
 # Restaurant-Manager-Rest-API
  Restaurant-Manager-Rest-API by 2uocbao, using framework Spring Boot
 Restaurant Manager REST API
-- Techonologies & Tools
+# Techonologies & Tools
 
 Maven
 
@@ -15,7 +15,7 @@ Spring Security
 
 JWT
 
-- API's
+# API's
 
 Quản lý Nhà hàng và các chi nhánh của Nhà hàng.
 
