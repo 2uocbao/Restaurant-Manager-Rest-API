@@ -24,7 +24,6 @@ import com.restaurant.manager.repository.EmployeeRepository;
 public class EmployeeRepositoryImpl implements EmployeeRepository {
 	Session session = null;
 	Transaction transaction = null;
-	@Autowired
 	SessionFactory sessionFactory;
 	@Autowired
 	EntityManager entityManager;
