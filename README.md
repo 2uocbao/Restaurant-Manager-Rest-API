@@ -1,30 +1,17 @@
-# Restaurant-Manager-Rest-API
- Restaurant-Manager-Rest-API by 2uocbao, using framework Spring Boot
-Restaurant Manager REST API
-# Techonologies & Tools
-
-Maven
-
-Spring Boot
-
-Mysql (PostgreSQL)
-
-Hibernate
-
-Spring Security
-
-JWT
-
-# API's
-
-Quản lý Nhà hàng và các chi nhánh của Nhà hàng.
-
-Quản lý Nhân viên.
-
-Quản lý order món, tạo món ăn.
-
-Quản lý việc nhập kho nguyên liệu.
-
-Báo cáo thống kê doanh thu và chi tiêu theo ngày, tháng, năm. 
-
-Báo cáo nguyên liệu hết hàng.
+## Restaurant-Manager-Rest-API
+## Contents
+* [General info](#General-info)
+* [Technologies](#Technologies)
+* [Setup](#Setup)
+## General infor
+This project write Java RESTful Web Services API. This project forcuses on service Restaurant, FrontEnd developer.
+## Techonologies
+Project is created with:
+* Java: jdk19
+* Hibernate: 5.6.15
+* Maven: 3.2.4
+* Spring Boot: 2.7.13
+* Mysql (PostgreSQL): 8.0.32
+* Spring Security: 5.7.9
+## Setup
+$ git clone https://github.com/2uocbao/Restaurant-Manager-Rest-API.git
