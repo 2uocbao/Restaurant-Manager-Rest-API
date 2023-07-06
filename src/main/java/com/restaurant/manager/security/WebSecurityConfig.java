@@ -1,38 +1,69 @@
 package com.restaurant.manager.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@EnableWebSecurity
+import com.restaurant.manager.jwt.JwtAuthenticationFilter;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableWebSecurity
+@EnableMethodSecurity
+@RequiredArgsConstructor
+@ComponentScan("com.restaurant.")
 public class WebSecurityConfig {
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
-	}
+	
+	private static final String ADMIN = "ADMIN";
+	private static final String EMPLOYEE = "EMPLOYEE";
+	private static final HttpMethod PUT = HttpMethod.PUT;
+	private static final HttpMethod GET = HttpMethod.GET;
+	
+	private final JwtAuthenticationFilter authenticationFilter;
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/home").permitAll().antMatchers("/hello").authenticated()
-				.antMatchers("/admin").hasRole("USER").and().formLogin().loginPage("/login").defaultSuccessUrl("/")
-				.failureUrl("/login?error").and().logout().logoutSuccessUrl("/").and().exceptionHandling()
-				.accessDeniedPage("/403");
+		http.csrf().disable();
+		http.authorizeHttpRequests()
+			.antMatchers("/account/**").permitAll()
+			
+			.antMatchers(GET, "/branch/**").permitAll()
+			.antMatchers("/branch/**").hasRole(ADMIN)
+			
+			.antMatchers(GET, "/employee/detail**").hasRole(EMPLOYEE)
+			.antMatchers(PUT, "/employee/update**").hasRole(EMPLOYEE)
+			.antMatchers("/employee/**").hasRole(ADMIN)
+			
+			.antMatchers("/food/**").hasRole(ADMIN)
+			
+			.antMatchers("/material/**").hasRole(ADMIN)
+			
+			.antMatchers("/order/**").hasRole(ADMIN)
+			.antMatchers("/order/**").hasRole(EMPLOYEE)
+			
+			.antMatchers("/report/**").hasRole(ADMIN)
+			
+			.antMatchers(GET, "/restaurant/detail/**").permitAll()
+			.antMatchers("/restaurant/**").hasRole(ADMIN)
+			
+			.antMatchers(GET, "/table/**").permitAll()
+			.antMatchers("/table/**").hasRole(ADMIN)
+			
+			.antMatchers("/warehouse/**").hasRole(ADMIN)
+			
+			.anyRequest().authenticated();
+		
+		http.logout()
+			.invalidateHttpSession(true).clearAuthentication(true);
+		
+		http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 }
